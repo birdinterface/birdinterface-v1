@@ -22,7 +22,9 @@ export function Navigation() {
   // Then check other paths
   if (pathname.startsWith('/welcome') ||
       pathname.startsWith('/terms') ||
-      pathname.startsWith('/privacy')) {
+      pathname.startsWith('/privacy') ||
+      pathname.startsWith('/login') ||
+      pathname.startsWith('/register')) {
     return null;
   }
 
