@@ -28,7 +28,7 @@ export function Navigation() {
 
   return (
     <>
-      <nav className="border-b fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
+      <nav className="border-b fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[9999]">
         <div className="max-w-screen-2xl mx-auto px-4">
           <div className="flex h-14 items-center gap-8">
             <Link href="/" className="font-semibold text-lg">
@@ -41,7 +41,7 @@ export function Navigation() {
                   key={item.href}
                   href={item.href}
                   className={`text-sm font-medium transition-colors hover:text-primary ${
-                    pathname === item.href
+                    (pathname === item.href || (item.href === '/intelligence' && pathname.startsWith('/intelligence')))
                       ? 'text-foreground'
                       : 'text-muted-foreground'
                   }`}

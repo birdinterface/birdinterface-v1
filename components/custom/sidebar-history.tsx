@@ -51,7 +51,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     data: history,
     isLoading,
     mutate,
-  } = useSWR<Array<Chat>>(user ? '/api/history' : null, fetcher, {
+  } = useSWR<Array<Chat>>(user ? '/intelligence/api/history' : null, fetcher, {
     fallbackData: [],
   });
 
@@ -65,7 +65,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const { theme } = useTheme();
   const handleDelete = async () => {
     try {
-      await fetch(`/api/chat?id=${deleteId}`, {
+      await fetch(`/intelligence/api/chat?id=${deleteId}`, {
         method: 'DELETE',
       }).then(res => {
         if (!res.ok) throw new Error('Failed to delete');
@@ -86,7 +86,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       });
 
       if (deleteId === id) {
-        router.push('/');
+        router.push('/intelligence');
       }
     } catch (error) {
       toast.error('Failed to delete chat');
@@ -131,7 +131,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           )}
         >
           <Link
-            href={`/chat/${chat.id}`}
+            href={`/intelligence/chat/${chat.id}`}
             onClick={() => setOpenMobile(false)}
             className="py-2 w-full"
           >

@@ -35,12 +35,12 @@ export function AppSidebar({ user }: { user: User | undefined }) {
   const { setOpenMobile } = useSidebar();
 
   return (
-    <Sidebar className="group-data-[side=left]:border-r-0">
+    <Sidebar className="group-data-[side=left]:border-r-0 mt-14">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="/" onClick={() => setOpenMobile(false)}>
+              <Link href="/intelligence" onClick={() => setOpenMobile(false)}>
                 <Image
                   src="/images/logodark.png"
                   alt="Logo"
@@ -61,7 +61,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
             </SidebarMenuButton>
             <BetterTooltip content="New Chat">
               <SidebarMenuAction asChild>
-                <Link href="/" onClick={() => setOpenMobile(false)}>
+                <Link href="/intelligence" onClick={() => setOpenMobile(false)}>
                   <Plus />
                 </Link>
               </SidebarMenuAction>
