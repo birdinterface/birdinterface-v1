@@ -27,30 +27,33 @@ export function Navigation() {
   }
 
   return (
-    <nav className="border-b">
-      <div className="max-w-screen-2xl mx-auto px-4">
-        <div className="flex h-14 items-center gap-8">
-          <Link href="/" className="font-semibold text-lg">
-            <span className="text-foreground">Bird</span>
-            <span className="text-muted-foreground">interface</span>
-          </Link>
-          <div className="flex gap-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  pathname === item.href
-                    ? 'text-foreground'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+    <>
+      <nav className="border-b fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
+        <div className="max-w-screen-2xl mx-auto px-4">
+          <div className="flex h-14 items-center gap-8">
+            <Link href="/" className="font-semibold text-lg">
+              <span className="text-foreground">Bird</span>
+              <span className="text-muted-foreground">interface</span>
+            </Link>
+            <div className="flex gap-6">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-sm font-medium transition-colors hover:text-primary ${
+                    pathname === item.href
+                      ? 'text-foreground'
+                      : 'text-muted-foreground'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <div className="h-14" /> {/* Spacer to prevent content from going under navbar */}
+    </>
   );
 } 
