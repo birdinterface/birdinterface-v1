@@ -7,6 +7,7 @@ import { auth } from '@/app/(auth)/auth';
 import { ModalProvider } from '@/components/context/modal-context';
 import { SubscriptionModal } from '@/components/custom/subscription-modal';
 import { ThemeProvider } from '@/components/custom/theme-provider';
+import { Navigation } from '@/components/custom/navigation';
 
 import './globals.css';
 
@@ -71,6 +72,7 @@ export default async function RootLayout({
           <ModalProvider>
             <Toaster position="top-center" />
             <SessionProvider>
+              <Navigation />
               {children}
               {userData && <SubscriptionModal user={userData} />}  
             </SessionProvider>
