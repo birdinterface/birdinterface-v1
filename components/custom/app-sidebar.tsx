@@ -41,22 +41,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/intelligence" onClick={() => setOpenMobile(false)}>
-                <Image
-                  src="/images/logodark.png"
-                  alt="Logo"
-                  width={180}
-                  height={30}
-                  className="dark:hidden"
-                  draggable={false}
-                />
-                <Image
-                  src="/images/logowhite.png"
-                  alt="Logo"
-                  width={180}
-                  height={30}
-                  className="hidden dark:block"
-                  draggable={false}
-                />
+                <span className="text-sm font-medium">AdvancersAI</span>
               </Link>
             </SidebarMenuButton>
             <BetterTooltip content="New Chat">
