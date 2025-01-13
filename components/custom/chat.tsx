@@ -119,11 +119,11 @@ export function Chat({
   };
 
   return (
-    <div className="flex flex-col min-w-0 h-dvh bg-background">
+    <div className="flex flex-col h-full bg-background">
       <ChatHeader selectedModelName={selectedModelName} />
       <div
         ref={messagesContainerRef}
-        className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll"
+        className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-auto"
       >
         {messages.length === 0 && <Overview />}
 

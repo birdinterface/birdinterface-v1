@@ -1,7 +1,21 @@
 'use client';
 
+import { ChevronUp } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
+import { signOut } from 'next-auth/react';
+
+import { useModal } from '../context/modal-context';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 const navItems = [
   { href: '/tasks', label: 'Tasks' },
@@ -11,8 +25,10 @@ const navItems = [
   { href: '/intelligence', label: 'Intelligence' },
 ];
 
-export function Navigation() {
+export function Navigation({ user }: { user: any }) {
   const pathname = usePathname();
+  const { setTheme, theme } = useTheme();
+  const { openModal } = useModal();
   
   // Check for imprint first
   if (pathname === '/imprint' || pathname === '/imprint/') {
@@ -51,6 +67,52 @@ export function Navigation() {
                   {item.label}
                 </Link>
               ))}
+            </div>
+            <div className="ml-auto flex items-center gap-4">
+              {user && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 rounded-full">
+                      <Image
+                        src={user.image || `https://avatar.vercel.sh/${user.email}`}
+                        alt={user.email ?? 'User Avatar'}
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                        draggable={false}
+                      />
+                      <span className="sr-only">Toggle user menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <button className="w-full text-left" onClick={openModal}>
+                        Your Plan
+                      </button>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    >
+                      {`Toggle ${theme === 'light' ? 'dark' : 'light'} mode`}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <button
+                        className="w-full text-left"
+                        onClick={() => {
+                          signOut({
+                            redirect: true,
+                            callbackUrl: '/',
+                          });
+                        }}
+                      >
+                        Sign out
+                      </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </div>
         </div>

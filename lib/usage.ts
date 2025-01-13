@@ -5,19 +5,24 @@ const COST_PER_OUTPUT_TOKEN = 0.000015; // $15 per million tokens
 const SYSTEM_PROMPT_TOKENS = 100; // Approximate tokens in base system prompt
 
 export const USAGE_LIMITS = {
-  free: 0.25,     // $0.10 per month
-  pro: 4.00,      // $3.00 per month
-  ultimate: 10.00  // $6.00 per month
+  free: 0.50,     // $0.10 per month
+  pro: 10.00,      // $3.00 per month
+  ultimate: 150.00  // $6.00 per month
 } as const;
 
 export function calculateCost(
   inputTokens: number, 
   outputTokens: number
 ): number {
-  const totalInputTokens = inputTokens + SYSTEM_PROMPT_TOKENS;
-  const cost = (totalInputTokens * COST_PER_INPUT_TOKEN) + 
-               (outputTokens * COST_PER_OUTPUT_TOKEN);
-  return Number(cost.toFixed(4));
+  // Actual Grok-2 pricing
+  const INPUT_COST_PER_1K_TOKENS = 0.002;   // $2 per 1M tokens = $0.002 per 1K tokens
+  const OUTPUT_COST_PER_1K_TOKENS = 0.01;   // $10 per 1M tokens = $0.01 per 1K tokens
+
+  const inputCost = (inputTokens / 1000) * INPUT_COST_PER_1K_TOKENS;
+  const outputCost = (outputTokens / 1000) * OUTPUT_COST_PER_1K_TOKENS;
+
+  // Return total cost rounded to 4 decimal places
+  return Number((inputCost + outputCost).toFixed(4));
 }
 
 export function hasExceededLimit(currentUsage: number, membership: string): boolean {

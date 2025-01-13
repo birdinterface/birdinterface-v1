@@ -21,14 +21,24 @@ import { Textarea } from '../ui/textarea';
 
 const suggestedActions = [
   {
-    title: 'How can I be useful',
-    label: 'and create new value?',
-    action: 'How can I be useful and create new value for civilization?',
+    title: 'What\'s the',  
+    label: 'Advancers Philosophy?',    
+    action: 'What\'s the Advancers Philosophy?', 
   },
   {
-    title: "What are the areas of",
-    label: 'innovation right now?',
-    action: "What are the areas of innovation right now?",
+    title: "Describe",
+    label: 'the next 50 years',
+    action: "Describe the next 50 years",
+  },
+  {
+    title: "How can I",
+    label: 'be useful?',
+    action: "How can I be useful?",
+  },
+  {
+    title: "What are the",
+    label: 'misaligned structures?',
+    action: "What are the misaligned structures?",
   },
 ];
 

@@ -1,27 +1,13 @@
 'use client';
 
 import { Plus } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { type User } from 'next-auth';
 
-import { VercelIcon } from '@/components/custom/icons';
 import { SidebarHistory } from '@/components/custom/sidebar-history';
-import { SidebarUserNav } from '@/components/custom/sidebar-user-nav';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuAction,
@@ -35,7 +21,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
   const { setOpenMobile } = useSidebar();
 
   return (
-    <Sidebar className="mt-14 bg-white dark:bg-black border-t border-r border-border">
+    <Sidebar className="mt-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-black border-t border-r border-border">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -57,19 +43,6 @@ export function AppSidebar({ user }: { user: User | undefined }) {
       <SidebarContent>
         <SidebarHistory user={user} />
       </SidebarContent>
-      <SidebarFooter className="gap-0">
-        <SidebarGroup>
-          <SidebarGroupContent>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        {user && (
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarUserNav user={user} />
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-      </SidebarFooter>
     </Sidebar>
   );
 }

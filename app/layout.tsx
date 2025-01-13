@@ -47,36 +47,31 @@ const THEME_COLOR_SCRIPT = `\
 
 export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   const session = await auth();
-  let userData: ExtendedUser | null = null;
-  
-  if (session?.user?.email) {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/user?email=${encodeURIComponent(session.user.email)}`);
-    const data = await response.json();
-    userData = {
-      ...session.user,
-      membership: data.membership
-    };
-  }
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_COLOR_SCRIPT }} />
       </head>
-      <body className="antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <ModalProvider>
-            <Toaster position="top-center" />
-            <SessionProvider>
-              <Navigation />
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SessionProvider session={session}>
+            <ModalProvider>
+              <Navigation user={session?.user} />
               {children}
-              {userData && <SubscriptionModal user={userData} />}  
-            </SessionProvider>
-          </ModalProvider>
+              <SubscriptionModal user={session?.user as ExtendedUser} />
+              <Toaster />
+            </ModalProvider>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
