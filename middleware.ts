@@ -1,9 +1,33 @@
-import NextAuth from "next-auth";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-import { authConfig } from "@/app/(auth)/auth.config";
+export async function middleware(request: NextRequest) {
+  const token = await getToken({ req: request });
 
-export default NextAuth(authConfig).auth;
+  if (
+    request.nextUrl.pathname.startsWith('/login') ||
+    request.nextUrl.pathname.startsWith('/register')
+  ) {
+    if (token) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+    return NextResponse.next();
+  }
+
+  if (
+    request.nextUrl.pathname === '/' ||
+    request.nextUrl.pathname.startsWith('/chat/')
+  ) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+    return NextResponse.next();
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ["/", "/:id", "/login", "/register"],
+  matcher: ['/', '/chat/:path*', '/login', '/register']
 };
