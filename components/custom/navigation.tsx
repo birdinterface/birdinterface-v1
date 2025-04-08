@@ -1,23 +1,23 @@
 'use client';
 
-import { ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTheme } from 'next-themes';
 import { signOut } from 'next-auth/react';
+import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
-import { useModal } from '../context/modal-context';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/dropdown-menu'; 
 import { cn } from '@/lib/utils';
+
+import { useModal } from '../context/modal-context';
 
 const navItems = [
   { href: '/tasks', label: 'Tasks' },

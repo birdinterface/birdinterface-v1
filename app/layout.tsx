@@ -5,9 +5,9 @@ import { Toaster } from 'sonner';
 
 import { auth } from '@/app/(auth)/auth';
 import { ModalProvider } from '@/components/context/modal-context';
+import { Navigation } from '@/components/custom/navigation';
 import { SubscriptionModal } from '@/components/custom/subscription-modal';
 import { ThemeProvider } from '@/components/custom/theme-provider';
-import { Navigation } from '@/components/custom/navigation';
 
 import './globals.css';
 

@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
 
+import { auth } from '@/app/(auth)/auth';
 import { AppSidebar } from '@/components/custom/app-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { auth } from '@/app/(auth)/auth';
 
 export default async function IntelligenceLayout({
   children,
