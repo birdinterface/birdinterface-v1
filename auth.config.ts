@@ -14,21 +14,24 @@ export const authConfig = {
   ],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      let isLoggedIn = !!auth?.user;
-      let isOnChat = nextUrl.pathname.startsWith("/");
-      let isOnRegister = nextUrl.pathname.startsWith("/register");
-      let isOnLogin = nextUrl.pathname.startsWith("/login");
+      const isLoggedIn = !!auth?.user;
+      const isOnChat = nextUrl.pathname.startsWith("/");
+      const isOnRegister = nextUrl.pathname.startsWith("/register");
+      const isOnLogin = nextUrl.pathname.startsWith("/login");
 
-      if (isOnChat && !isLoggedIn) {
-        return false;
+      // Allow access to register and login pages when not logged in
+      if (!isLoggedIn && (isOnRegister || isOnLogin)) {
+        return true;
       }
 
-      if (isOnRegister && isLoggedIn) {
+      // Redirect to home if trying to access auth pages while logged in
+      if (isLoggedIn && (isOnRegister || isOnLogin)) {
         return Response.redirect(new URL("/", nextUrl));
       }
 
-      if (isOnLogin && isLoggedIn) {
-        return Response.redirect(new URL("/", nextUrl));
+      // Protect chat routes
+      if (isOnChat) {
+        return isLoggedIn;
       }
 
       return true;
