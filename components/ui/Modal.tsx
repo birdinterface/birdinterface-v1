@@ -18,7 +18,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
   if (!isOpen) return null;
 
   return createPortal(
-    <div className={`fixed inset-0 z-50 flex items-center justify-center ${className}`} style={{ width: '100vw', height: '100vh' }}>
+    <div className={`fixed inset-0 z-[10000] flex items-center justify-center ${className}`} style={{ width: '100vw', height: '100vh' }}>
       <div className="fixed inset-0 bg-black dark:bg-black opacity-80 pointer-events-auto"></div>
       <div className="w-full h-full bg-white dark:bg-black p-6 relative pointer-events-auto">
         <button
