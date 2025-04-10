@@ -4,10 +4,10 @@ import { format, parseISO, isToday, isYesterday, isTomorrow } from 'date-fns';
 import { Check, Calendar } from 'lucide-react';
 import { useState, useRef, KeyboardEvent, TouchEvent, useEffect, useCallback, type ReactNode } from 'react';
 
-import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
-import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import { cn } from '@/lib/utils';
 
 type Task = {
