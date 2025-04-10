@@ -1,4 +1,5 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import { type User } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { Toaster } from 'sonner';
@@ -8,8 +9,9 @@ import { ModalProvider } from '@/components/context/modal-context';
 import { Navigation } from '@/components/custom/navigation';
 import { SubscriptionModal } from '@/components/custom/subscription-modal';
 import { ThemeProvider } from '@/components/custom/theme-provider';
-
 import './globals.css';
+
+const inter = Inter({ subsets: ['latin'] });
 
 interface ExtendedUser extends User {
   membership?: string;
@@ -17,7 +19,7 @@ interface ExtendedUser extends User {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://birdinterface.com'),
-  title: 'Bird',
+  title: 'Bird Interface',
   description: 'An AI that understands your whole life',
   icons: {
     icon: '/favicon.ico'
@@ -60,7 +62,7 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_COLOR_SCRIPT }} />
       </head>
-      <body>
+      <body className={inter.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

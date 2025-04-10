@@ -6,6 +6,10 @@ const nextConfig = {
       'lh3.googleusercontent.com',
     ],
   },
+  reactStrictMode: true,
+  experimental: {
+    serverActions: true,
+  },
   // ... other config options
 }
 

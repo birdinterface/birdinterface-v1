@@ -106,76 +106,87 @@ export function Navigation({ user }: { user: any }) {
           backdrop-filter: blur(16px) !important;
           z-index: 99999 !important;
         }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
       `}</style>
       <nav className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[9999] overscroll-none">
         <div className="relative w-full nav-dots">
           <div className="flex h-14 items-center justify-center relative z-10 px-4">
-            <div className="flex items-center gap-6">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-transparent">
-                    <div className="relative w-6 h-6">
-                      {mounted && (
-                        <Image
-                          src={resolvedTheme === 'dark' ? '/images/Birdwhite.png' : '/images/Birdblack.png'}
-                          alt="Bird Interface Logo"
-                          layout="fill"
-                          objectFit="contain"
-                          priority
-                        />
-                      )}
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" sideOffset={0} className="w-48 custom-dropdown">
-                  {user && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <button className="w-full text-left text-xs nav-text" onClick={openModal}>
-                          YOUR PLAN
-                        </button>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-xs nav-text"
-                        onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                      >
-                        {theme === 'light' ? 'DARK MODE' : 'LIGHT MODE'}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <button
-                          className="w-full text-left text-xs nav-text"
-                          onClick={() => {
-                            signOut({
-                              redirect: true,
-                              callbackUrl: '/',
-                            });
-                          }}
+            <div className="flex items-center gap-6 w-full max-w-screen-2xl mx-auto md:justify-center">
+              <div className="hidden md:flex md:flex-1 md:basis-8 md:justify-end" /> {/* Left spacer */}
+              <div className="flex items-center gap-6 w-full md:w-auto">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-transparent shrink-0">
+                      <div className="relative w-6 h-6">
+                        {mounted && (
+                          <Image
+                            src={resolvedTheme === 'dark' ? '/images/Birdwhite.png' : '/images/Birdblack.png'}
+                            alt="Bird Interface Logo"
+                            layout="fill"
+                            objectFit="contain"
+                            priority
+                          />
+                        )}
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" sideOffset={0} className="w-48 custom-dropdown">
+                    {user && (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <button className="w-full text-left text-xs nav-text" onClick={openModal}>
+                            YOUR PLAN
+                          </button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-xs nav-text"
+                          onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                         >
-                          SIGN OUT
-                        </button>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <div className="overflow-x-auto scrolling-touch overscroll-contain touch-pan-x no-scrollbar">
-                <div className="flex gap-6 min-w-max">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "text-xs font-medium transition-colors hover:text-primary whitespace-nowrap nav-text",
-                        (pathname === item.href || (item.href === '/intelligence' && pathname?.startsWith('/intelligence')))
-                          ? 'text-foreground'
-                          : 'text-muted-foreground'
-                      )}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+                          {theme === 'light' ? 'DARK MODE' : 'LIGHT MODE'}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <button
+                            className="w-full text-left text-xs nav-text"
+                            onClick={() => {
+                              signOut({
+                                redirect: true,
+                                callbackUrl: '/',
+                              });
+                            }}
+                          >
+                            SIGN OUT
+                          </button>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <div className="overflow-x-auto scrolling-touch overscroll-x-contain touch-pan-x flex-1 -mx-4 px-4 no-scrollbar">
+                  <div className="flex gap-6 min-w-max">
+                    {navItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          "text-xs font-medium transition-colors hover:text-primary whitespace-nowrap nav-text",
+                          (pathname === item.href || (item.href === '/intelligence' && pathname?.startsWith('/intelligence')))
+                            ? 'text-foreground'
+                            : 'text-muted-foreground'
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </div>
+              <div className="hidden md:flex md:flex-1 md:basis-8" /> {/* Right spacer */}
             </div>
           </div>
         </div>
