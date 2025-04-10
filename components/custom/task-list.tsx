@@ -1,12 +1,11 @@
 'use client';
 
 import { format, parseISO, isToday, isYesterday, isTomorrow } from 'date-fns';
-import { Check, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
-import React from 'react';
-import { useState, useRef, KeyboardEvent, TouchEvent, useEffect } from 'react';
+import { Check, Calendar } from 'lucide-react';
+import { useState, useRef, KeyboardEvent, TouchEvent, useEffect, useCallback, type ReactNode } from 'react';
 
-import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
+import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
@@ -93,7 +92,7 @@ export function TaskList() {
     return format(parsedDate, 'MMM d');
   };
 
-  const addNewTask = () => {
+  const addNewTask = useCallback(() => {
     const newTask: Task = {
       id: Date.now().toString(),
       name: '',
@@ -102,12 +101,12 @@ export function TaskList() {
       completed: false,
       status: activeTab,
     };
-    setTasks([...tasks, newTask]);
+    setTasks(prev => [...prev, newTask]);
     setTimeout(() => {
       const input = document.querySelector(`input[data-task-id="${newTask.id}"]`) as HTMLInputElement;
       if (input) input.focus();
     }, 0);
-  };
+  }, [activeTab]);
 
   const updateTask = (id: string, updates: Partial<Task>) => {
     setTasks(prevTasks => {
@@ -183,13 +182,13 @@ export function TaskList() {
     }
   };
 
-  const undoDelete = () => {
+  const undoDelete = useCallback(() => {
     if (deletedTasks.length > 0) {
       const [taskToRestore, ...remainingDeleted] = deletedTasks;
       setTasks(prev => [...prev, taskToRestore]);
       setDeletedTasks(remainingDeleted);
     }
-  };
+  }, [deletedTasks]);
 
   const focusLastTask = () => {
     if (lastTaskRef.current) {
@@ -248,13 +247,13 @@ export function TaskList() {
 
     document.addEventListener('keydown', handleGlobalKeyDown as any);
     return () => document.removeEventListener('keydown', handleGlobalKeyDown as any);
-  }, []);
+  }, [undoDelete]);
 
   useEffect(() => {
     if (tasks.length === 0) {
       addNewTask();
     }
-  }, [tasks.length]);
+  }, [tasks.length, addNewTask]);
 
   return (
     <div className="w-full flex items-start justify-center">
@@ -302,15 +301,15 @@ export function TaskList() {
               <div className="bg-background rounded-lg p-2 transition-transform flex items-start gap-2">
                 {activeTab === 'done' ? (
                   <div className="mt-1 text-foreground flex">
-                    <Check className="h-3 w-3" />
-                    <Check className="h-3 w-3 -ml-2" />
+                    <Check className="size-3" />
+                    <Check className="size-3 -ml-2" />
                   </div>
                 ) : (
                   <button 
                     className="mt-1 text-foreground hover:text-foreground transition-colors"
                     onClick={() => updateTask(task.id, { completed: !task.completed })}
                   >
-                    <Check className="h-3 w-3" />
+                    <Check className="size-3" />
                   </button>
                 )}
                 
@@ -364,7 +363,7 @@ export function TaskList() {
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button className="text-muted-foreground hover:text-foreground">
-                                  <Calendar className="h-3 w-3" />
+                                  <Calendar className="size-3" />
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent className="w-auto p-0 border-0 rounded-none" align="end">
@@ -411,7 +410,7 @@ export function TaskList() {
                             <button
                               className="text-muted-foreground hover:text-foreground"
                             >
-                              <Calendar className="h-3 w-3" />
+                              <Calendar className="size-3" />
                             </button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0 border-0 rounded-none" align="end">
@@ -439,7 +438,7 @@ export function TaskList() {
               <button 
                 className="mt-1 text-muted-foreground hover:text-primary transition-colors"
               >
-                <Check className="h-3 w-3 opacity-0" />
+                <Check className="size-3" />
               </button>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
@@ -465,7 +464,7 @@ export function TaskList() {
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground whitespace-nowrap"></span>
                     <button className="text-muted-foreground hover:text-foreground">
-                      <Calendar className="h-3 w-3" />
+                      <Calendar className="size-3" />
                     </button>
                   </div>
                 </div>
@@ -488,7 +487,7 @@ function TabButton({
   onChange,
   className
 }: { 
-  children: React.ReactNode; 
+  children: ReactNode; 
   active: boolean; 
   onClick: () => void;
   onDoubleClick?: () => void;
@@ -497,9 +496,9 @@ function TabButton({
   onChange?: (value: string) => void;
   className?: string;
 }) {
-  const spanRef = React.useRef<HTMLSpanElement>(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isEditing && spanRef.current) {
       spanRef.current.focus();
       const range = document.createRange();

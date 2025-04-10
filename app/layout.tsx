@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import { type Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { type User } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
@@ -19,7 +19,7 @@ interface ExtendedUser extends User {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://birdinterface.com'),
-  title: 'Bird Interface',
+  title: 'Birdinterface',
   description: 'An AI that understands your whole life',
   icons: {
     icon: '/favicon.ico'
