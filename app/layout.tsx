@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://birdinterface.com'),
   title: 'Bird',
   description: 'An AI that understands your whole life',
+  icons: {
+    icon: '/favicon.ico'
+  }
 };
 
 export const viewport = {
