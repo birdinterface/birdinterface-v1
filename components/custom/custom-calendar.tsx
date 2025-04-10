@@ -50,7 +50,7 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
           onClick={() => setCurrentMonth(prev => subMonths(prev, 1))}
           className="text-foreground opacity-50 hover:opacity-100"
         >
-          <ChevronLeft className="size-3" />
+          <ChevronLeft className="h-3 w-3" />
         </button>
         <span className="text-xs font-medium">
           {format(currentMonth, 'MMMM yyyy')}
@@ -59,7 +59,7 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
           onClick={() => setCurrentMonth(prev => addMonths(prev, 1))}
           className="text-foreground opacity-50 hover:opacity-100"
         >
-          <ChevronRight className="size-3" />
+          <ChevronRight className="h-3 w-3" />
         </button>
       </div>
 
@@ -80,7 +80,7 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
             <button
               key={date.toISOString()}
               onClick={() => handleDateClick(date)}
-              className={`text-[0.65rem] size-6 flex items-center justify-center ${
+              className={`text-[0.65rem] h-6 w-6 flex items-center justify-center ${
                 isSelected
                   ? 'text-foreground font-medium'
                   : isTodayDate
