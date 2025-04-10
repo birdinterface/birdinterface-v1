@@ -1,14 +1,15 @@
 'use client';
 
-import { useState, useRef, KeyboardEvent, TouchEvent, useEffect } from 'react';
 import { format, parseISO, isToday, isYesterday, isTomorrow } from 'date-fns';
 import { Check, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from 'react';
+import { useState, useRef, KeyboardEvent, TouchEvent, useEffect } from 'react';
+
+import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
+import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import React from 'react';
-import { CustomCalendar } from '@/components/custom/custom-calendar';
-import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
+import { cn } from '@/lib/utils';
 
 type Task = {
   id: string;

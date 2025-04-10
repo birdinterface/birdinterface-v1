@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { addMonths, format, getDay, isEqual, isSameMonth, isToday, startOfMonth, subMonths } from 'date-fns';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 interface CustomCalendarProps {
