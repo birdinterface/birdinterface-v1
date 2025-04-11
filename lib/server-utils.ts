@@ -5,6 +5,7 @@ import { CoreMessage } from "ai";
 import { formatDistance, subDays, format, isWithinInterval, startOfMonth } from 'date-fns';
 
 import { Chat } from "@/db/schema";
+
 import { convertToUIMessages } from "./utils"; // Assuming convertToUIMessages is safe
 
 export function getTitleFromChat(chat: Chat) {

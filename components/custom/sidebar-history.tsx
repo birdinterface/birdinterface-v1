@@ -7,7 +7,6 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import useSWR from 'swr';
-import { fetcher } from '@/lib/utils';
 
 import {
   InfoIcon,
@@ -41,6 +40,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
+import { fetcher } from '@/lib/utils';
 
 // Define the expected shape of a processed chat object from the API
 interface ProcessedChat {
