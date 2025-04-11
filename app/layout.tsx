@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { type User } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
@@ -9,6 +8,9 @@ import { ModalProvider } from '@/components/context/modal-context';
 import { Navigation } from '@/components/custom/navigation';
 import { SubscriptionModal } from '@/components/custom/subscription-modal';
 import { ThemeProvider } from '@/components/custom/theme-provider';
+
+import type { Metadata } from 'next';
+
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
