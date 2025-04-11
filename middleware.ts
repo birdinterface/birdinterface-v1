@@ -2,9 +2,11 @@
 
 // Import the consolidated auth object
 import { auth } from "@/app/(auth)/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config"; // Import the Edge-safe config
 
-// Export the auth function directly as the middleware
-export default auth;
+// Initialize NextAuth with only the Edge-safe config for the middleware
+export default NextAuth(authConfig).auth;
 
 // Keep the existing matcher config
 export const config = {

@@ -5,6 +5,7 @@ import Google from "next-auth/providers/google";
 
 import { getUser, createUser } from "@/db/queries";
 import { User as DbUser } from "@/db/schema";
+import { authConfig } from "@/auth.config";
 
 declare module "next-auth" {
   interface User {
@@ -32,10 +33,7 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  pages: {
-    signIn: "/login",
-    newUser: "/",
-  },
+  ...authConfig,
   providers: [
     Google({
       clientId: process.env.GOOGLE_ID!,
@@ -68,26 +66,6 @@ export const {
     }),
   ],
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isAuthRoute = ["/login", "/register"].includes(nextUrl.pathname);
-      const isProtectedRoute = nextUrl.pathname === "/" || nextUrl.pathname.startsWith("/:id");
-
-      if (isAuthRoute) {
-        if (isLoggedIn) {
-          return Response.redirect(new URL("/", nextUrl));
-        }
-        return true;
-      }
-
-      if (isProtectedRoute) {
-        if (!isLoggedIn) {
-          return false;
-        }
-      }
-
-      return true;
-    },
     async signIn({ user, account }) {
       if (account?.provider === "google") {
         try {
