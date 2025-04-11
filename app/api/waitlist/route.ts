@@ -1,14 +1,32 @@
 import mailchimp from '@mailchimp/mailchimp_marketing';
 import { NextResponse } from 'next/server';
 
+// Validate environment variables
+const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
+const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID;
+const MAILCHIMP_SERVER_PREFIX = process.env.MAILCHIMP_SERVER_PREFIX;
+
+if (!MAILCHIMP_API_KEY || !MAILCHIMP_LIST_ID || !MAILCHIMP_SERVER_PREFIX) {
+  console.error('Missing required Mailchimp environment variables:', {
+    hasApiKey: !!MAILCHIMP_API_KEY,
+    hasListId: !!MAILCHIMP_LIST_ID,
+    hasServerPrefix: !!MAILCHIMP_SERVER_PREFIX
+  });
+}
+
 // Initialize Mailchimp
 mailchimp.setConfig({
-  apiKey: process.env.MAILCHIMP_API_KEY,
-  server: process.env.MAILCHIMP_SERVER_PREFIX,
+  apiKey: MAILCHIMP_API_KEY!,
+  server: MAILCHIMP_SERVER_PREFIX!,
 });
 
 export async function POST(request: Request) {
   try {
+    // Validate environment variables are available
+    if (!MAILCHIMP_API_KEY || !MAILCHIMP_LIST_ID || !MAILCHIMP_SERVER_PREFIX) {
+      throw new Error('Missing required Mailchimp configuration');
+    }
+
     const { email } = await request.json();
 
     if (!email) {
@@ -20,7 +38,7 @@ export async function POST(request: Request) {
 
     try {
       // Add member to list
-      await mailchimp.lists.addListMember(process.env.MAILCHIMP_LIST_ID!, {
+      await mailchimp.lists.addListMember(MAILCHIMP_LIST_ID, {
         email_address: email,
         status: 'subscribed',
       });
@@ -30,7 +48,11 @@ export async function POST(request: Request) {
         { status: 200 }
       );
     } catch (mailchimpError: any) {
-      console.error('Mailchimp error:', mailchimpError);
+      console.error('Mailchimp error:', {
+        error: mailchimpError,
+        listId: MAILCHIMP_LIST_ID,
+        serverPrefix: MAILCHIMP_SERVER_PREFIX
+      });
       
       // Check if the error is because the email is already subscribed
       if (mailchimpError.response?.body?.title === 'Member Exists') {
