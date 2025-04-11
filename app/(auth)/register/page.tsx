@@ -67,7 +67,7 @@ export default function Page() {
             href="/welcome"
             className="text-sm text-gray-500 hover:text-gray-800 dark:text-zinc-400 dark:hover:text-zinc-200"
           >
-            Learn more about Bird →
+            Learn more about Birdinterface →
           </Link>
         </div>
       </div>
