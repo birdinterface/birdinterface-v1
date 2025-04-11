@@ -12,7 +12,10 @@ const nextConfig = {
   },
   reactStrictMode: true,
   experimental: {
-    serverActions: true,
+    serverActions: {
+      // You can add configuration options here if needed
+      // For now, an empty object enables it with defaults
+    },
   },
   // ... other config options
 }
