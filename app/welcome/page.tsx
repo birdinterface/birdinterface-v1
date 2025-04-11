@@ -57,7 +57,7 @@ const Welcome = () => {
       <Head>
         <title>Birdinterface</title>
       </Head>
-      <div className="min-h-screen flex flex-col items-center justify-start pt-32 bg-black relative">
+      <div className="h-[100dvh] flex flex-col items-center justify-start pt-32 bg-black relative overflow-hidden">
         <div 
           className="absolute inset-0" 
           style={{ 
@@ -65,7 +65,7 @@ const Welcome = () => {
             backgroundSize: '20px 20px',
           }}
         />
-        <div className="relative w-64 h-64 mb-2 z-10">
+        <div className="relative w-64 h-64 mb-9 z-10">
           <Image
             src="/images/Birdwhite.png"
             alt="Bird Interface Logo"
@@ -87,6 +87,7 @@ const Welcome = () => {
                 required
                 disabled={isSubmitting}
                 className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
               />
               <button
                 type="submit"
