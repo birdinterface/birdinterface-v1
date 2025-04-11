@@ -1,4 +1,5 @@
-import type { NextAuthConfig } from "next-auth";
+import type { NextAuthConfig, Session } from "next-auth";
+import type { NextRequest } from 'next/server';
 
 export const authConfig = {
   // Providers can be defined here if they are Edge-compatible
@@ -12,7 +13,8 @@ export const authConfig = {
   callbacks: {
     // The authorized callback runs in middleware, so it must be Edge-compatible.
     // Ensure no database calls or Node.js APIs are used here.
-    authorized({ auth, request: { nextUrl } }) {
+    authorized({ auth, request }: { auth: Session | null; request: NextRequest }) {
+      const nextUrl = request.nextUrl; // Extract nextUrl from the typed request
       const isLoggedIn = !!auth?.user;
       const isAuthRoute = ["/login", "/register"].includes(nextUrl.pathname);
 
