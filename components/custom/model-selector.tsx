@@ -3,7 +3,7 @@
 import { Check, ChevronDown } from 'lucide-react';
 import { startTransition, useMemo, useOptimistic, useState } from 'react';
 
-import { saveModel } from '@/app/(chat)/actions';
+import { saveModel } from '@/app/chat/actions';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
