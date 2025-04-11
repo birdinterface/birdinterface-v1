@@ -10,8 +10,6 @@ import {
 import { clsx, type ClassValue } from "clsx";
 import { formatDistance, subDays, format, isWithinInterval, startOfMonth } from 'date-fns';
 import { twMerge } from "tailwind-merge";
-import { Chat } from '@/db/schema';
-import { fetcher } from '@/lib/utils';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,6 +19,28 @@ interface ApplicationError extends Error {
   info: string;
   status: number;
 }
+
+export const fetcher = async (url: string) => {
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    const error = new Error(
+      "An error occurred while fetching the data.",
+    ) as ApplicationError;
+
+    // Attempt to parse error info, handle potential non-JSON responses gracefully
+    try {
+      error.info = await res.json();
+    } catch (e) {
+      error.info = res.statusText; // Fallback to status text
+    }
+    error.status = res.status;
+
+    throw error;
+  }
+
+  return res.json();
+};
 
 export function generateUUID(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
