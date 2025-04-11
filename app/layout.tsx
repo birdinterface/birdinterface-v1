@@ -21,8 +21,8 @@ interface ExtendedUser extends User {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://birdinterface.com'),
-  title: 'Bird Interface',
-  description: 'An AI that understands your whole life',
+  title: 'Birdinterface',
+  description: 'The Personal User Interface of the future',
   icons: {
     icon: '/favicon.ico'
   }
