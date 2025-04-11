@@ -2,6 +2,8 @@ import type { NextAuthConfig, Session } from "next-auth";
 import type { NextRequest } from 'next/server';
 
 export const authConfig = {
+  // Explicitly trust the host in the Edge environment
+  trustHost: true,
   // Providers can be defined here if they are Edge-compatible
   // (e.g., Google might be, depending on usage, but Credentials using DB is not)
   // For simplicity, we'll keep providers in the main auth.ts for now.
