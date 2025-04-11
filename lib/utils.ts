@@ -1,4 +1,4 @@
-'use client'; // TEMPORARY: Mark entire file as client for diagnostics
+// 'use client'; // TEMPORARY: Mark entire file as client for diagnostics - REMOVED
 
 import {
   CoreMessage,
@@ -38,13 +38,6 @@ export const fetcher = async (url: string) => {
 
   return res.json();
 };
-
-export function getLocalStorage(key: string) {
-  if (typeof window !== "undefined") {
-    return JSON.parse(localStorage.getItem(key) || "[]");
-  }
-  return [];
-}
 
 export function generateUUID(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
