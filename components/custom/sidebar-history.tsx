@@ -7,6 +7,7 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import useSWR from 'swr';
+import { fetcher } from '@/lib/utils';
 
 import {
   InfoIcon,
@@ -39,9 +40,18 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Chat } from '@/db/schema';
-import { fetcher, getTitleFromChat, groupChatsByDate } from '@/lib/utils';
 import { cn } from '@/lib/utils';
+
+// Define the expected shape of a processed chat object from the API
+interface ProcessedChat {
+  id: string;
+  title: string; 
+  updatedAt: string; // Keep if needed for filtering/display, otherwise remove
+  // Add any other properties your UI needs that the API provides
+}
+
+// Define the expected shape of the grouped history from the API
+type GroupedHistory = Record<string, ProcessedChat[]>;
 
 export function SidebarHistory({ user }: { user: User | undefined }) {
   const { setOpenMobile } = useSidebar();
@@ -49,15 +59,16 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const id = params?.id as string | undefined;
   const pathname = usePathname();
   const {
-    data: history,
+    data: groupedHistoryData, // Renamed for clarity, now expects GroupedHistory type
     isLoading,
     mutate,
-  } = useSWR<Array<Chat>>(user ? '/intelligence/api/history' : null, fetcher, {
-    fallbackData: [],
+  } = useSWR<GroupedHistory>(user ? '/intelligence/api/history' : null, fetcher, {
+    fallbackData: {}, // Default to empty object for grouped data
   });
 
   useEffect(() => {
-    mutate();
+    // Mutate might need adjustment depending on how you want to handle cache updates
+    mutate(); 
   }, [pathname, mutate]);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -72,10 +83,17 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
         if (!res.ok) throw new Error('Failed to delete');
       });
 
-      mutate((history) => {
-        if (history) {
-          return history.filter((h) => h.id !== deleteId);
+      // Adjust mutation logic for the grouped structure
+      mutate((currentData) => {
+        if (!currentData) return {};
+        const newData: GroupedHistory = {};
+        for (const period in currentData) {
+          const filteredChats = currentData[period].filter((h) => h.id !== deleteId);
+          if (filteredChats.length > 0) {
+            newData[period] = filteredChats;
+          }
         }
+        return newData;
       }, false);
 
       toast.success('Chat deleted successfully', {
@@ -110,12 +128,10 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const groupedHistory = history ? groupChatsByDate(history) : {};
-
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  // Render function for chat items
-  const renderChatItem = (chat: Chat) => (
+  // Render function for chat items - updated parameter type
+  const renderChatItem = (chat: ProcessedChat) => (
     <SidebarMenuItem key={chat.id} className="group/menu-item">
       <div className={cn(
         "flex w-full rounded-md",
@@ -136,7 +152,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
             onClick={() => setOpenMobile(false)}
             className="py-2 w-full"
           >
-            <span>{getTitleFromChat(chat)}</span>
+            {/* Use chat.title directly */}
+            <span>{chat.title}</span> 
           </Link>
         </SidebarMenuButton>
         <DropdownMenu 
@@ -212,7 +229,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     );
   }
 
-  if (history?.length === 0) {
+  if (!groupedHistoryData || Object.keys(groupedHistoryData).length === 0) {
     return (
       <SidebarGroup>
         <SidebarGroupContent>
@@ -234,13 +251,15 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <SidebarGroup className="mt-3">
         <SidebarGroupContent>
           <SidebarMenu>
-            {Object.entries(groupedHistory).map(([period, chats]) => 
+            {/* Use groupedHistoryData directly and ensure correct type */}
+            {Object.entries(groupedHistoryData).map(([period, chats]: [string, ProcessedChat[]]) => 
               chats.length > 0 && (
                 <div key={period} className="mb-4">
                   <div className="px-2 mb-2 text-xs font-medium text-muted-foreground">
                     {period}
                   </div>
-                  {chats.map(renderChatItem)}
+                  {/* Ensure renderChatItem receives ProcessedChat */}
+                  {chats.map(renderChatItem)} 
                 </div>
               )
             )}
