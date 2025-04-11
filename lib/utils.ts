@@ -1,3 +1,5 @@
+'use client'; // TEMPORARY: Mark entire file as client for diagnostics
+
 import {
   CoreMessage,
   CoreToolMessage,
