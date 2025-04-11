@@ -1,3 +1,5 @@
+'use client';
+
 import { ComponentProps } from 'react';
 
 import { SidebarTrigger } from '@/components/ui/sidebar';
