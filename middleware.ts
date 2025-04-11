@@ -10,5 +10,6 @@ export default NextAuth(authConfig).auth;
 
 // Keep the existing matcher config
 export const config = {
-  matcher: ["/", "/:id", "/login", "/register"],
+  // Refined matcher: Explicitly protect / and /tasks/*, handle auth routes
+  matcher: ["/login", "/register", "/", "/tasks/:path*"],
 };

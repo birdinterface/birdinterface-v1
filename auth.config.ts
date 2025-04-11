@@ -15,33 +15,23 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isAuthRoute = ["/login", "/register"].includes(nextUrl.pathname);
-      // Define protected routes based on your matcher in middleware.ts
-      const protectedRoutes = ["/", "/:id"];
-      const isProtectedRoute = protectedRoutes.some(route => {
-        if (route.endsWith('/:id')) {
-          // Match dynamic routes like /task/123
-          const baseRoute = route.substring(0, route.lastIndexOf('/'));
-          return nextUrl.pathname.startsWith(baseRoute + '/');
-        } 
-        return nextUrl.pathname === route;
-      });
 
       if (isAuthRoute) {
         if (isLoggedIn) {
-          return Response.redirect(new URL("/", nextUrl)); // Redirect logged-in users from auth pages
+          // Redirect logged-in users trying to access login/register
+          return Response.redirect(new URL("/", nextUrl));
         }
-        return true; // Allow access to auth pages if not logged in
-      }
-
-      if (isProtectedRoute) {
-        if (!isLoggedIn) {
-          // Returning false triggers redirect to the signIn page defined above
-          return false;
+        // Allow unauthenticated users to access login/register
+        return true;
+      } else {
+        // For any other route covered by the matcher ("/", "/:id")
+        // Allow access if logged in
+        if (isLoggedIn) {
+          return true;
         }
+        // Deny access if not logged in, triggering redirect to signIn page
+        return false;
       }
-
-      // Allow access to all other routes by default
-      return true;
     },
   },
 } satisfies NextAuthConfig; 
