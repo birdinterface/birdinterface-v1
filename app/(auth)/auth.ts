@@ -3,9 +3,9 @@ import NextAuth, { DefaultSession, User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
+import { authConfig } from "@/auth.config";
 import { getUser, createUser } from "@/db/queries";
 import { User as DbUser } from "@/db/schema";
-import { authConfig } from "@/auth.config";
 
 declare module "next-auth" {
   interface User {
