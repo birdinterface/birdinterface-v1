@@ -1,9 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      'avatar.vercel.sh',
-      'lh3.googleusercontent.com',
+    remotePatterns: [
+      {
+        hostname: 'avatar.vercel.sh',
+      },
+      {
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
   },
   reactStrictMode: true,
