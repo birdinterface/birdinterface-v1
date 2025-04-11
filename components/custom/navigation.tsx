@@ -29,14 +29,9 @@ const navItems = [
 
 export function Navigation({ user }: { user: any }) {
   const pathname = usePathname();
-  const { setTheme, theme, resolvedTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
   const { openModal } = useModal();
   const [isMobile, setIsMobile] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -64,56 +59,6 @@ export function Navigation({ user }: { user: any }) {
 
   return (
     <>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-        .nav-text {
-          font-family: 'Space Grotesk', sans-serif;
-          letter-spacing: 0.05em;
-        }
-        body::before {
-          content: '';
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: radial-gradient(circle, rgba(0, 0, 0, 0.20) 1px, transparent 1px);
-          background-size: 20px 20px;
-          pointer-events: none;
-          z-index: -1;
-        }
-        .dark body::before {
-          background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-        }
-        .nav-dots::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: radial-gradient(circle, rgba(0, 0, 0, 0.15) 1px, transparent 1px);
-          background-size: 20px 20px;
-          pointer-events: none;
-        }
-        .dark .nav-dots::before {
-          background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-        }
-        .custom-dropdown {
-          border: none !important;
-          padding: 0.5rem !important;
-          background-color: var(--background) !important;
-          backdrop-filter: blur(16px) !important;
-          z-index: 99999 !important;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
       <nav className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[9999] overscroll-none">
         <div className="relative w-full nav-dots">
           <div className="flex h-14 items-center justify-center relative z-10 px-4">
@@ -124,15 +69,22 @@ export function Navigation({ user }: { user: any }) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-transparent shrink-0">
                       <div className="relative w-6 h-6">
-                        {mounted && (
-                          <Image
-                            src={resolvedTheme === 'dark' ? '/images/Birdwhite.png' : '/images/Birdblack.png'}
-                            alt="Bird Interface Logo"
-                            layout="fill"
-                            objectFit="contain"
-                            priority
-                          />
-                        )}
+                        <Image
+                          src={'/images/Birdblack.png'}
+                          alt="Bird Interface Logo Light"
+                          layout="fill"
+                          objectFit="contain"
+                          priority
+                          className="block dark:hidden"
+                        />
+                        <Image
+                          src={'/images/Birdwhite.png'}
+                          alt="Bird Interface Logo Dark"
+                          layout="fill"
+                          objectFit="contain"
+                          priority
+                          className="hidden dark:block"
+                        />
                       </div>
                     </Button>
                   </DropdownMenuTrigger>

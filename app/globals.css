@@ -1,3 +1,6 @@
+/* Import Space Grotesk font */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -147,9 +150,8 @@
   .theme {
     --animate-shiny-text: shiny-text 8s infinite;
   }
-}
 
-@layer base {
+  /* Apply base styles here */
   * {
     @apply border-border;
   }
@@ -158,6 +160,26 @@
     @apply bg-background text-foreground;
   }
 
+  /* Add body::before for background dots */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.20) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Add dark mode variant for body::before */
+  .dark body::before {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  }
+
+  /* Define fonts here */
   @font-face {
     font-family: 'geist';
     font-style: normal;
@@ -201,4 +223,36 @@
     background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
+}
+
+/* Add styles moved from navigation.tsx */
+.nav-text {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.nav-dots::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.15) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+.dark .nav-dots::before {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+}
+
+.custom-dropdown {
+  border: none !important;
+  padding: 0.5rem !important;
+  /* Use CSS variables for background */
+  background-color: var(--background) !important;
+  backdrop-filter: blur(16px) !important;
+  /* Ensure high z-index */
+  z-index: 99999 !important;
 }
