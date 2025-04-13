@@ -15,7 +15,7 @@ interface Flare {
 const GrainyGradientGlow: React.FC = () => {
   const [flares, setFlares] = useState<Flare[]>([]);
 
-  const baseColors = ['#6fa1d8', '#4682B4', '#ffdd88', '#e8a5ad', '#f0f0f0']; // Desat. Blue, Steel Blue, Desat. Yellow, Desat. Pink, Lighter Grey/White
+  const baseColors = ['#cccccc', '#4682B4', '#ffdd88', '#f69581', '#6fa1d8']; // Desat. Blue, Steel Blue, Desat. Yellow, Desat. Pink, Lighter Grey/White
   const defaultFlareSize = 250;
   const whiteFlareSize = 130;
   const updateInterval = 1000; // Faster update interval (1 second)
