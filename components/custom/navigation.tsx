@@ -64,6 +64,7 @@ export function Navigation({ user }: { user: any }) {
                           objectFit="contain"
                           priority
                           className="block dark:hidden"
+                          draggable={false}
                         />
                         <Image
                           src={'/images/Birdwhite.png'}
@@ -72,6 +73,7 @@ export function Navigation({ user }: { user: any }) {
                           objectFit="contain"
                           priority
                           className="hidden dark:block"
+                          draggable={false}
                         />
                       </div>
                     </Button>

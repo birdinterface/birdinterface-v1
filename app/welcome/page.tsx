@@ -83,7 +83,7 @@ const Welcome = () => {
           alt="Grain texture" 
           className="absolute inset-0 w-full h-full object-cover z-40 pointer-events-none" // Highest z-index, scales with container
           style={{ 
-            opacity: 0.025, // Keeping the user's last opacity
+            opacity: 0.00, // Keeping the user's last opacity
             // Simplified filter aiming for yellow:
             filter: 'grayscale(1) sepia(1) saturate(400%) hue-rotate(-30deg) brightness(1.3)', 
             // Explanation: grayscale->sepia base->saturate->hue-rotate towards yellow->adjust brightness
