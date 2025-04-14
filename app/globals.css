@@ -162,6 +162,7 @@
 
   /* Add body::before for background dots */
   body::before {
+    @apply bg-background;
     content: '';
     position: fixed;
     top: 0;

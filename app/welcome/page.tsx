@@ -72,23 +72,10 @@ const Welcome = () => {
           />
         </div>
 
-        {/* Glow Layer (Flares) */} 
-        <div className="absolute inset-0 z-10"> 
+        {/* Glow Layer (Flares) */}
+        <div className="absolute inset-0 z-35">
            <GrainyGradientGlow />
         </div>
-        
-        {/* Image Grain Overlay Layer (Using <img> tag) */}
-        <img 
-          src="/images/white_particles_transparent_1920x1080 (1).png" 
-          alt="Grain texture" 
-          className="absolute inset-0 w-full h-full object-cover z-40 pointer-events-none" // Highest z-index, scales with container
-          style={{ 
-            opacity: 0.00, // Keeping the user's last opacity
-            // Simplified filter aiming for yellow:
-            filter: 'grayscale(1) sepia(1) saturate(400%) hue-rotate(-30deg) brightness(1.3)', 
-            // Explanation: grayscale->sepia base->saturate->hue-rotate towards yellow->adjust brightness
-          }}
-        />
 
         {/* Content Layer (z-index 30, now below grain) */}
         <div className="absolute inset-0 h-[100dvh] flex flex-col items-center justify-start pt-32 overflow-hidden z-30">

@@ -26,7 +26,7 @@
   border-radius: 50%;
   transform: translate(-50%, -50%);
   /* Use ease-in-out for smoother start/end of each movement segment */
-  transition: left 1s ease-in-out, top 1s ease-in-out;
+  transition: left 3s ease-in-out, top 3s ease-in-out; /* Increased duration to 3s */
   will-change: left, top; /* Optimize for position changes */
 }
 
@@ -59,4 +59,4 @@
 /* .grainOverlay::before { ... } */
 
 /* Remove grainAnimation keyframes if no longer used */
-/* @keyframes grainAnimation { ... } */ 
+/* @keyframes grainAnimation { ... }  */
