@@ -16,7 +16,7 @@
   inset: 0;
   filter: blur(100px);
   /* opacity: 0.4; <-- Replaced by animation */
-  z-index: 1; /* Flares behind grain */
+  z-index: 10; /* Flares NOW ON TOP of grain */
   opacity: 0; /* Start transparent */
   animation: fadeInFlares 2s ease-in-out forwards; /* Apply fade-in animation */
 }
@@ -35,7 +35,7 @@
   position: fixed; /* Stick to viewport */
   inset: 0;
   pointer-events: none; /* Allow clicks through */
-  z-index: 10; /* Ensure grain is on top */
+  z-index: 1; /* Grain NOW BEHIND flares */
   opacity: 0.00; /* Set a very low opacity */
 }
 
