@@ -5,10 +5,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Add Good Times Bold font */
+@font-face {
+  font-family: 'Good Times';
+  src: url('/fonts/good-times.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --font-good-times: 'Good Times', sans-serif;
+  --dot-size: 1px;
+  --dot-space: 22px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -65,6 +77,24 @@
     right: 0;
     color: currentColor;
     z-index: -1;
+  }
+
+  .dot-pattern {
+    position: relative;
+    background-image: radial-gradient(
+      circle at center,
+      rgb(0 0 0 / 0.15) var(--dot-size),
+      transparent var(--dot-size)
+    );
+    background-size: var(--dot-space) var(--dot-space);
+  }
+
+  .dark .dot-pattern {
+    background-image: radial-gradient(
+      circle at center,
+      rgb(255 255 255 / 0.15) var(--dot-size),
+      transparent var(--dot-size)
+    );
   }
 }
 
@@ -158,26 +188,32 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-good-times);
   }
 
-  /* Add body::before for background dots */
+  /* Update body::before with new dot pattern */
   body::before {
-    @apply bg-background;
+    @apply bg-background dot-pattern;
     content: '';
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.20) 1px, transparent 1px);
-    background-size: 20px 20px;
     pointer-events: none;
     z-index: -1;
   }
 
-  /* Add dark mode variant for body::before */
-  .dark body::before {
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  /* Update nav-dots with new dot pattern */
+  .nav-dots::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    @apply dot-pattern;
+    pointer-events: none;
   }
 
   /* Define fonts here */
@@ -228,24 +264,16 @@
 
 /* Add styles moved from navigation.tsx */
 .nav-text {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-good-times);
+  font-weight: bold;
   letter-spacing: 0.05em;
+  font-size: 10px;
 }
 
-.nav-dots::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.15) 1px, transparent 1px);
-  background-size: 20px 20px;
-  pointer-events: none;
-}
-
-.dark .nav-dots::before {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+nav {
+  @apply dot-pattern;
+  position: relative;
+  z-index: 10;
 }
 
 .custom-dropdown {
@@ -256,4 +284,37 @@
   backdrop-filter: blur(16px) !important;
   /* Ensure high z-index */
   z-index: 99999 !important;
+}
+
+/* Add styles for tasks */
+.task-tab {
+  font-family: var(--font-good-times);
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  font-size: 9px;
+}
+
+.task-input {
+  font-family: var(--font-good-times);
+  letter-spacing: 0.05em;
+  font-size: 9px;
+}
+
+/* Add styles for task calendar */
+.task-calendar-date {
+  font-family: var(--font-good-times);
+  letter-spacing: 0.05em;
+  font-size: 9px;
+}
+
+.task-calendar button {
+  font-family: var(--font-good-times);
+  letter-spacing: 0.05em;
+  font-size: 9px;
+}
+
+.task-calendar-header {
+  font-family: var(--font-good-times);
+  letter-spacing: 0.05em;
+  font-size: 10px;
 }

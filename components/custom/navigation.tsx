@@ -49,13 +49,16 @@ export function Navigation({ user }: { user: any }) {
     <>
       <nav className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[9999] overscroll-none">
         <div className="relative w-full nav-dots">
-          <div className="flex h-14 items-center justify-center relative z-10 px-4">
-            <div className="flex items-center gap-6 w-full max-w-screen-2xl mx-auto md:justify-center">
+          <div className="flex h-10 items-center justify-center relative z-10 px-4">
+            <div className="flex items-center gap-3 w-full max-w-screen-2xl mx-auto md:justify-center">
               <div className="hidden md:flex md:flex-1 md:basis-8 md:justify-end" /> {/* Left spacer */}
-              <div className="flex items-center gap-6 w-full md:w-auto">
+              <div className="flex items-center gap-3 w-full md:w-auto">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-transparent shrink-0">
+                    <Button 
+                      variant="ghost" 
+                      className="h-8 w-8 p-0 hover:bg-transparent shrink-0 focus-visible:ring-0 data-[state=open]:bg-transparent"
+                    >
                       <div className="relative w-6 h-6">
                         <Image
                           src={'/images/Birdblack.png'}

@@ -283,7 +283,7 @@ export function TaskList() {
               active={activeTab === 'done'} 
               onClick={() => setActiveTab('done')}
             >
-              <span className="text-xs font-medium">
+              <span className="task-tab">
                 {tabNames.done}
               </span>
             </TabButton>
@@ -322,7 +322,7 @@ export function TaskList() {
                         value={activeTab === 'done' && task.name.trim() === ' ' ? '' : task.name}
                         onChange={(e) => updateTask(task.id, { name: e.target.value })}
                         onKeyDown={(e) => handleKeyDown(e, task.id)}
-                        className="flex-1 bg-transparent text-xs font-medium focus:outline-none"
+                        className="flex-1 bg-transparent text-xs font-medium focus:outline-none task-input"
                         data-task-id={task.id}
                         placeholder="Task name"
                       />
@@ -331,7 +331,7 @@ export function TaskList() {
                         value={activeTab === 'done' && task.description.trim() === ' ' ? '' : task.description}
                         onChange={(e) => updateTask(task.id, { description: e.target.value })}
                         onKeyDown={(e) => handleKeyDown(e, task.id)}
-                        className="flex-1 bg-transparent text-xs text-muted-foreground focus:outline-none"
+                        className="flex-1 bg-transparent text-xs text-muted-foreground focus:outline-none task-input"
                         placeholder="Description"
                       />
                     </div>
@@ -341,11 +341,11 @@ export function TaskList() {
                           task.completedAt ? (
                             <Popover>
                               <PopoverTrigger asChild>
-                                <button className="text-muted-foreground hover:text-foreground">
+                                <button className="text-muted-foreground hover:text-foreground task-calendar-date">
                                   {format(parseISO(task.completedAt), 'MMM d')}
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border-0 rounded-none" align="end">
+                              <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
                                 <CustomCalendar
                                   selectedDate={task.completedAt ? parseISO(task.completedAt) : undefined}
                                   onDateSelect={(date) => {
@@ -363,11 +363,11 @@ export function TaskList() {
                           ) : (
                             <Popover>
                               <PopoverTrigger asChild>
-                                <button className="text-muted-foreground hover:text-foreground">
+                                <button className="text-muted-foreground hover:text-foreground task-calendar-date">
                                   <Calendar className="h-3 w-3" />
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border-0 rounded-none" align="end">
+                              <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
                                 <CustomCalendar
                                   selectedDate={undefined}
                                   onDateSelect={(date) => {
@@ -386,11 +386,11 @@ export function TaskList() {
                         ) : task.dueDate ? (
                           <Popover>
                             <PopoverTrigger asChild>
-                              <button className="text-muted-foreground hover:text-foreground">
+                              <button className="text-muted-foreground hover:text-foreground task-calendar-date">
                                 {formatDate(task.dueDate)}
                               </button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 border-0 rounded-none" align="end">
+                            <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
                               <CustomCalendar
                                 selectedDate={task.dueDate ? parseISO(task.dueDate) : undefined}
                                 onDateSelect={(date) => {
@@ -409,12 +409,12 @@ export function TaskList() {
                         <Popover>
                           <PopoverTrigger asChild>
                             <button
-                              className="text-muted-foreground hover:text-foreground"
+                              className="text-muted-foreground hover:text-foreground task-calendar-date"
                             >
                               <Calendar className="h-3 w-3" />
                             </button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0 border-0 rounded-none" align="end">
+                          <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
                             <CustomCalendar
                               selectedDate={task.dueDate ? parseISO(task.dueDate) : undefined}
                               onDateSelect={(date) => {
@@ -530,7 +530,7 @@ function TabButton({
           }
         }}
         className={cn(
-          "px-2 py-1 text-xs outline-none",
+          "px-2 py-1 text-xs outline-none task-tab",
           active 
             ? "text-foreground" 
             : "text-muted-foreground hover:text-foreground"
@@ -546,7 +546,7 @@ function TabButton({
       onClick={onClick}
       onDoubleClick={onDoubleClick}
       className={cn(
-        "px-2 py-1 text-xs transition-colors",
+        "px-2 py-1 text-xs transition-colors task-tab",
         active 
           ? "text-foreground" 
           : "text-muted-foreground hover:text-foreground",

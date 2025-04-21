@@ -3,12 +3,12 @@
   inset: 0;
   /* overflow: hidden; <-- Remove this to prevent clipping fixed grain */
   /* No background needed */
-  background-color: #1a1a1a; /* Add a dark base background */
+  background-color: #1a1a1a00; /* Add a dark base background */
 }
 
 @keyframes fadeInFlares {
   from { opacity: 0; }
-  to { opacity: 0.6; }
+  to { opacity: 0.2; }
 }
 
 .flaresContainer {
@@ -36,7 +36,7 @@
   inset: 0;
   pointer-events: none; /* Allow clicks through */
   z-index: 1; /* Grain NOW BEHIND flares */
-  opacity: 0.15; /* Set a very low opacity */
+  opacity: 0; /* set a very low opacity */
 }
 
 /* Use a pseudo-element for the grain texture */

@@ -52,7 +52,7 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
         >
           <ChevronLeft className="h-3 w-3" />
         </button>
-        <span className="text-xs font-medium">
+        <span className="text-xs font-goodtimes text-foreground">
           {format(currentMonth, 'MMMM yyyy')}
         </span>
         <button
@@ -65,7 +65,7 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
 
       <div className="grid grid-cols-7 gap-0">
         {weekDays.map(({ key, label }) => (
-          <div key={key} className="text-center text-muted-foreground/50 text-[0.5rem] font-normal">
+          <div key={key} className="text-center text-muted-foreground/50 text-[0.5rem] font-goodtimes">
             {label}
           </div>
         ))}
@@ -80,9 +80,9 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
             <button
               key={date.toISOString()}
               onClick={() => handleDateClick(date)}
-              className={`text-[0.65rem] h-6 w-6 flex items-center justify-center ${
+              className={`text-[0.65rem] h-6 w-6 flex items-center justify-center font-goodtimes ${
                 isSelected
-                  ? 'text-foreground font-medium'
+                  ? 'text-foreground'
                   : isTodayDate
                   ? 'text-accent-foreground'
                   : 'text-muted-foreground hover:text-foreground'
@@ -95,4 +95,4 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
       </div>
     </div>
   );
-} 
+}

@@ -59,28 +59,24 @@ const Welcome = () => {
       </Head>
       {/* Outer relative container for stacking context */}
       <div className="relative w-full h-[100dvh]">
-        {/* Background Layer (Black + Dot Grid) */}
+        {/* Background Layer (Dot Grid) */}
         <div 
-          className="absolute inset-0 bg-black z-0" 
+          className="absolute inset-0 z-0" 
         >
-           <div 
-            className="absolute inset-0" 
-            style={{ 
-              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
-              backgroundSize: '20px 20px',
-            }}
+          <div 
+            className="absolute inset-0 dot-pattern opacity-50" 
           />
         </div>
 
         {/* Glow Layer (Flares) */}
-        <div className="absolute inset-0 z-35">
+        <div className="absolute inset-0 z-10">
            <GrainyGradientGlow />
         </div>
 
-        {/* Content Layer (z-index 30, now below grain) */}
-        <div className="absolute inset-0 h-[100dvh] flex flex-col items-center justify-start pt-32 overflow-hidden z-30">
+        {/* Content Layer (z-index 20) */}
+        <div className="absolute inset-0 h-[100dvh] flex flex-col items-center justify-start pt-32 overflow-hidden z-20">
           {/* Removed bg-black, z-index handled by parent */}
-          <div className="relative w-64 h-64 mb-9"> {/* z-index within this layer if needed */}
+          <div className="relative w-64 h-64 mb-9">
             <Image
               src="/images/Birdwhite.png"
               alt="Bird Interface Logo"
