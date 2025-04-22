@@ -78,7 +78,7 @@ const Welcome = () => {
           {/* Removed bg-black, z-index handled by parent */}
           <div className="relative w-64 h-64 mb-9">
             <Image
-              src="/images/Birdwhite.png"
+              src="/images/white.png"
               alt="Bird Interface Logo"
               layout="fill"
               objectFit="contain"

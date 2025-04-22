@@ -52,7 +52,7 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
         >
           <ChevronLeft className="h-3 w-3" />
         </button>
-        <span className="text-xs font-goodtimes text-foreground">
+        <span className="text-xs task-calendar-header">
           {format(currentMonth, 'MMMM yyyy')}
         </span>
         <button

@@ -8,7 +8,7 @@
 
 @keyframes fadeInFlares {
   from { opacity: 0; }
-  to { opacity: 0.2; }
+  to { opacity: 0.0; }
 }
 
 .flaresContainer {
