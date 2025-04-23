@@ -22,7 +22,8 @@ const Welcome = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [displayText, setDisplayText] = useState('');
-  const fullText = "Next generation personal computer operating system.";
+  const [isTextComplete, setIsTextComplete] = useState(false);
+  const fullText = "A next generation personal computer operating system.";
   const words = fullText.split(' ');
 
   useEffect(() => {
@@ -30,6 +31,9 @@ const Welcome = () => {
     const interval = setInterval(() => {
       if (currentWordIndex <= words.length) {
         setDisplayText(words.slice(0, currentWordIndex).join(' '));
+        if (currentWordIndex === words.length) {
+          setIsTextComplete(true);
+        }
         currentWordIndex++;
       } else {
         clearInterval(interval);
@@ -82,7 +86,7 @@ const Welcome = () => {
         {/* Background Layer (Dot Grid with Glow) */}
         <div className="absolute inset-0 z-0">
           <DotPattern
-            glow={true}
+            glow={isTextComplete}
             className={cn(
               "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
               "opacity-50"
@@ -97,7 +101,7 @@ const Welcome = () => {
 
         {/* Content Layer (z-index 20) */}
         <div className="absolute inset-0 flex flex-col items-center justify-start pt-48 overflow-hidden z-20">
-          <div className="relative w-[200px] h-[200px] mb-9">
+          <div className="relative w-[150px] h-[150px] mb-12">
             <Image
               src="/images/white.png"
               alt="Bird Interface Logo"
@@ -111,7 +115,7 @@ const Welcome = () => {
             />
           </div>
           <motion.h1 
-            className="text-white text-2xl font-light mb-12 text-center px-4 max-w-2xl mx-auto"
+            className="text-white text-3xl font-light mb-12 text-center px-4 max-w-2xl mx-auto min-h-[80px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
