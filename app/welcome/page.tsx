@@ -88,7 +88,7 @@ const Welcome = () => {
               priority
             />
           </div>
-          <h1 className="text-white text-3xl font-light mb-12 text-center px-4 max-w-2xl mx-auto">The AI that understands your whole life.</h1>
+          <h1 className="text-white text-3xl font-light mb-12 text-center px-4 max-w-2xl mx-auto">Intelligence, personalized.</h1>
           
           <form onSubmit={handleSubmit} className="w-full max-w-md px-4">
             <div className="flex flex-col gap-2">
