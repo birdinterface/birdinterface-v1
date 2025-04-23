@@ -7,13 +7,13 @@ import { useEffect, useState } from 'react';
 
 import GrainyGradientGlow from '@/app/components/GrainyGradientGlow';
 import { DotPattern } from "@/components/magicui/dot-pattern";
-import { cn } from "@/lib/utils";
 import '../../public/css/normalize.css';
 import '../../public/css/webflow.css';
 import '../../public/css/advancers-club-ef3cf37311bfc4b53cc064fc.webflow.css';
 import '../../public/css/stars.css';
 import { PreloadImages } from '@/components/PreloadImages';
 import { criticalImages } from '@/lib/images';
+import { cn } from "@/lib/utils";
 
 const Welcome = () => {
   const [email, setEmail] = useState('');
