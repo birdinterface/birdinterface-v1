@@ -1,10 +1,10 @@
 "use client";
 
+import { motion, AnimatePresence } from 'framer-motion';
 import { Bold } from 'lucide-react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 import GrainyGradientGlow from '@/app/components/GrainyGradientGlow';
 import { DotPattern } from "@/components/magicui/dot-pattern";
