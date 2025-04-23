@@ -86,6 +86,9 @@ const Welcome = () => {
               layout="fill"
               objectFit="contain"
               priority
+              draggable={false}
+              quality={85}
+              loading="eager"
             />
           </div>
           <h1 className="text-white text-3xl font-light mb-12 text-center px-4 max-w-2xl mx-auto">Intelligence, personalized.</h1>
