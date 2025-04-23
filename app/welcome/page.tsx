@@ -114,10 +114,10 @@ const Welcome = () => {
               loading="eager"
             />
           </div>
-          <div className="flex-1 flex flex-col items-center justify-center -mt-80">
-            <div className="w-full max-w-2xl mx-auto">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full -mt-10">
+            <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
               <motion.h1 
-                className="text-white text-3xl font-light mb-12 text-center px-4 min-h-[80px]"
+                className="text-white text-3xl font-light mb-12 text-center px-4 h-[80px]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
