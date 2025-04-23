@@ -4,6 +4,7 @@ import { Bold } from 'lucide-react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import GrainyGradientGlow from '@/app/components/GrainyGradientGlow';
 import { DotPattern } from "@/components/magicui/dot-pattern";
@@ -20,6 +21,23 @@ const Welcome = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [displayText, setDisplayText] = useState('');
+  const fullText = "Next generation personal computer operating system.";
+  const words = fullText.split(' ');
+
+  useEffect(() => {
+    let currentWordIndex = 0;
+    const interval = setInterval(() => {
+      if (currentWordIndex <= words.length) {
+        setDisplayText(words.slice(0, currentWordIndex).join(' '));
+        currentWordIndex++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 150); // Much faster animation, word by word
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +109,14 @@ const Welcome = () => {
               loading="eager"
             />
           </div>
-          <h1 className="text-white text-3xl font-light mb-12 text-center px-4 max-w-2xl mx-auto">Intelligence, personalized.</h1>
+          <motion.h1 
+            className="text-white text-2xl font-light mb-12 text-center px-4 max-w-2xl mx-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {displayText}
+          </motion.h1>
           
           <form onSubmit={handleSubmit} className="w-full max-w-md px-4">
             <div className="flex flex-col gap-2">
