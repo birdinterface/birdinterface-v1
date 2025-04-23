@@ -96,13 +96,14 @@ const Welcome = () => {
         </div>
 
         {/* Content Layer (z-index 20) */}
-        <div className="absolute inset-0 flex flex-col items-center justify-start pt-32 overflow-hidden z-20">
-          <div className="relative w-64 h-64 mb-9">
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-48 overflow-hidden z-20">
+          <div className="relative w-[200px] h-[200px] mb-9">
             <Image
               src="/images/white.png"
               alt="Bird Interface Logo"
-              layout="fill"
-              objectFit="contain"
+              width={200}
+              height={200}
+              className="object-contain"
               priority
               draggable={false}
               quality={85}
