@@ -100,8 +100,8 @@ const Welcome = () => {
         </div>
 
         {/* Content Layer (z-index 20) */}
-        <div className="absolute inset-0 flex flex-col items-center justify-start pt-48 overflow-hidden z-20">
-          <div className="relative w-[150px] h-[150px] mb-12">
+        <div className="absolute inset-0 flex flex-col items-center z-20">
+          <div className="relative w-[150px] h-[150px] mt-10 mb-9">
             <Image
               src="/images/white.png"
               alt="Bird Interface Logo"
@@ -114,41 +114,45 @@ const Welcome = () => {
               loading="eager"
             />
           </div>
-          <motion.h1 
-            className="text-white text-3xl font-light mb-12 text-center px-4 max-w-2xl mx-auto min-h-[80px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            {displayText}
-          </motion.h1>
-          
-          <form onSubmit={handleSubmit} className="w-full max-w-md px-4">
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                  required
-                  disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50"
-                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
-                />
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-6 py-2 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors disabled:opacity-50 min-w-[120px]"
-                >
-                  {isSubmitting ? 'Joining...' : isSubmitted ? 'Thank You' : 'Join waitlist'}
-                </button>
-              </div>
-              {error && (
-                <p className="text-red-400 text-sm mt-2">{error}</p>
-              )}
+          <div className="flex-1 flex flex-col items-center justify-center -mt-80">
+            <div className="w-full max-w-2xl mx-auto">
+              <motion.h1 
+                className="text-white text-3xl font-light mb-12 text-center px-4 min-h-[80px]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                {displayText}
+              </motion.h1>
+              
+              <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto px-4">
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email"
+                      required
+                      disabled={isSubmitting}
+                      className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50"
+                      style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                    />
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="px-6 py-2 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors disabled:opacity-50 min-w-[120px]"
+                    >
+                      {isSubmitting ? 'Joining...' : isSubmitted ? 'Thank You' : 'Join waitlist'}
+                    </button>
+                  </div>
+                  {error && (
+                    <p className="text-red-400 text-sm mt-2">{error}</p>
+                  )}
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </>
