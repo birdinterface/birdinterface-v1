@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import GrainyGradientGlow from '@/app/components/GrainyGradientGlow';
+import { DotPattern } from "@/components/magicui/dot-pattern";
+import { cn } from "@/lib/utils";
 import '../../public/css/normalize.css';
 import '../../public/css/webflow.css';
 import '../../public/css/advancers-club-ef3cf37311bfc4b53cc064fc.webflow.css';
@@ -58,13 +60,15 @@ const Welcome = () => {
         <title>Birdinterface</title>
       </Head>
       {/* Outer relative container for stacking context */}
-      <div className="relative w-full h-[100dvh]">
-        {/* Background Layer (Dot Grid) */}
-        <div 
-          className="absolute inset-0 z-0" 
-        >
-          <div 
-            className="absolute inset-0 dot-pattern opacity-50" 
+      <div className="fixed inset-0 w-full h-screen overflow-hidden bg-black">
+        {/* Background Layer (Dot Grid with Glow) */}
+        <div className="absolute inset-0 z-0">
+          <DotPattern
+            glow={true}
+            className={cn(
+              "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+              "opacity-50"
+            )}
           />
         </div>
 
@@ -74,8 +78,7 @@ const Welcome = () => {
         </div>
 
         {/* Content Layer (z-index 20) */}
-        <div className="absolute inset-0 h-[100dvh] flex flex-col items-center justify-start pt-32 overflow-hidden z-20">
-          {/* Removed bg-black, z-index handled by parent */}
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-32 overflow-hidden z-20">
           <div className="relative w-64 h-64 mb-9">
             <Image
               src="/images/white.png"
@@ -85,7 +88,7 @@ const Welcome = () => {
               priority
             />
           </div>
-          <h1 className="text-white text-3xl font-light mb-12 text-center px-4 max-w-2xl mx-auto">An intelligent personal interface.</h1>
+          <h1 className="text-white text-3xl font-light mb-12 text-center px-4 max-w-2xl mx-auto">The AI that understands your whole life.</h1>
           
           <form onSubmit={handleSubmit} className="w-full max-w-md px-4">
             <div className="flex flex-col gap-2">

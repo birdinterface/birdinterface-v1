@@ -1,9 +1,7 @@
 .grainyGradientContainer {
   position: absolute;
   inset: 0;
-  /* overflow: hidden; <-- Remove this to prevent clipping fixed grain */
-  /* No background needed */
-  background-color: #1a1a1a00; /* Add a dark base background */
+  background-color: transparent;
 }
 
 @keyframes fadeInFlares {
@@ -15,48 +13,15 @@
   position: absolute;
   inset: 0;
   filter: blur(100px);
-  /* opacity: 0.4; <-- Replaced by animation */
-  z-index: 10; /* Flares NOW ON TOP of grain */
-  opacity: 0; /* Start transparent */
-  animation: fadeInFlares 2s ease-in-out forwards; /* Apply fade-in animation */
+  z-index: 10;
+  opacity: 0;
+  animation: fadeInFlares 2s ease-in-out forwards;
 }
 
 .flare {
   position: absolute;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  /* Use ease-in-out for smoother start/end of each movement segment */
-  transition: left 3s ease-in-out, top 3s ease-in-out; /* Increased duration to 3s */
-  will-change: left, top; /* Optimize for position changes */
+  transition: left 3s ease-in-out, top 3s ease-in-out;
+  will-change: left, top;
 }
-
-/* Add grain overlay styles */
-.grainOverlay {
-  position: fixed; /* Stick to viewport */
-  inset: 0;
-  pointer-events: none; /* Allow clicks through */
-  z-index: 1; /* Grain NOW BEHIND flares */
-  opacity: 0; /* set a very low opacity */
-}
-
-/* Use a pseudo-element for the grain texture */
-.grainOverlay::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  /* SVG noise pattern */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  background-size: 250px 250px; /* Adjust pattern size if needed */
-  /* Optional animation can be added back if desired */
-  /* animation: grainAnimation 0.5s steps(1) infinite; */
-}
-
-/* Optional: Keyframes for animated grain */
-/* @keyframes grainAnimation { ... } */
-
-/* Remove Grain effect styles */
-/* .grainOverlay { ... } */
-/* .grainOverlay::before { ... } */
-
-/* Remove grainAnimation keyframes if no longer used */
-/* @keyframes grainAnimation { ... }  */
