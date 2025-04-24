@@ -101,9 +101,9 @@ const Welcome = () => {
 
         {/* Content Layer (z-index 20) */}
         <div className="absolute inset-0 flex flex-col items-center z-20">
-          <div className="relative w-[150px] h-[150px] mt-10 mb-9">
+          <div className="relative w-[160px] h-[160px] mt-10 mb-9">
             <Image
-              src="/images/white.png"
+              src="/images/logowhites.png"
               alt="Bird Interface Logo"
               width={200}
               height={200}
