@@ -154,11 +154,12 @@ html, body {
     --sidebar-ring: 217.2 91.2% 59.8%; /* Keep blue? */
     /* Task background */
     --task-background-light: 0 0% 96.1%; /* Light grey (same as secondary) */
+    --task-background-dark: 0 0% 3.9%; /* Original dark card/popover color */
   }
 
   .dark {
     /* Dark theme overrides */
-    --background: 0 0% 3.9%; /* Dark background */
+    --background: 0 0% 0%; /* Pure Black background */
     --foreground: 0 0% 98%; /* Light text */
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
@@ -188,7 +189,7 @@ html, body {
     --sidebar-border: 0 0% 14.9%; /* Darker border */
     /* --sidebar-ring: ...; /* Adjust if needed */
     /* Task background */
-    --task-background-dark: 0 0% 5%; /* Darker grey (same as border) */
+    --task-background-dark: 0 0% 3.9%; /* Original dark card/popover color */
   }
 
   .theme {
@@ -241,6 +242,11 @@ html, body {
     font-style: normal;
     font-weight: 100 900;
     src: url(/fonts/geist-mono.woff2) format('woff2');
+  }
+
+  /* Ensure base HTML background is black in dark mode */
+  html.dark {
+    background-color: black;
   }
 }
 
