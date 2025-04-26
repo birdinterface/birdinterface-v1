@@ -258,8 +258,8 @@ export function TaskList() {
 
   return (
     <div className="w-full flex items-start justify-center">
-      <div className="w-full max-w-2xl px-4">
-        <div className="bg-background rounded-t-lg p-4">
+      <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-lg">
+        <div className="pt-4 px-4">
           <div className="flex justify-between items-center">
             <div className="flex gap-2">
               {(['todo', 'watch', 'later'] as const).map(tab => (
@@ -290,7 +290,7 @@ export function TaskList() {
           </div>
         </div>
         
-        <div className="space-y-2 bg-background rounded-b-lg p-4 pt-0">
+        <div className="space-y-2 py-4 px-4">
           {filteredTasks.map(task => (
             <div 
               key={task.id}
@@ -299,7 +299,7 @@ export function TaskList() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              <div className="bg-background rounded-lg p-2 transition-transform flex items-start gap-2">
+              <div className="bg-task-light dark:bg-task-dark rounded-lg p-2 transition-transform flex items-start gap-2">
                 {activeTab === 'done' ? (
                   <div className="mt-1 text-foreground flex">
                     <Check className="h-3 w-3" />
@@ -435,7 +435,7 @@ export function TaskList() {
             </div>
           ))}
           {filteredTasks.length === 0 && activeTab !== 'done' && (
-            <div className="bg-background rounded-lg p-2 transition-transform flex items-start gap-2">
+            <div className="bg-task-light dark:bg-task-dark rounded-lg p-2 transition-transform flex items-start gap-2">
               <button 
                 className="mt-1 text-muted-foreground hover:text-primary transition-colors"
               >

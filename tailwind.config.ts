@@ -22,6 +22,10 @@ const config: Config = {
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        task: {
+          light: 'hsl(var(--task-background-light))',
+          dark: 'hsl(var(--task-background-dark))'
+        },
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
