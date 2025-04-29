@@ -400,7 +400,7 @@ export function TaskList() {
 
   return (
     <div className="w-full flex items-start justify-center">
-      <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-lg">
+      <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-lg mb-4">
         <div className="pt-4 px-4">
           <div className="flex justify-between items-center">
             <div className="flex gap-2">
