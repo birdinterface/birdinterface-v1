@@ -142,17 +142,15 @@ export function TaskList() {
 
         const originalTabTasks = prevTasks.filter(t => t.status === originalStatus);
         if (originalTabTasks.length === 1 && originalStatus !== 'done') {
-          const defaultExists = updatedTasks.some(t => t.id === `default-${originalStatus}`);
-          if (!defaultExists) {
-            updatedTasks.push({
-              id: `default-${originalStatus}`,
-              name: '',
-              description: '',
-              dueDate: '',
-              completed: false,
-              status: originalStatus,
-            });
-          }
+          // Add a new empty task immediately
+          updatedTasks.push({
+            id: Date.now().toString(),
+            name: '',
+            description: '',
+            dueDate: '',
+            completed: false,
+            status: originalStatus,
+          });
         }
 
         return updatedTasks;
@@ -186,17 +184,15 @@ export function TaskList() {
         );
 
         if (remainingTasksInOriginalTab.length === 0 && originalStatus !== 'done') {
-           const defaultExists = updatedTasks.some(t => t.id === `default-${originalStatus}`);
-           if (!defaultExists) {
-              updatedTasks.push({
-                 id: `default-${originalStatus}`,
-                 name: '',
-                 description: '',
-                 dueDate: '',
-                 completed: false,
-                 status: originalStatus,
-               });
-           }
+          // Add a new empty task immediately
+          updatedTasks.push({
+            id: Date.now().toString(),
+            name: '',
+            description: '',
+            dueDate: '',
+            completed: false,
+            status: originalStatus,
+          });
         }
         return updatedTasks;
       }
@@ -357,21 +353,42 @@ export function TaskList() {
       if (draggedTask) {
         const originalStatus = draggedTask.status;
 
-        // Update the task's status
-        updateTask(taskId, { status: targetStatus });
+        // Check if there's an empty task in the target list
+        const emptyTaskInTarget = tasks.find(t => 
+          t.status === targetStatus && 
+          !t.name.trim() && 
+          !t.description.trim() && 
+          !t.dueDate.trim()
+        );
+
+        if (emptyTaskInTarget) {
+          // Fill the empty task with the dragged task's content
+          updateTask(emptyTaskInTarget.id, {
+            name: draggedTask.name,
+            description: draggedTask.description,
+            dueDate: draggedTask.dueDate,
+            completed: draggedTask.completed
+          });
+          
+          // Delete the original dragged task
+          setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId));
+        } else {
+          // If no empty task exists, update the task's status as before
+          updateTask(taskId, { status: targetStatus });
+        }
 
         // If the user dropped the task onto a *different* tab 
         // AND the tab they dragged *from* is the currently active one,
         // focus the new placeholder in that original tab.
         if (originalStatus !== targetStatus && activeTab === originalStatus) {
           setTimeout(() => {
-            // Construct the ID of the default placeholder for the original tab
-            const placeholderInputSelector = `input[data-task-id="default-${originalStatus}"]`;
-            const placeholderInput = document.querySelector(placeholderInputSelector) as HTMLInputElement;
-            if (placeholderInput) {
-              placeholderInput.focus();
+            // Find the newly added empty task
+            const newEmptyTask = tasks.find(t => t.status === originalStatus && !t.name && !t.description);
+            if (newEmptyTask) {
+              const input = document.querySelector(`input[data-task-id="${newEmptyTask.id}"]`) as HTMLInputElement;
+              if (input) input.focus();
             }
-          }, 0); // setTimeout ensures this runs after the state update and re-render
+          }, 0);
         }
       }
     }
@@ -580,46 +597,6 @@ export function TaskList() {
               </div>
             </div>
           ))}
-          {(filteredTasks.length === 0 || 
-           (filteredTasks.length === 1 && filteredTasks[0].id === draggingTaskId))
-           && activeTab !== 'done' && (
-            <div className="bg-task-light dark:bg-task-dark rounded-lg p-2 transition-transform flex items-start gap-2">
-              <button 
-                className="mt-1 text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Check className="h-3 w-3 opacity-0" />
-              </button>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <input
-                      type="text"
-                      className="flex-1 bg-transparent text-xs font-medium focus:outline-none"
-                      placeholder="Task name"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          addNewTask();
-                        }
-                      }}
-                      autoFocus
-                    />
-                    <input
-                      type="text"
-                      className="flex-1 bg-transparent text-xs text-muted-foreground focus:outline-none"
-                      placeholder="Description"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground whitespace-nowrap"></span>
-                    <button className="text-muted-foreground hover:text-foreground">
-                      <Calendar className="h-3 w-3" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

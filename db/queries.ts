@@ -7,7 +7,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 
-import { user, chat, User } from "./schema";
+import { user, chat, User, task, Task, actionLog, ActionLog } from "./schema";
 
 
 // Create and export the database instance
@@ -187,4 +187,131 @@ export async function updateUserData(userId: string, data: Partial<Pick<User, 'm
     console.error("Failed to update user data in database");
     throw error;
   }
+}
+
+
+// Task Queries
+export async function createTask(
+  userId: string,
+  data: Pick<Task, "title" | "description" | "dueDate" | "status">
+): Promise<Task> {
+  try {
+    const [newTask] = await db.insert(task).values({
+      ...data,
+      userId,
+    }).returning();
+
+    await logTaskAction({
+      taskId: newTask.id,
+      userId,
+      actorType: 'user',
+      actorId: userId,
+      actionType: 'CREATE',
+      details: { task: data },
+    });
+
+    return newTask;
+  } catch (error) {
+    console.error("Failed to create task in database");
+    throw error;
+  }
+}
+
+export async function updateTask(
+  taskId: string,
+  userId: string,
+  data: Partial<Pick<Task, "title" | "description" | "dueDate" | "status" | "completed" | "completedAt">>
+): Promise<Task> {
+  try {
+    const [updatedTask] = await db
+      .update(task)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(task.id, taskId))
+      .returning();
+
+    await logTaskAction({
+      taskId,
+      userId,
+      actorType: 'user',
+      actorId: userId,
+      actionType: 'UPDATE',
+      details: { updates: data },
+    });
+
+    return updatedTask;
+  } catch (error) {
+    console.error("Failed to update task in database");
+    throw error;
+  }
+}
+
+export async function deleteTask(taskId: string, userId: string): Promise<void> {
+  try {
+    await logTaskAction({
+      taskId,
+      userId,
+      actorType: 'user',
+      actorId: userId,
+      actionType: 'DELETE',
+      details: null,
+    });
+
+    await db.delete(task).where(eq(task.id, taskId));
+  } catch (error) {
+    console.error("Failed to delete task from database");
+    throw error;
+  }
+}
+
+export async function getUserTasks(userId: string): Promise<Task[]> {
+  try {
+    return await db
+      .select()
+      .from(task)
+      .where(eq(task.userId, userId))
+      .orderBy(desc(task.createdAt));
+  } catch (error) {
+    console.error("Failed to get user tasks from database");
+    throw error;
+  }
+}
+
+// Action Log Queries
+export async function logTaskAction(data: Omit<ActionLog, "id" | "timestamp">): Promise<ActionLog> {
+  try {
+    const [newLog] = await db.insert(actionLog).values(data).returning();
+    return newLog;
+  } catch (error) {
+    console.error("Failed to create action log in database");
+    throw error;
+  }
+}
+
+export async function getTaskActionLogs(taskId: string): Promise<ActionLog[]> {
+  try {
+    return await db
+      .select()
+      .from(actionLog)
+      .where(eq(actionLog.taskId, taskId))
+      .orderBy(desc(actionLog.timestamp));
+  } catch (error) {
+    console.error("Failed to get task action logs from database");
+    throw error;
+  }
+}
+
+export async function getUserActionLogs(userId: string): Promise<ActionLog[]> {
+  try {
+    return await db
+      .select()
+      .from(actionLog)
+      .where(eq(actionLog.userId, userId))
+      .orderBy(desc(actionLog.timestamp));
+  } catch (error) {
+    console.error("Failed to get user action logs from database");
+    throw error;
+  }
 }

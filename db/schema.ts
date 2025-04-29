@@ -1,6 +1,6 @@
 import { Message } from "ai";
 import { InferSelectModel } from "drizzle-orm";
-import { pgTable, varchar, timestamp, json, uuid, decimal } from "drizzle-orm/pg-core";
+import { pgTable, varchar, timestamp, json, uuid, decimal, text, boolean } from "drizzle-orm/pg-core";
 
 
 export const user = pgTable("User", {
@@ -34,3 +34,37 @@ export const chat = pgTable("Chat", {
 export type Chat = Omit<InferSelectModel<typeof chat>, "messages"> & {
   messages: Array<Message>;
 };
+
+export const task = pgTable("Task", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  title: varchar("title", { length: 256 }).notNull(),
+  description: text("description"),
+  dueDate: timestamp("dueDate"),
+  status: varchar("status", { length: 64 }).notNull().default('todo'),
+  completed: boolean("completed").notNull().default(false),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => user.id),
+});
+
+export type Task = InferSelectModel<typeof task>;
+
+export const actionLog = pgTable("ActionLog", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  taskId: uuid("taskId")
+    .notNull()
+    .references(() => task.id),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => user.id),
+  actorType: varchar("actorType", { length: 20 }).notNull(), // 'user' or 'ai'
+  actorId: varchar("actorId", { length: 256 }).notNull(),
+  actionType: varchar("actionType", { length: 64 }).notNull(),
+  details: json("details"),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+});
+
+export type ActionLog = InferSelectModel<typeof actionLog>;
