@@ -322,6 +322,13 @@ nav {
   font-family: var(--font-good-times);
   letter-spacing: 0.05em;
   font-size: 9px;
+  min-width: 40px;
+  min-height: 18px;
+  line-height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .task-calendar button {
