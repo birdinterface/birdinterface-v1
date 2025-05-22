@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Task } from '@/lib/supabase'; // Assuming Task type is in lib/supabase
-import { TaskList } from '@/components/custom/task-list';
-import { createTask, updateTask as updateTaskApi, deleteTask as deleteTaskApi } from '@/lib/queries';
+
 import type { Task as UiTask } from '@/components/custom/task-list';
+import { TaskList } from '@/components/custom/task-list';
+
 import { auth } from '@/app/(auth)/auth';
+
+import { createTask, updateTask as updateTaskApi, deleteTask as deleteTaskApi } from '@/lib/queries';
+import { Task } from '@/lib/supabase'; // Assuming Task type is in lib/supabase
 
 function toUiTask(task: any): UiTask {
   return {
