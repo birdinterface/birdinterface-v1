@@ -1,5 +1,6 @@
-import { supabase, User, Chat, Task, ActionLog } from './supabase'
 import { genSaltSync, hashSync } from 'bcrypt-ts'
+
+import { supabase, User, Chat, Task, ActionLog } from './supabase'
 
 // USER
 export async function getUser(email: string): Promise<User[]> {
