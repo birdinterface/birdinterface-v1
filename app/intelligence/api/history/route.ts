@@ -2,8 +2,8 @@ import { Message } from "ai";
 
 import { auth } from "@/app/(auth)/auth";
 import { getChatsByUserId } from "@/lib/queries";
-import { Chat } from "@/lib/supabase";
 import { getTitleFromChat, groupChatsByDate } from "@/lib/server-utils";
+import { Chat } from "@/lib/supabase";
 
 // Define a type for the processed chat including the title
 // This might need adjustment based on what SidebarHistory actually needs

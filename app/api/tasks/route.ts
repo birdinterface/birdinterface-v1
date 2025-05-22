@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+
 import { auth } from '@/app/(auth)/auth';
 import { getUserTasks } from '@/lib/queries';
 
