@@ -6,7 +6,7 @@ import { convertToCoreMessages, Message, streamText, CoreMessage } from 'ai';
 import { z } from 'zod';
 
 import { auth } from '@/app/(auth)/auth';
-import { deleteChatById, getChatById, saveChat, updateUser, getUser, updateUserUsage } from '@/db/queries';
+import { deleteChatById, getChatById, saveChat, updateUser, getUser, updateUserUsage } from '@/lib/queries';
 import { getRelevantKnowledge } from '@/lib/knowledge';
 import { Model, models } from '@/lib/model';
 import { calculateCost, hasExceededLimit, getNextResetDate } from '@/lib/usage';

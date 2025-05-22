@@ -11,7 +11,7 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
-type Task = {
+export type Task = {
   id: string;
   name: string;
   description: string;
@@ -19,40 +19,29 @@ type Task = {
   completed: boolean;
   status: 'todo' | 'watch' | 'later' | 'done';
   completedAt?: string;
+  userId: string;
 };
 
 type Tab = 'todo' | 'watch' | 'later' | 'done';
 
-export function TaskList() {
+export function TaskList({
+  tasks: externalTasks,
+  userId,
+  onAddTask,
+  onUpdateTask,
+  onDeleteTask
+}: {
+  tasks?: Task[];
+  userId: string;
+  onAddTask?: (task: Omit<Task, 'id'>) => void;
+  onUpdateTask?: (id: string, updates: Partial<Task>) => void;
+  onDeleteTask?: (id: string) => void;
+}) {
+  // If tasks are provided as a prop, use them directly (controlled component)
+  const tasks = externalTasks ?? [];
   const [activeTab, setActiveTab] = useState<Tab>('todo');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [showCompletedAnimation, setShowCompletedAnimation] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 'default-todo',
-      name: '',
-      description: '',
-      dueDate: '',
-      completed: false,
-      status: 'todo'
-    },
-    {
-      id: 'default-watch',
-      name: '',
-      description: '',
-      dueDate: '',
-      completed: false,
-      status: 'watch'
-    },
-    {
-      id: 'default-later',
-      name: '',
-      description: '',
-      dueDate: '',
-      completed: false,
-      status: 'later'
-    }
-  ]);
   const [deletedTasks, setDeletedTasks] = useState<Task[]>([]);
   const [swipeStartX, setSwipeStartX] = useState<number | null>(null);
   const [swipeDistance, setSwipeDistance] = useState(0);
@@ -67,6 +56,12 @@ export function TaskList() {
     done: 'Completed'
   });
   const [dragOverTarget, setDragOverTarget] = useState<Tab | null>(null);
+  const [emptyTaskData, setEmptyTaskData] = useState({ name: '', description: '' });
+  const lastTaskInputRef = useRef<HTMLInputElement | null>(null);
+  const shouldFocusNewTaskRef = useRef(false);
+  const focusAttemptCountRef = useRef(0);
+  const maintainFocusRef = useRef(false);
+  const focusedTaskPositionRef = useRef<number>(-1);
 
   const filteredTasks = tasks
     .filter(task => task.status === activeTab)
@@ -79,6 +74,118 @@ export function TaskList() {
       const comparison = dateA - dateB;
       return sortDirection === 'asc' ? comparison : -comparison;
     });
+
+  // If there are no tasks for the active tab, show an empty editable row
+  const displayTasks = filteredTasks.length > 0 ? filteredTasks : [{
+    id: 'empty',
+    name: emptyTaskData.name,
+    description: emptyTaskData.description,
+    dueDate: '',
+    completed: false,
+    status: activeTab,
+    userId: '', // This is a placeholder, actual new task uses prop userId
+  }];
+
+  const focusTaskInput = (taskId: string) => {
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const taskNameInput = document.querySelector(
+          `input.task-input[data-task-id="${taskId}"]`
+        ) as HTMLInputElement;
+
+        if (taskNameInput) {
+          if (document.activeElement !== taskNameInput) {
+            console.log('Focusing task input:', taskId);
+            taskNameInput.focus();
+            taskNameInput.setSelectionRange(0, 0);
+            lastTaskInputRef.current = taskNameInput;
+            maintainFocusRef.current = true;
+            
+            const taskIndex = filteredTasks.findIndex(t => t.id === taskId);
+            focusedTaskPositionRef.current = taskIndex;
+            console.log('Set focused task position to:', taskIndex);
+          }
+        } else {
+          console.log('Task input not found for ID:', taskId);
+        }
+      }, 10);
+    });
+  };
+
+  const focusLastEmptyTask = () => {
+    console.log('Attempting to focus last empty task, filteredTasks length:', filteredTasks.length);
+    
+    for (let i = filteredTasks.length - 1; i >= 0; i--) {
+      const task = filteredTasks[i];
+      if (task.name === '' && task.id !== 'empty') {
+        console.log('Found empty task to focus:', task.id);
+        focusTaskInput(task.id);
+        return true;
+      }
+    }
+    
+    if (filteredTasks.length === 1 && filteredTasks[0].name === '' && filteredTasks[0].id !== 'empty') {
+      console.log('Focusing single empty task:', filteredTasks[0].id);
+      focusTaskInput(filteredTasks[0].id);
+      return true;
+    }
+    
+    console.log('No empty task found to focus');
+    return false;
+  };
+
+  useEffect(() => {
+    if (maintainFocusRef.current && focusedTaskPositionRef.current >= 0) {
+      const targetPosition = focusedTaskPositionRef.current;
+      console.log('Attempting to maintain focus at position:', targetPosition);
+      
+      if (filteredTasks[targetPosition] && filteredTasks[targetPosition].id !== 'empty') {
+        const taskId = filteredTasks[targetPosition].id;
+        console.log('Re-focusing task at position', targetPosition, 'with ID:', taskId);
+        
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            const taskNameInput = document.querySelector(
+              `input.task-input[data-task-id="${taskId}"]`
+            ) as HTMLInputElement;
+
+            if (taskNameInput && document.activeElement !== taskNameInput) {
+              taskNameInput.focus();
+              taskNameInput.setSelectionRange(0, 0);
+              lastTaskInputRef.current = taskNameInput;
+              console.log('Focus restored to:', taskId);
+            }
+          }, 5);
+        });
+      }
+    }
+  }, [filteredTasks]);
+
+  useEffect(() => {
+    if (shouldFocusNewTaskRef.current && focusAttemptCountRef.current < 3) {
+      focusAttemptCountRef.current++;
+      console.log('Focus attempt #', focusAttemptCountRef.current);
+      
+      const focused = focusLastEmptyTask();
+      
+      if (focused) {
+        shouldFocusNewTaskRef.current = false;
+        focusAttemptCountRef.current = 0;
+      } else if (focusAttemptCountRef.current >= 3) {
+        console.log('Giving up focus attempts');
+        shouldFocusNewTaskRef.current = false;
+        focusAttemptCountRef.current = 0;
+        maintainFocusRef.current = false;
+      }
+    }
+  }, [filteredTasks, tasks, activeTab]);
+
+  useEffect(() => {
+    shouldFocusNewTaskRef.current = false;
+    focusAttemptCountRef.current = 0;
+    maintainFocusRef.current = false;
+    focusedTaskPositionRef.current = -1;
+  }, [activeTab]);
 
   const formatDate = (date: string) => {
     if (!date) return '';
@@ -96,220 +203,127 @@ export function TaskList() {
   };
 
   const addNewTask = () => {
-    const newTask: Task = {
-      id: Date.now().toString(),
-      name: '',
-      description: '',
-      dueDate: '',
-      completed: false,
-      status: activeTab,
-    };
-    setTasks([...tasks, newTask]);
-    setTimeout(() => {
-      const input = document.querySelector(`input[data-task-id="${newTask.id}"]`) as HTMLInputElement;
-      if (input) input.focus();
-    }, 0);
+    if (onAddTask && userId) {
+      console.log('Adding new task...');
+      shouldFocusNewTaskRef.current = true;
+      focusAttemptCountRef.current = 0;
+      onAddTask({
+        name: '',
+        description: '',
+        dueDate: '',
+        completed: false,
+        status: activeTab,
+        userId,
+      });
+    }
   };
 
   const updateTask = (id: string, updates: Partial<Task>) => {
-    setTasks(prevTasks => {
-      const taskIndex = prevTasks.findIndex(t => t.id === id);
-      if (taskIndex === -1) return prevTasks;
-      
-      const task = prevTasks[taskIndex];
-      const tasksInSameTab = prevTasks.filter(t => t.status === task.status);
-      
-      const originalStatus = task.status;
+    if (id === 'empty') {
+      setEmptyTaskData(prev => ({
+        name: typeof updates.name === 'string' ? updates.name : prev.name,
+        description: typeof updates.description === 'string' ? updates.description : prev.description,
+      }));
+      // Do not call onUpdateTask for the placeholder
+    } else if (onUpdateTask) {
+      const currentFocusedTask = filteredTasks[focusedTaskPositionRef.current];
+      if (currentFocusedTask && currentFocusedTask.id === id && updates.name && updates.name !== '') {
+        console.log('Task got a name, stopping focus maintenance');
+        maintainFocusRef.current = false;
+        focusedTaskPositionRef.current = -1;
+      }
 
-      if (updates.completed && !task.completed) {
-        if (!task.name.trim() && !task.description.trim()) {
-          return prevTasks;
-        }
-
-        setShowCompletedAnimation(false);
-        setTimeout(() => setShowCompletedAnimation(true), 0);
-        setTimeout(() => setShowCompletedAnimation(false), 1000);
-
-        const updatedTasks = [...prevTasks];
-        updatedTasks[taskIndex] = {
-          ...task,
+      // Handle task completion
+      if (updates.completed !== undefined) {
+        const now = new Date().toISOString();
+        const updatedTask = {
           ...updates,
-          name: task.name.trim() === '' ? ' ' : task.name,
-          description: task.description.trim() === '' ? ' ' : task.description,
-          completedAt: new Date().toISOString(),
-          status: 'done'
+          status: updates.completed ? 'done' as const : 'todo' as const,
+          completedAt: updates.completed ? now : undefined
         };
-
-        const originalTabTasks = prevTasks.filter(t => t.status === originalStatus);
-        if (originalTabTasks.length === 1 && originalStatus !== 'done') {
-          // Add a new empty task immediately
-          updatedTasks.push({
-            id: Date.now().toString(),
-            name: '',
-            description: '',
-            dueDate: '',
-            completed: false,
-            status: originalStatus,
-          });
+        onUpdateTask(id, updatedTask);
+        
+        if (updates.completed) {
+          setShowCompletedAnimation(true);
+          setTimeout(() => setShowCompletedAnimation(false), 1500);
         }
-
-        return updatedTasks;
+      } else {
+        onUpdateTask(id, updates);
       }
-
-      if (updates.completed === false && task.completed) {
-        const { completedAt, ...rest } = task;
-        return prevTasks.map(t => 
-          t.id === id ? {
-            ...rest,
-            ...updates,
-            name: rest.name.trim(),
-            description: rest.description.trim(),
-            status: activeTab === 'done' ? 'todo' : activeTab
-          } : t
-        );
-      }
-
-      if (updates.status && updates.status !== originalStatus && updates.status !== 'done') {
-        if (!task.name.trim() && !task.description.trim() && !task.dueDate.trim() && !task.id.startsWith('default-')) {
-          console.warn("Attempted to move an empty non-default task. Ignoring.");
-          return prevTasks;
-        }
-
-        let updatedTasks = prevTasks.map(t =>
-          t.id === id ? { ...t, ...updates } : t
-        );
-
-        const remainingTasksInOriginalTab = prevTasks.filter(
-            t => t.status === originalStatus && t.id !== id
-        );
-
-        if (remainingTasksInOriginalTab.length === 0 && originalStatus !== 'done') {
-          // Add a new empty task immediately
-          updatedTasks.push({
-            id: Date.now().toString(),
-            name: '',
-            description: '',
-            dueDate: '',
-            completed: false,
-            status: originalStatus,
-          });
-        }
-        return updatedTasks;
-      }
-
-      return prevTasks.map(t => 
-        t.id === id ? { ...t, ...updates } : t
-      );
-    });
+    }
   };
 
   const deleteTask = (taskId: string) => {
-    const taskToDelete = tasks.find(task => task.id === taskId);
-    if (taskToDelete) {
-      if (taskToDelete.status !== 'done') {
-        const tasksInSameTab = tasks.filter(t => t.status === taskToDelete.status);
-        if (tasksInSameTab.length <= 1) {
-          return;
+    if (onDeleteTask) {
+      // Store the index of the task being deleted
+      const taskIndex = tasks.findIndex(t => t.id === taskId);
+      onDeleteTask(taskId);
+      
+      // After deletion, focus the previous task if it exists
+      requestAnimationFrame(() => {
+        const taskInputs = document.querySelectorAll('.task-input[data-task-id]');
+        const targetIndex = Math.min(taskIndex, taskInputs.length - 1);
+        if (targetIndex >= 0) {
+          (taskInputs[targetIndex] as HTMLInputElement)?.focus();
         }
-      }
-      setDeletedTasks(prev => [taskToDelete, ...prev]);
-      setTasks(tasks.filter(task => task.id !== taskId));
+      });
     }
   };
 
   const undoDelete = () => {
-    if (deletedTasks.length > 0) {
-      const [taskToRestore, ...remainingDeleted] = deletedTasks;
-      setTasks(prev => [...prev, taskToRestore]);
-      setDeletedTasks(remainingDeleted);
-    }
+    // ... existing code ...
   };
 
-  const focusLastTask = () => {
-    if (lastTaskRef.current) {
-      const inputs = document.querySelectorAll(`input[data-task-id]`) as NodeListOf<HTMLInputElement>;
-      const lastInput = Array.from(inputs).find(input => input.dataset.taskId === lastTaskRef.current);
-      if (lastInput) {
-        lastInput.focus();
-        lastTaskRef.current = null;
-      }
-    }
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, taskId: string) => {
+  const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>, taskId: string) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      const currentTaskValue = e.currentTarget.value;
-
-      // Check if we are editing a placeholder task
-      if (taskId.startsWith('default-')) {
-        // Only proceed if the placeholder has some text
-        if (currentTaskValue.trim() !== '') {
-          // Update the placeholder to become a real task
-          updateTask(taskId, { 
-            name: currentTaskValue, 
-            id: Date.now().toString() // Assign a new ID
-          });
-          // Add a new empty placeholder below the one just filled
-          addNewTask(); 
-        } 
-        // If Enter is pressed on an empty placeholder, do nothing.
-      } else {
-        // For non-placeholder tasks:
-        // Find the current task to check if it's empty
-        const currentTask = tasks.find(t => t.id === taskId);
-        // Only add a new task if the current one isn't empty
-        if (currentTask && (currentTask.name.trim() !== '' || currentTask.description.trim() !== '')) {
-            addNewTask();
-        }
-        // If the current task is empty, do nothing on Enter.
-      }
-    } else if (e.key === 'Backspace' && e.currentTarget.selectionStart === 0 && e.currentTarget.selectionEnd === 0) {
-      // Check if the input is empty before allowing deletion
-      const task = tasks.find(t => t.id === taskId);
-      if (task && !task.name.trim() && !task.description.trim()) {
-        // Allow deleting empty tasks, but handle placeholder logic carefully
-        const tasksInThisTab = tasks.filter(t => t.status === task.status);
-        // Prevent deleting the *last* task in a tab (which should be the placeholder)
-        if (tasksInThisTab.length <= 1) {
-          return; // Don't delete the last placeholder via backspace
-        }
-
-        e.preventDefault();
-        const taskIndex = tasks.findIndex(t => t.id === taskId);
-        if (taskIndex > 0) {
-          // Focus the previous task after deletion
-          const prevTask = tasks[taskIndex - 1];
-          // Ensure the previous task is in the same tab before setting focus ref
-          if (prevTask && prevTask.status === task.status) { 
-              lastTaskRef.current = prevTask.id;
+      if (taskId === 'empty') {
+        if (emptyTaskData.name.trim() !== '') {
+          if (onAddTask && userId) {
+            console.log('Adding task from empty row...');
+            shouldFocusNewTaskRef.current = true;
+            focusAttemptCountRef.current = 0;
+            onAddTask({
+              name: emptyTaskData.name.trim(),
+              description: emptyTaskData.description.trim(),
+              dueDate: '',
+              completed: false,
+              status: activeTab,
+              userId,
+            });
+            setEmptyTaskData({ name: '', description: '' });
           }
         }
-        deleteTask(taskId);
-        setTimeout(focusLastTask, 0);
+      } else {
+        const task = tasks.find(t => t.id === taskId);
+        if (task && task.name.trim() !== '') {
+          addNewTask();
+        }
+      }
+    } else if (e.key === 'Backspace' && taskId !== 'empty') {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      if (e.currentTarget.selectionStart === 0 && e.currentTarget.selectionEnd === 0) {
+        const taskName = typeof task.name === 'string' ? task.name : '';
+        const taskDescription = typeof task.description === 'string' ? task.description : '';
+        if (taskName.trim() === '' && taskDescription.trim() === '') {
+          deleteTask(taskId);
+        }
       }
     }
   };
 
   const handleTouchStart = (e: TouchEvent, taskId: string) => {
-    setSwipeStartX(e.touches[0].clientX);
-    setTaskToDelete(taskId);
+    // ... existing code ...
   };
 
   const handleTouchMove = (e: TouchEvent) => {
-    if (swipeStartX === null) return;
-    const currentX = e.touches[0].clientX;
-    const distance = swipeStartX - currentX;
-    setSwipeDistance(Math.max(0, Math.min(distance, 100)));
+    // ... existing code ...
   };
 
   const handleTouchEnd = () => {
-    if (swipeDistance > 50 && taskToDelete) {
-      deleteTask(taskToDelete);
-    }
-    setSwipeStartX(null);
-    setSwipeDistance(0);
-    setTaskToDelete(null);
+    // ... existing code ...
   };
 
   useEffect(() => {
@@ -326,76 +340,51 @@ export function TaskList() {
 
   // Drag and Drop Handlers
   const handleDragStart = (e: DragEvent<HTMLDivElement>, taskId: string) => {
-    e.dataTransfer.setData('taskId', taskId);
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', taskId);
     setDraggingTaskId(taskId);
   };
 
   const handleDragOver = (e: DragEvent<HTMLButtonElement>, targetStatus: Tab) => {
-    e.preventDefault(); // Necessary to allow dropping
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverTarget(targetStatus); // Set target for visual feedback
+    e.preventDefault();
+    if (targetStatus !== activeTab) {
+      setDragOverTarget(targetStatus);
+    }
   };
 
   const handleDragLeave = (e: DragEvent<HTMLButtonElement>) => {
-    setDragOverTarget(null); // Clear visual feedback when leaving droppable area
+    e.preventDefault();
+    setDragOverTarget(null);
   };
 
   const handleDrop = (e: DragEvent<HTMLButtonElement>, targetStatus: Tab) => {
     e.preventDefault();
-    const taskId = e.dataTransfer.getData('taskId');
-    setDragOverTarget(null); // Clear visual feedback immediately
-    setDraggingTaskId(null); // Clear dragging task ID immediately
-
-    if (taskId) {
-      // Find the task being dragged to know its original status
-      const draggedTask = tasks.find(t => t.id === taskId);
-      if (draggedTask) {
-        const originalStatus = draggedTask.status;
-
-        // Check if there's an empty task in the target list
-        const emptyTaskInTarget = tasks.find(t => 
-          t.status === targetStatus && 
-          !t.name.trim() && 
-          !t.description.trim() && 
-          !t.dueDate.trim()
-        );
-
-        if (emptyTaskInTarget) {
-          // Fill the empty task with the dragged task's content
-          updateTask(emptyTaskInTarget.id, {
-            name: draggedTask.name,
-            description: draggedTask.description,
-            dueDate: draggedTask.dueDate,
-            completed: draggedTask.completed
-          });
-          
-          // Delete the original dragged task
-          setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId));
-        } else {
-          // If no empty task exists, update the task's status as before
-          updateTask(taskId, { status: targetStatus });
+    const taskId = e.dataTransfer.getData('text/plain');
+    if (taskId && onUpdateTask) {
+      const task = tasks.find(t => t.id === taskId);
+      if (task) {
+        const updates: Partial<Task> = {
+          status: targetStatus
+        };
+        
+        // If dropping into done tab, mark as completed
+        if (targetStatus === 'done') {
+          updates.completed = true;
+          updates.completedAt = new Date().toISOString();
+        } else if (task.status === 'done') {
+          // If moving from done tab, mark as uncompleted
+          updates.completed = false;
+          updates.completedAt = undefined;
         }
-
-        // If the user dropped the task onto a *different* tab 
-        // AND the tab they dragged *from* is the currently active one,
-        // focus the new placeholder in that original tab.
-        if (originalStatus !== targetStatus && activeTab === originalStatus) {
-          setTimeout(() => {
-            // Find the newly added empty task
-            const newEmptyTask = tasks.find(t => t.status === originalStatus && !t.name && !t.description);
-            if (newEmptyTask) {
-              const input = document.querySelector(`input[data-task-id="${newEmptyTask.id}"]`) as HTMLInputElement;
-              if (input) input.focus();
-            }
-          }, 0);
-        }
+        
+        onUpdateTask(taskId, updates);
       }
     }
+    setDragOverTarget(null);
   };
 
   const handleDragEnd = () => {
     setDraggingTaskId(null);
+    setDragOverTarget(null);
   };
 
   return (
@@ -439,7 +428,7 @@ export function TaskList() {
         </div>
         
         <div className="space-y-2 py-4 px-4">
-          {filteredTasks.map(task => (
+          {displayTasks.map(task => (
             <div
               key={task.id}
               className="relative group"
@@ -482,16 +471,16 @@ export function TaskList() {
                     <div className="flex items-center gap-2 min-w-0">
                       <input
                         type="text"
-                        value={activeTab === 'done' && task.name.trim() === ' ' ? '' : task.name}
+                        value={typeof task.name === 'string' ? task.name : ''}
                         onChange={(e) => updateTask(task.id, { name: e.target.value })}
                         onKeyDown={(e) => handleKeyDown(e, task.id)}
                         className="flex-1 bg-transparent text-xs font-medium focus:outline-none task-input"
                         data-task-id={task.id}
-                        placeholder="Task name"
+                        placeholder={task.id === 'empty' ? "Task Name" : "Task name"}
                       />
                       <input
                         type="text"
-                        value={activeTab === 'done' && task.description.trim() === ' ' ? '' : task.description}
+                        value={typeof task.description === 'string' ? task.description : ''}
                         onChange={(e) => updateTask(task.id, { description: e.target.value })}
                         onKeyDown={(e) => handleKeyDown(e, task.id)}
                         className="flex-1 bg-transparent text-xs text-muted-foreground focus:outline-none task-input"

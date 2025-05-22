@@ -1,5 +1,5 @@
-import { updateUser, updateUserBystripecustomerid } from "@/db/queries";    
-import { User } from "@/db/schema";
+import { updateUser, updateUserBystripecustomerid } from "@/lib/queries";    
+import { User } from "@/lib/supabase";
 import { stripe } from "@/lib/stripe";
 import Stripe from "stripe";
 

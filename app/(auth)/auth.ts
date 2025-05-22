@@ -4,8 +4,8 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
 import { authConfig } from "@/auth.config";
-import { getUser, createUser } from "@/db/queries";
-import { User as DbUser } from "@/db/schema";
+import { getUser, createUser } from "@/lib/queries";
+import { User as DbUser } from "@/lib/supabase";
 
 declare module "next-auth" {
   interface User {

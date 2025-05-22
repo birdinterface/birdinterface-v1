@@ -4,7 +4,7 @@
 import { CoreMessage } from "ai";
 import { formatDistance, subDays, format, isWithinInterval, startOfMonth } from 'date-fns';
 
-import { Chat } from "@/db/schema";
+import { Chat } from "@/lib/supabase";
 
 import { convertToUIMessages } from "./utils"; // Assuming convertToUIMessages is safe
 

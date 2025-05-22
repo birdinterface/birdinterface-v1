@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
 
-
-import { db } from '@/db/queries';
-import { user } from '@/db/schema';
-
+import { supabase } from '@/lib/supabase';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -15,9 +12,10 @@ export async function GET(request: Request) {
 
   try {
     // Reset all users' usage to 0
-    await db
-      .update(user)
-      .set({ usage: '0.00' });
+    const { error } = await supabase
+      .from('User')
+      .update({ usage: '0.00' });
+    if (error) throw error;
     
     return NextResponse.json({ success: true });
   } catch (error) {

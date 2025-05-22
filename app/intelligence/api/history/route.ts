@@ -1,8 +1,8 @@
 import { Message } from "ai";
 
 import { auth } from "@/app/(auth)/auth";
-import { getChatsByUserId } from "@/db/queries";
-import { Chat } from "@/db/schema";
+import { getChatsByUserId } from "@/lib/queries";
+import { Chat } from "@/lib/supabase";
 import { getTitleFromChat, groupChatsByDate } from "@/lib/server-utils";
 
 // Define a type for the processed chat including the title
@@ -23,9 +23,16 @@ export async function GET() {
   const rawChats = await getChatsByUserId({ id: session.user.id! });
 
   // Process chats: Validate/cast messages and add titles
-  const processedChats: ProcessedChatForGrouping[] = rawChats.map(chat => {
+  const processedChats: ProcessedChatForGrouping[] = rawChats.map((chat: Chat) => {
     // Basic validation/casting - adjust if your messages are stored differently (e.g., JSON string)
-    const messages = (Array.isArray(chat.messages) ? chat.messages : []) as Message[];
+    let messages: Message[] = [];
+    if (Array.isArray(chat.messages)) {
+      messages = chat.messages as Message[];
+    } else if (typeof chat.messages === 'string') {
+      try {
+        messages = JSON.parse(chat.messages);
+      } catch {}
+    }
     const chatWithTypedMessages: Chat = { ...chat, messages };
 
     return {
