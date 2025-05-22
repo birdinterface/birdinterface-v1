@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 
 import { auth } from '@/app/(auth)/auth';
 import { Chat as PreviewChat } from '@/components/custom/chat';
-import { getChatById } from '@/db/queries';
-import { Chat } from '@/db/schema';
+import { getChatById } from '@/lib/queries';
+import { Chat } from '@/lib/supabase';
 import { DEFAULT_MODEL_NAME, models } from '@/lib/model';
 import { convertToUIMessages } from '@/lib/utils';
 
