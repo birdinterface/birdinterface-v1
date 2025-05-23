@@ -1,6 +1,6 @@
 'use client';
 
-import { format, parseISO, isToday, isYesterday, isTomorrow } from 'date-fns';
+import { format, parseISO, isToday, isYesterday, isTomorrow, parse } from 'date-fns';
 import { Check, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
 import React from 'react';
 import { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent } from 'react';
@@ -187,9 +187,26 @@ export function TaskList({
     focusedTaskPositionRef.current = -1;
   }, [activeTab]);
 
+  const parseTaskDate = (dateString: string | undefined | null): Date | undefined => {
+    if (!dateString || dateString.trim() === '') return undefined;
+    try {
+      // Handle date-only format (YYYY-MM-DD) by adding time component
+      const dateToParseString = dateString.includes('T') ? dateString : dateString + 'T00:00:00';
+      const parsedDate = parseISO(dateToParseString);
+      // Check if the parsed date is valid
+      if (isNaN(parsedDate.getTime())) return undefined;
+      return parsedDate;
+    } catch (error) {
+      console.warn('Failed to parse date:', dateString, error);
+      return undefined;
+    }
+  };
+
   const formatDate = (date: string) => {
     if (!date) return '';
-    const parsedDate = parseISO(date);
+    const parsedDate = parseTaskDate(date);
+    if (!parsedDate) return '';
+    
     if (isToday(parsedDate)) return 'Today';
     if (isYesterday(parsedDate)) return 'Yesterday';
     if (isTomorrow(parsedDate)) return 'Tomorrow';
@@ -235,7 +252,7 @@ export function TaskList({
 
       // Handle task completion
       if (updates.completed !== undefined) {
-        const now = new Date().toISOString();
+        const now = format(new Date(), 'yyyy-MM-dd');
         const updatedTask = {
           ...updates,
           status: updates.completed ? 'done' as const : 'todo' as const,
@@ -369,7 +386,7 @@ export function TaskList({
         // If dropping into done tab, mark as completed
         if (targetStatus === 'done') {
           updates.completed = true;
-          updates.completedAt = new Date().toISOString();
+          updates.completedAt = format(new Date(), 'yyyy-MM-dd');
         } else if (task.status === 'done') {
           // If moving from done tab, mark as uncompleted
           updates.completed = false;
@@ -387,6 +404,79 @@ export function TaskList({
     setDragOverTarget(null);
   };
 
+  // Empty task drag handlers
+  const handleEmptyTaskDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleEmptyTaskDragLeave = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleEmptyTaskDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData('text/plain');
+    if (taskId && onUpdateTask) {
+      const task = tasks.find(t => t.id === taskId);
+      if (task) {
+        const updates: Partial<Task> = {
+          status: activeTab
+        };
+        
+        // If dropping into done tab, mark as completed
+        if (activeTab === 'done') {
+          updates.completed = true;
+          updates.completedAt = format(new Date(), 'yyyy-MM-dd');
+        } else if (task.status === 'done') {
+          // If moving from done tab, mark as uncompleted
+          updates.completed = false;
+          updates.completedAt = undefined;
+        }
+        
+        onUpdateTask(taskId, updates);
+      }
+    }
+  };
+
+  // Load user preferences on mount
+  useEffect(() => {
+    async function loadUserPreferences() {
+      try {
+        const response = await fetch('/api/user-preferences');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.tabNames) {
+            setTabNames(data.tabNames);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load user preferences:', error);
+      }
+    }
+    loadUserPreferences();
+  }, []);
+
+  // Save tab names when they change
+  const updateTabName = async (tab: Tab, newName: string) => {
+    const updatedTabNames = { ...tabNames, [tab]: newName };
+    setTabNames(updatedTabNames);
+    setEditingTab(null);
+    
+    try {
+      await fetch('/api/user-preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tabNames: updatedTabNames
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to save tab name:', error);
+    }
+  };
+
   return (
     <div className="w-full flex items-start justify-center">
       <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-lg mb-4">
@@ -402,8 +492,7 @@ export function TaskList({
                   isEditing={editingTab === tab}
                   value={tabNames[tab]}
                   onChange={(value) => {
-                    setTabNames(prev => ({ ...prev, [tab]: value }));
-                    setEditingTab(null);
+                    updateTabName(tab, value);
                   }}
                   onDragOver={(e) => handleDragOver(e, tab)}
                   onDrop={(e) => handleDrop(e, tab)}
@@ -432,9 +521,12 @@ export function TaskList({
             <div
               key={task.id}
               className="relative group"
-              draggable={activeTab !== 'done'}
+              draggable={activeTab !== 'done' && task.id !== 'empty'}
               onDragStart={(e) => handleDragStart(e, task.id)}
               onDragEnd={handleDragEnd}
+              onDragOver={task.id === 'empty' ? handleEmptyTaskDragOver : undefined}
+              onDragLeave={task.id === 'empty' ? handleEmptyTaskDragLeave : undefined}
+              onDrop={task.id === 'empty' ? handleEmptyTaskDrop : undefined}
               onTouchStart={(e) => handleTouchStart(e, task.id)}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
@@ -488,25 +580,21 @@ export function TaskList({
                       />
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      <span className="text-xs text-muted-foreground whitespace-nowrap min-w-[60px] flex justify-end">
                         {(activeTab as Tab) === 'done' ? (
                           task.completedAt ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button className="text-muted-foreground hover:text-foreground task-calendar-date">
-                                  {format(parseISO(task.completedAt), 'MMM d')}
+                                  {formatDate(task.completedAt)}
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
                                 <CustomCalendar
-                                  selectedDate={task.completedAt ? parseISO(task.completedAt) : undefined}
+                                  selectedDate={parseTaskDate(task.completedAt)}
                                   onDateSelect={(date) => {
                                     if (date) {
-                                      updateTask(task.id, { completedAt: date.toISOString() });
-                                    }
-                                    const popoverTrigger = document.querySelector('[data-state="open"]');
-                                    if (popoverTrigger) {
-                                      (popoverTrigger as HTMLButtonElement).click();
+                                      updateTask(task.id, { completedAt: format(date, 'yyyy-MM-dd') });
                                     }
                                   }}
                                 />
@@ -515,7 +603,7 @@ export function TaskList({
                           ) : (
                             <Popover>
                               <PopoverTrigger asChild>
-                                <button className="text-muted-foreground hover:text-foreground task-calendar-date">
+                                <button className="text-muted-foreground hover:text-foreground task-calendar-date flex justify-center">
                                   <Calendar className="h-3 w-3" />
                                 </button>
                               </PopoverTrigger>
@@ -524,11 +612,7 @@ export function TaskList({
                                   selectedDate={undefined}
                                   onDateSelect={(date) => {
                                     if (date) {
-                                      updateTask(task.id, { completedAt: date.toISOString() });
-                                    }
-                                    const popoverTrigger = document.querySelector('[data-state="open"]');
-                                    if (popoverTrigger) {
-                                      (popoverTrigger as HTMLButtonElement).click();
+                                      updateTask(task.id, { completedAt: format(date, 'yyyy-MM-dd') });
                                     }
                                   }}
                                 />
@@ -544,42 +628,31 @@ export function TaskList({
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
                               <CustomCalendar
-                                selectedDate={task.dueDate ? parseISO(task.dueDate) : undefined}
+                                selectedDate={parseTaskDate(task.dueDate)}
                                 onDateSelect={(date) => {
-                                  updateTask(task.id, { dueDate: date?.toISOString() || '' });
-                                  const popoverTrigger = document.querySelector('[data-state="open"]');
-                                  if (popoverTrigger) {
-                                    (popoverTrigger as HTMLButtonElement).click();
-                                  }
+                                  updateTask(task.id, { dueDate: date ? format(date, 'yyyy-MM-dd') : '' });
                                 }}
                               />
                             </PopoverContent>
                           </Popover>
-                        ) : null}
+                        ) : (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button className="text-muted-foreground hover:text-foreground task-calendar-date flex justify-center">
+                                <Calendar className="h-3 w-3" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
+                              <CustomCalendar
+                                selectedDate={parseTaskDate(task.dueDate)}
+                                onDateSelect={(date) => {
+                                  updateTask(task.id, { dueDate: date ? format(date, 'yyyy-MM-dd') : '' });
+                                }}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        )}
                       </span>
-                      {activeTab !== 'done' && !task.dueDate && (
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <button
-                              className="text-muted-foreground hover:text-foreground task-calendar-date"
-                            >
-                              <Calendar className="h-3 w-3" />
-                            </button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
-                            <CustomCalendar
-                              selectedDate={task.dueDate ? parseISO(task.dueDate) : undefined}
-                              onDateSelect={(date) => {
-                                updateTask(task.id, { dueDate: date?.toISOString() || '' });
-                                const popoverTrigger = document.querySelector('[data-state="open"]');
-                                if (popoverTrigger) {
-                                  (popoverTrigger as HTMLButtonElement).click();
-                                }
-                              }}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      )}
                     </div>
                   </div>
                 </div>

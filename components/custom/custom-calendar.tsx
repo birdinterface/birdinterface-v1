@@ -1,4 +1,4 @@
-import { addMonths, format, getDay, isEqual, isSameMonth, isToday, startOfMonth, subMonths } from 'date-fns';
+import { addMonths, format, getDay, isEqual, isSameMonth, isToday, startOfMonth, subMonths, addDays } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
@@ -25,11 +25,10 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
     const firstDayOffset = getDay(start);
     const days: (Date | null)[] = Array(firstDayOffset).fill(null);
     
-    let currentDate = start;
+    let currentDate = new Date(start);
     while (isSameMonth(currentDate, start)) {
-      days.push(currentDate);
-      currentDate = addMonths(currentDate, 0);
-      currentDate.setDate(currentDate.getDate() + 1);
+      days.push(new Date(currentDate));
+      currentDate = addDays(currentDate, 1);
     }
     
     return days;

@@ -1,6 +1,6 @@
 import { genSaltSync, hashSync } from 'bcrypt-ts'
 
-import { supabase, User, Chat, Task, ActionLog } from './supabase'
+import { supabase, User, Chat, Task, ActionLog, UserPreferences } from './supabase'
 
 // USER
 export async function getUser(email: string): Promise<User[]> {
@@ -167,9 +167,13 @@ export async function createTask(userId: string, data: Pick<Task, 'title' | 'des
 
 export async function updateTask(taskId: string, userId: string, data: Partial<Task>): Promise<Task> {
   const updateData: any = { ...data, updatedat: new Date().toISOString() };
-  if (updateData.dueDate) {
-    updateData.duedate = updateData.dueDate;
+  if (updateData.dueDate !== undefined) {
+    updateData.duedate = updateData.dueDate || null; // Set to null if empty string
     delete updateData.dueDate;
+  }
+  if (updateData.completedAt !== undefined) {
+    updateData.completedat = updateData.completedAt || null; // Set to null if empty string
+    delete updateData.completedAt;
   }
   console.log(`Updating task ${taskId} for user ${userId} with data:`, updateData);
   const { data: updated, error, status, statusText } = await supabase
@@ -246,4 +250,53 @@ export async function getUserActionLogs(userId: string): Promise<ActionLog[]> {
     .order('timestamp', { ascending: false })
   if (error) throw error
   return data || []
+}
+
+// USER PREFERENCES
+export async function getUserPreferences(userId: string): Promise<UserPreferences | null> {
+  const { data, error } = await supabase
+    .from('UserPreferences')
+    .select('*')
+    .eq('userId', userId)
+    .single()
+  if (error) {
+    if (error.code === 'PGRST116') { // No rows returned
+      return null
+    }
+    throw error
+  }
+  return data
+}
+
+export async function saveUserPreferences(userId: string, preferences: Partial<UserPreferences>): Promise<UserPreferences> {
+  // Check if preferences exist
+  const { data: existing, error: fetchError } = await supabase
+    .from('UserPreferences')
+    .select('*')
+    .eq('userId', userId)
+  if (fetchError && fetchError.code !== 'PGRST116') throw fetchError
+  
+  if (existing && existing.length > 0) {
+    // Update
+    const { data, error } = await supabase
+      .from('UserPreferences')
+      .update({ ...preferences, updatedAt: new Date().toISOString() })
+      .eq('userId', userId)
+      .select()
+    if (error) throw error
+    return data[0]
+  } else {
+    // Insert
+    const { data, error } = await supabase
+      .from('UserPreferences')
+      .insert({
+        userId,
+        ...preferences,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+      .select()
+    if (error) throw error
+    return data[0]
+  }
 } 

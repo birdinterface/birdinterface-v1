@@ -56,4 +56,17 @@ export type ActionLog = {
   actionType: string
   details: any
   timestamp: string
+}
+
+export type UserPreferences = {
+  id: string
+  userId: string
+  tabNames: {
+    todo: string
+    watch: string
+    later: string
+    done: string
+  }
+  createdAt: string
+  updatedAt: string
 } 

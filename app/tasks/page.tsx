@@ -10,14 +10,15 @@ import { Task } from '@/lib/supabase';
 import type { Task as UiTask } from '@/components/custom/task-list';
 
 function toUiTask(task: any): UiTask {
+  console.log('Converting task to UI task:', task);
   return {
     id: task.id,
     name: task.title,
     description: task.description,
-    dueDate: task.duedate,
+    dueDate: task.duedate || '',
     completed: task.completed,
     status: task.status,
-    completedAt: task.completedat,
+    completedAt: task.completedat || '',
     userId: task.userid,
   };
 }
@@ -80,6 +81,7 @@ export default function TasksPage() {
 
   // Handler to update a task (optimistic)
   const handleUpdateTask = async (id: string, updates: Partial<UiTask>) => {
+    console.log('Frontend: Updating task', id, 'with updates:', updates);
     const prevTasks = tasks;
     setTasks((prev) => prev.map(t => t.id === id ? { ...t, ...updates } : t));
     try {
@@ -88,15 +90,20 @@ export default function TasksPage() {
         // Don't call backend for placeholder/empty tasks
         return;
       }
-      const updated = await updateTaskApi(id, realUserId, {
+      const backendData = {
         title: updates.name,
         description: updates.description,
         dueDate: updates.dueDate,
         status: updates.status,
         completed: updates.completed,
-      });
+        completedAt: updates.completedAt,
+      };
+      console.log('Frontend: Sending to backend:', backendData);
+      const updated = await updateTaskApi(id, realUserId, backendData);
+      console.log('Frontend: Backend response:', updated);
       setTasks((prev) => prev.map(t => t.id === id ? { ...t, ...updates, ...toUiTask(updated) } : t));
     } catch (err) {
+      console.error('Frontend: Update task error:', err);
       setTasks(prevTasks);
       setError('Failed to update task');
       window.alert('Failed to update task');
