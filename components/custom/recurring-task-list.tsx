@@ -2,8 +2,7 @@
 
 import { format, parseISO, isToday, isYesterday, isTomorrow, addDays, addWeeks, addMonths, addYears, getDay, startOfDay } from 'date-fns';
 import { Check, ChevronDown, ChevronUp, Calendar, Repeat } from 'lucide-react';
-import React from 'react';
-import { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent } from 'react';
+import React, { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback } from 'react';
 
 import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -995,7 +994,7 @@ export function RecurringTaskList({
     userId: '',
   }];
 
-  const focusTaskInput = (taskId: string) => {
+  const focusTaskInput = useCallback((taskId: string) => {
     requestAnimationFrame(() => {
       setTimeout(() => {
         const taskNameInput = document.querySelector(
@@ -1019,9 +1018,9 @@ export function RecurringTaskList({
         }
       }, 10);
     });
-  };
+  }, [sortedTasks]);
 
-  const focusLastEmptyTask = () => {
+  const focusLastEmptyTask = useCallback(() => {
     console.log('Attempting to focus last empty recurring task, sortedTasks length:', sortedTasks.length);
     
     for (let i = sortedTasks.length - 1; i >= 0; i--) {
@@ -1041,7 +1040,7 @@ export function RecurringTaskList({
     
     console.log('No empty recurring task found to focus');
     return false;
-  };
+  }, [sortedTasks, focusTaskInput]);
 
   useEffect(() => {
     if (maintainFocusRef.current && focusedTaskPositionRef.current >= 0) {
@@ -1087,7 +1086,7 @@ export function RecurringTaskList({
         maintainFocusRef.current = false;
       }
     }
-  }, [sortedTasks, tasks]);
+  }, [sortedTasks, tasks, focusLastEmptyTask]);
 
   const formatDate = (date: string) => {
     if (!date) return '';
@@ -1261,16 +1260,16 @@ export function RecurringTaskList({
   return (
     <div className="w-full flex items-start justify-center recurring-task-container">
       <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-lg mb-4">
-        <div className="pt-4 px-4 pb-4">
+        <div className="p-4">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="flex items-center justify-between w-full text-left"
           >
             <span className="text-xs text-foreground task-tab">Recurring Tasks</span>
             {isCollapsed ? (
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              <ChevronDown className="size-4 text-muted-foreground" />
             ) : (
-              <ChevronUp className="h-4 w-4 text-muted-foreground" />
+              <ChevronUp className="size-4 text-muted-foreground" />
             )}
           </button>
         </div>
@@ -1302,7 +1301,7 @@ export function RecurringTaskList({
                     className="mt-1 text-foreground hover:text-foreground transition-colors"
                     onClick={() => updateTask(task.id, { completed: !task.completed })}
                   >
-                    <Check className="h-3 w-3" />
+                    <Check className="size-3" />
                   </button>
                   
                   <div className="flex-1 min-w-0">
@@ -1370,7 +1369,7 @@ export function RecurringTaskList({
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button className="text-muted-foreground hover:text-foreground task-calendar-date flex justify-center">
-                                  <Calendar className="h-3 w-3" />
+                                  <Calendar className="size-3" />
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
@@ -1579,7 +1578,7 @@ function RecurringSettings({
   return (
     <div className="px-2 py-1.5 border-t border-border">
       <div className="flex items-center gap-1 mb-1.5">
-        <Repeat className="h-2 w-2 text-muted-foreground" />
+        <Repeat className="size-2 text-muted-foreground" />
         <span className="text-[0.6rem] text-foreground task-tab">Repeat</span>
       </div>
       
@@ -1605,7 +1604,7 @@ function RecurringSettings({
         />
         
         {showSuggestion && suggestion && (
-          <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded shadow-lg">
+          <div className="absolute top-full inset-x-0 z-50 mt-1 bg-background border border-border rounded shadow-lg">
               <button
               onClick={selectSuggestion}
               className="w-full text-left px-1 py-0.5 text-[0.6rem] hover:bg-accent hover:text-accent-foreground flex items-center justify-between"

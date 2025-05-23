@@ -1,9 +1,8 @@
 'use client';
 
-import { format, parseISO, isToday, isYesterday, isTomorrow, parse } from 'date-fns';
-import { Check, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
-import React from 'react';
-import { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent } from 'react';
+import { format, parseISO, isToday, isYesterday, isTomorrow } from 'date-fns';
+import { Check, ChevronDown, ChevronUp, Calendar, Edit2 } from 'lucide-react';
+import React, { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback } from 'react';
 
 import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
@@ -86,7 +85,7 @@ export function TaskList({
     userId: '', // This is a placeholder, actual new task uses prop userId
   }];
 
-  const focusTaskInput = (taskId: string) => {
+  const focusTaskInput = useCallback((taskId: string) => {
     requestAnimationFrame(() => {
       setTimeout(() => {
         const taskNameInput = document.querySelector(
@@ -110,9 +109,9 @@ export function TaskList({
         }
       }, 10);
     });
-  };
+  }, [filteredTasks]);
 
-  const focusLastEmptyTask = () => {
+  const focusLastEmptyTask = useCallback(() => {
     console.log('Attempting to focus last empty task, filteredTasks length:', filteredTasks.length);
     
     for (let i = filteredTasks.length - 1; i >= 0; i--) {
@@ -132,7 +131,7 @@ export function TaskList({
     
     console.log('No empty task found to focus');
     return false;
-  };
+  }, [filteredTasks, focusTaskInput]);
 
   useEffect(() => {
     if (maintainFocusRef.current && focusedTaskPositionRef.current >= 0) {
@@ -178,7 +177,7 @@ export function TaskList({
         maintainFocusRef.current = false;
       }
     }
-  }, [filteredTasks, tasks, activeTab]);
+  }, [filteredTasks, tasks, activeTab, focusLastEmptyTask]);
 
   useEffect(() => {
     shouldFocusNewTaskRef.current = false;
@@ -517,7 +516,7 @@ export function TaskList({
           </div>
         </div>
         
-        <div className="space-y-2 py-4 px-4">
+        <div className="space-y-2 p-4">
           {displayTasks.map(task => (
             <div
               key={task.id}
@@ -547,15 +546,15 @@ export function TaskList({
               >
                 {activeTab === 'done' ? (
                   <div className="mt-1 text-foreground flex">
-                    <Check className="h-3 w-3" />
-                    <Check className="h-3 w-3 -ml-2" />
+                    <Check className="size-3" />
+                    <Check className="size-3 -ml-2" />
                   </div>
                 ) : (
                   <button 
                     className="mt-1 text-foreground hover:text-foreground transition-colors"
                     onClick={() => updateTask(task.id, { completed: !task.completed })}
                   >
-                    <Check className="h-3 w-3" />
+                    <Check className="size-3" />
                   </button>
                 )}
                 
@@ -605,7 +604,7 @@ export function TaskList({
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button className="text-muted-foreground hover:text-foreground task-calendar-date flex justify-center">
-                                  <Calendar className="h-3 w-3" />
+                                  <Calendar className="size-3" />
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
@@ -640,7 +639,7 @@ export function TaskList({
                           <Popover>
                             <PopoverTrigger asChild>
                               <button className="text-muted-foreground hover:text-foreground task-calendar-date flex justify-center">
-                                <Calendar className="h-3 w-3" />
+                                <Calendar className="size-3" />
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">

@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 
 import { auth } from '@/app/(auth)/auth';
-import { TaskList } from '@/components/custom/task-list';
 import { RecurringTaskList } from '@/components/custom/recurring-task-list';
+import { TaskList } from '@/components/custom/task-list';
 import { createTask, updateTask as updateTaskApi, deleteTask as deleteTaskApi } from '@/lib/queries';
 import { Task } from '@/lib/supabase';
 
-import type { Task as UiTask } from '@/components/custom/task-list';
 import type { RecurringTask } from '@/components/custom/recurring-task-list';
+import type { Task as UiTask } from '@/components/custom/task-list';
 
 function toUiTask(task: any): UiTask {
   console.log('Converting task to UI task:', task);

@@ -39,8 +39,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
-import { fetcher } from '@/lib/utils';
+import { cn, fetcher } from '@/lib/utils';
 
 // Define the expected shape of a processed chat object from the API
 interface ProcessedChat {
