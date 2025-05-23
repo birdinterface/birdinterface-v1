@@ -273,12 +273,13 @@ export function TaskList({
   const deleteTask = (taskId: string) => {
     if (onDeleteTask) {
       // Store the index of the task being deleted
-      const taskIndex = tasks.findIndex(t => t.id === taskId);
+      const taskIndex = filteredTasks.findIndex(t => t.id === taskId);
       onDeleteTask(taskId);
       
-      // After deletion, focus the previous task if it exists
+      // After deletion, focus the previous task if it exists, but only within this component
       requestAnimationFrame(() => {
-        const taskInputs = document.querySelectorAll('.task-input[data-task-id]');
+        // Use a more specific selector to avoid interfering with recurring tasks
+        const taskInputs = document.querySelectorAll('.task-list-container .task-input[data-task-id]');
         const targetIndex = Math.min(taskIndex, taskInputs.length - 1);
         if (targetIndex >= 0) {
           (taskInputs[targetIndex] as HTMLInputElement)?.focus();
@@ -478,7 +479,7 @@ export function TaskList({
   };
 
   return (
-    <div className="w-full flex items-start justify-center">
+    <div className="w-full flex items-start justify-center task-list-container">
       <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-lg mb-4">
         <div className="pt-4 px-4">
           <div className="flex justify-between items-center">

@@ -1,14 +1,18 @@
-import { addMonths, format, getDay, isEqual, isSameMonth, isToday, startOfMonth, subMonths, addDays } from 'date-fns';
+import { addMonths, format, getDay, isEqual, isSameMonth, isToday, startOfMonth, subMonths, addDays, isSameDay } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 interface CustomCalendarProps {
   selectedDate?: Date;
   onDateSelect?: (date: Date | undefined) => void;
+  recurringDates?: Date[];
 }
 
-export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarProps) {
+export function CustomCalendar({ selectedDate, onDateSelect, recurringDates = [] }: CustomCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
+  
+  // Debug: Log recurring dates
+  console.log('CustomCalendar received recurringDates:', recurringDates.length, recurringDates);
   
   const weekDays = [
     { key: 'sun', label: 'S' },
@@ -40,6 +44,10 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
     } else {
       onDateSelect?.(date);
     }
+  };
+
+  const isRecurringDate = (date: Date) => {
+    return recurringDates.some(recurringDate => isSameDay(date, recurringDate));
   };
 
   return (
@@ -74,16 +82,19 @@ export function CustomCalendar({ selectedDate, onDateSelect }: CustomCalendarPro
           
           const isSelected = selectedDate ? isEqual(date, selectedDate) : false;
           const isTodayDate = isToday(date);
+          const isRecurring = isRecurringDate(date);
           
           return (
             <button
               key={date.toISOString()}
               onClick={() => handleDateClick(date)}
-              className={`text-[0.65rem] h-6 w-6 flex items-center justify-center font-goodtimes ${
-                isSelected
+              className={`text-[0.65rem] h-6 w-6 flex items-center justify-center font-goodtimes relative ${
+                isTodayDate
+                  ? 'text-blue-500'
+                  : isSelected
                   ? 'text-foreground'
-                  : isTodayDate
-                  ? 'text-accent-foreground'
+                  : isRecurring
+                  ? 'text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
