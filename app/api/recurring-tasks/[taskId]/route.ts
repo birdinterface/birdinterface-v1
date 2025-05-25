@@ -12,31 +12,24 @@ type RouteContext = {
 
 export async function PUT(request: NextRequest, { params }: RouteContext) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { taskId } = params;
-    const body = await request.json();
+    // const session = await auth(); // Simplified
+    // if (!session?.user?.id) { // Simplified
+    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }); // Simplified
+    // }
+    // const body = await request.json(); // Simplified
+    // const taskData = { ...body }; // Simplified
+    // console.log(`API: Updating recurring task ${taskId} for user ${session.user.id} with data:`, taskData); // Simplified
+    // const updatedTask = await updateRecurringTask(taskId, session.user.id, taskData); // Simplified
+    // console.log(`API: Recurring task ${taskId} updated for user ${session.user.id}:`, updatedTask); // Simplified
+    // return NextResponse.json(updatedTask); // Simplified
 
-    // Ensure that fields like title, description, etc. are correctly passed
-    // and match the Partial<Task> structure expected by updateRecurringTask.
-    // You might need to map fields from body to the Task structure if they differ.
-    const taskData = {
-      ...body,
-      // Example: Map a 'name' field from body to 'title' if your Task model uses 'title'
-      // title: body.name || body.title,
-    };
-
-    console.log(`API: Updating recurring task ${taskId} for user ${session.user.id} with data:`, taskData);
-    const updatedTask = await updateRecurringTask(taskId, session.user.id, taskData);
-    console.log(`API: Recurring task ${taskId} updated for user ${session.user.id}:`, updatedTask);
-
-    return NextResponse.json(updatedTask);
+    // Bare minimum logic for diagnostics:
+    console.log(`API: PUT request for taskId: ${taskId} (simplified handler)`);
+    return NextResponse.json({ message: `PUT request for ${taskId} received (simplified handler)` });
   } catch (error) {
-    console.error('API Error updating recurring task:', error);
-    return NextResponse.json({ error: 'Failed to update recurring task' }, { status: 500 });
+    console.error('API Error in simplified PUT handler:', error);
+    return NextResponse.json({ error: 'Failed in simplified PUT handler' }, { status: 500 });
   }
 }
 
