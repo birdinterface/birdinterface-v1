@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 import { auth } from '@/app/(auth)/auth';
 import { updateRecurringTask, deleteRecurringTask } from '@/lib/queries';
 
-export async function PUT(request: Request, { params }: { params: { taskId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { taskId: string } }) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -33,7 +33,7 @@ export async function PUT(request: Request, { params }: { params: { taskId: stri
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { taskId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { taskId: string } }) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
