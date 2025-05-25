@@ -3,14 +3,14 @@ import { NextResponse, NextRequest } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { updateRecurringTask, deleteRecurringTask } from '@/lib/queries';
 
-export async function PUT(request: NextRequest, context: { params: { taskId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { taskId: string } }) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { taskId } = context.params;
+    const { taskId } = params;
     const body = await request.json();
 
     // Ensure that fields like title, description, etc. are correctly passed
