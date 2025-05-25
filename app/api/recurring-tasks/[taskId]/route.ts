@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { updateRecurringTask, deleteRecurringTask } from '@/lib/queries';
 
-export async function PUT(request: Request, { params }: { params: { taskId: string } }) {
+export async function PUT(request: Request, params: { taskId: string }) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
