@@ -39,6 +39,7 @@ function toRecurringTask(task: any): RecurringTask {
     description: task.description,
     dueDate: task.duedate || '',
     completed: task.completed,
+    status: task.status || '',
     completedAt: task.completedat || '',
     userId: task.userid,
     recurrencePattern: task.recurrencepattern || undefined,
@@ -134,7 +135,7 @@ export default function TasksPage() {
           description: task.description,
           dueDate: task.dueDate,
           status: task.status || 'pending',
-          recurrencepattern: task.recurrencePattern,
+          recurrencepattern: task.recurrencePattern || null,
         }
       );
       setRecurringTasks((prev) => prev.map(t => t.id === tempId ? toRecurringTask(created) : t));
@@ -196,7 +197,7 @@ export default function TasksPage() {
         status: updates.status,
         completed: updates.completed,
         completedAt: updates.completedAt,
-        recurrencepattern: updates.recurrencePattern,
+        recurrencepattern: updates.recurrencePattern || null,
       };
       console.log('Frontend: Sending recurring to backend:', backendData);
       const updated = await updateRecurringTaskApi(id, realUserId, backendData as any);
