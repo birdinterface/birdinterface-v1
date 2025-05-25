@@ -29,6 +29,9 @@ export function Chat({
   const { theme } = useTheme();
   const { openModal } = useModal();
 
+  // Ensure initialMessages is an array
+  const validInitialMessages = Array.isArray(initialMessages) ? initialMessages : [];
+
   // Determine upload API based on chat API
   const uploadApi = api.includes('/intelligence/') 
     ? '/intelligence/api/files/upload' 
@@ -38,7 +41,7 @@ export function Chat({
     useChat({
       api,
       id,
-      initialMessages,
+      initialMessages: validInitialMessages,
       body: {
         id,
         model: selectedModelName,
