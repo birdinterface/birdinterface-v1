@@ -1,39 +1,39 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 import { auth } from '@/app/(auth)/auth';
 import { updateRecurringTask, deleteRecurringTask } from '@/lib/queries';
 
-// Define a common type for the context parameters
-type RouteContext = {
-  params: {
-    taskId: string;
-  };
-};
-
-export async function PUT(request: NextRequest, { params }: RouteContext) {
+export async function PUT(request: Request, { params }: { params: { taskId: string } }) {
   try {
-    const { taskId } = params;
-    // const session = await auth(); // Simplified
-    // if (!session?.user?.id) { // Simplified
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }); // Simplified
-    // }
-    // const body = await request.json(); // Simplified
-    // const taskData = { ...body }; // Simplified
-    // console.log(`API: Updating recurring task ${taskId} for user ${session.user.id} with data:`, taskData); // Simplified
-    // const updatedTask = await updateRecurringTask(taskId, session.user.id, taskData); // Simplified
-    // console.log(`API: Recurring task ${taskId} updated for user ${session.user.id}:`, updatedTask); // Simplified
-    // return NextResponse.json(updatedTask); // Simplified
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    // Bare minimum logic for diagnostics:
-    console.log(`API: PUT request for taskId: ${taskId} (simplified handler)`);
-    return NextResponse.json({ message: `PUT request for ${taskId} received (simplified handler)` });
+    const { taskId } = params;
+    const body = await request.json();
+
+    // Ensure that fields like title, description, etc. are correctly passed
+    // and match the Partial<Task> structure expected by updateRecurringTask.
+    // You might need to map fields from body to the Task structure if they differ.
+    const taskData = {
+      ...body,
+      // Example: Map a 'name' field from body to 'title' if your Task model uses 'title'
+      // title: body.name || body.title,
+    };
+
+    console.log(`API: Updating recurring task ${taskId} for user ${session.user.id} with data:`, taskData);
+    const updatedTask = await updateRecurringTask(taskId, session.user.id, taskData);
+    console.log(`API: Recurring task ${taskId} updated for user ${session.user.id}:`, updatedTask);
+
+    return NextResponse.json(updatedTask);
   } catch (error) {
-    console.error('API Error in simplified PUT handler:', error);
-    return NextResponse.json({ error: 'Failed in simplified PUT handler' }, { status: 500 });
+    console.error('API Error updating recurring task:', error);
+    return NextResponse.json({ error: 'Failed to update recurring task' }, { status: 500 });
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteContext) {
+export async function DELETE(request: Request, { params }: { params: { taskId: string } }) {
   try {
     const session = await auth();
     if (!session?.user?.id) {

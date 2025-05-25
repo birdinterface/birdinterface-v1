@@ -95,13 +95,19 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
           className="relative inline-flex items-center cursor-pointer w-[160px] h-8"
           onClick={togglePlan}
         >
-          <div className={`size-full bg-gray-100 border border-gray-300 rounded-full dark:bg-[#282b2e] dark:border-gray-700`}>
-            <div className={`absolute top-1/2 left-[4px] -translate-y-1/2 bg-[#d3dee8] rounded-full h-6 w-[76px] transition-all ${selectedPlan === (currentMembership === 'free' ? 'pro' : 'ultimate') ? 'translate-x-[76px]' : ''} dark:bg-[#3a3f43]`}></div>
+          <div className={`w-full h-full bg-gray-100 border border-gray-300 rounded-full dark:bg-[#282b2e] dark:border-gray-700`}>
+            <div className={`absolute top-1/2 left-[4px] transform -translate-y-1/2 bg-[#d3dee8] rounded-full h-6 w-[76px] transition-all ${
+              selectedPlan === (currentMembership === 'free' ? 'pro' : 'ultimate') ? 'translate-x-[76px]' : ''
+            } dark:bg-[#3a3f43]`}></div>
           </div>
-          <span className={`absolute left-0 w-[80px] text-xs font-medium text-gray-700 dark:text-gray-300 transition-opacity duration-200 ease-in ${selectedPlan === (currentMembership === 'free' ? 'free' : 'pro') ? 'opacity-100' : 'opacity-50'} flex items-center justify-center h-full`}>
+          <span className={`absolute left-0 w-[80px] text-xs font-medium text-gray-700 dark:text-gray-300 transition-opacity duration-200 ease-in ${
+            selectedPlan === (currentMembership === 'free' ? 'free' : 'pro') ? 'opacity-100' : 'opacity-50'
+          } flex items-center justify-center h-full`}>
             {currentMembership === 'free' ? 'Free' : 'Pro'}
           </span>
-          <span className={`absolute right-0 w-[80px] text-xs font-medium text-gray-700 dark:text-gray-300 transition-opacity duration-200 ease-in ${selectedPlan === (currentMembership === 'free' ? 'pro' : 'ultimate') ? 'opacity-100' : 'opacity-50'} flex items-center justify-center h-full`}>
+          <span className={`absolute right-0 w-[80px] text-xs font-medium text-gray-700 dark:text-gray-300 transition-opacity duration-200 ease-in ${
+            selectedPlan === (currentMembership === 'free' ? 'pro' : 'ultimate') ? 'opacity-100' : 'opacity-50'
+          } flex items-center justify-center h-full`}>
             {currentMembership === 'free' ? 'Pro' : 'Ultimate'}
           </span>
         </div>
@@ -162,41 +168,41 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
           {selectedPlan === 'free' ? (
             <>
               <li className="flex items-center mb-2">
-                <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-5 h-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Full functionality
               </li>
               <li className="flex items-center mb-2">
-                <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-5 h-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Runs on Grok from xAI
               </li>
               <li className="flex items-center mb-2">
-                <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-5 h-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Prompt engineered
               </li>
             </>
           ) : selectedPlan === 'pro' ? (
             <>
               <li className="flex items-center mb-2">
-                <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-5 h-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Everything in Free
               </li>
               <li className="flex items-center mb-2">
-                <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-5 h-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Much more usage
               </li>
               <li className="flex items-center">
-                <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-5 h-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Early access to newest AI features
               </li>
             </>
           ) : (
             <>
               <li className="flex items-center mb-2">
-                <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-5 h-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Everything in Pro
               </li>
               <li className="flex items-center">
-                <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-5 h-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Unlimited usage
               </li>
             </>

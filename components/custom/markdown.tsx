@@ -142,7 +142,7 @@ const CopyButton = ({ content }: { content: string }) => {
       {copied ? (
         <svg 
           viewBox="0 0 24 24"
-          className="size-4 text-green-500"
+          className="h-4 w-4 text-green-500"
           fill="none" 
           stroke="currentColor" 
           strokeWidth="2"
@@ -156,7 +156,7 @@ const CopyButton = ({ content }: { content: string }) => {
       ) : (
         <svg
           viewBox="0 0 24 24"
-          className="size-4 text-muted-foreground"
+          className="h-4 w-4 text-muted-foreground"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"

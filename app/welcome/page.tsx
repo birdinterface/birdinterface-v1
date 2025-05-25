@@ -16,9 +16,6 @@ import { PreloadImages } from '@/components/PreloadImages';
 import { criticalImages } from '@/lib/images';
 import { cn } from "@/lib/utils";
 
-const fullText = "A next generation computer interface.";
-const words = fullText.split(' ');
-
 const Welcome = () => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -26,6 +23,8 @@ const Welcome = () => {
   const [error, setError] = useState('');
   const [displayText, setDisplayText] = useState('');
   const [isTextComplete, setIsTextComplete] = useState(false);
+  const fullText = "A next generation computer interface.";
+  const words = fullText.split(' ');
 
   useEffect(() => {
     let currentWordIndex = 0;
@@ -102,7 +101,7 @@ const Welcome = () => {
 
         {/* Content Layer (z-index 20) */}
         <div className="absolute inset-0 flex flex-col items-center z-20">
-          <div className="relative size-[160px] mt-10 mb-9">
+          <div className="relative w-[160px] h-[160px] mt-10 mb-9">
             <Image
               src="/images/logowhites.png"
               alt="Bird Interface Logo"

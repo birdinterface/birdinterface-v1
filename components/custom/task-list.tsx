@@ -2,7 +2,7 @@
 
 import { format, parseISO, isToday, isYesterday, isTomorrow } from 'date-fns';
 import { Check, ChevronDown, ChevronUp, Calendar, Edit2 } from 'lucide-react';
-import React, { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback, useMemo } from 'react';
+import React, { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback } from 'react';
 
 import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
@@ -37,7 +37,7 @@ export function TaskList({
   onDeleteTask?: (id: string) => void;
 }) {
   // If tasks are provided as a prop, use them directly (controlled component)
-  const tasks = useMemo(() => externalTasks ?? [], [externalTasks]);
+  const tasks = externalTasks ?? [];
   const [activeTab, setActiveTab] = useState<Tab>('todo');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [showCompletedAnimation, setShowCompletedAnimation] = useState(false);
@@ -678,13 +678,26 @@ function TabButton(props: {
   onDrop?: (e: DragEvent<HTMLButtonElement>) => void;
   onDragLeave?: (e: DragEvent<HTMLButtonElement>) => void;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const spanRef = React.useRef<HTMLSpanElement>(null);
+  const { 
+    children, 
+    active, 
+    onClick,
+    onDoubleClick,
+    isEditing,
+    value,
+    onChange,
+    className,
+    onDragOver, 
+    onDrop, 
+    onDragLeave 
+  } = props;
 
-  useEffect(() => {
-    if (props.isEditing && inputRef.current) {
-      inputRef.current.focus();
+  React.useEffect(() => {
+    if (isEditing && spanRef.current) {
+      spanRef.current.focus();
       const range = document.createRange();
-      range.selectNodeContents(inputRef.current);
+      range.selectNodeContents(spanRef.current);
       range.collapse(false);
       const selection = window.getSelection();
       if (selection) {
@@ -692,57 +705,52 @@ function TabButton(props: {
         selection.addRange(range);
       }
     }
-  }, [props.isEditing]);
+  }, [isEditing]);
 
-  if (props.isEditing && props.value !== undefined && props.onChange) {
+  if (isEditing && value !== undefined && onChange) {
     return (
       <span
-        ref={inputRef}
+        ref={spanRef}
         contentEditable
         suppressContentEditableWarning
         onBlur={(e) => {
-          const newValue = e.currentTarget.textContent || props.value;
-          if (props.onChange && typeof newValue === 'string') {
-            props.onChange(newValue);
-          }
+          const newValue = e.currentTarget.textContent || value;
+          onChange(newValue);
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault();
-            const newValue = e.currentTarget.textContent || props.value;
-            if (props.onChange && typeof newValue === 'string') {
-              props.onChange(newValue);
-            }
+            onChange(e.currentTarget.textContent || value);
           }
         }}
         className={cn(
           "px-2 py-1 text-xs outline-none task-tab",
-          props.active 
+          active 
             ? "text-foreground" 
             : "text-muted-foreground hover:text-foreground"
         )}
       >
-        {props.value}
+        {value}
       </span>
     );
   }
 
   return (
     <button
-      onClick={props.onClick}
-      onDoubleClick={props.onDoubleClick}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
       className={cn(
         "px-2 py-1 text-xs transition-colors task-tab rounded-md",
-        props.active 
+        active 
           ? "text-foreground" 
           : "text-muted-foreground hover:text-foreground",
-        props.className
+        className
       )}
-      onDragOver={props.onDragOver}
-      onDrop={props.onDrop}
-      onDragLeave={props.onDragLeave}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragLeave={onDragLeave}
     >
-      {props.children}
+      {children}
     </button>
   );
 } 

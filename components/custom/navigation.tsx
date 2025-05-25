@@ -47,7 +47,7 @@ export function Navigation({ user }: { user: any }) {
 
   return (
     <>
-      <nav className="fixed top-0 inset-x-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[9999] overscroll-none">
+      <nav className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[9999] overscroll-none">
         <div className="relative w-full nav-dots">
           <div className="flex h-10 items-center justify-center relative z-10 px-4">
             <div className="flex items-center gap-3 w-full max-w-screen-2xl mx-auto md:justify-center">
@@ -57,9 +57,9 @@ export function Navigation({ user }: { user: any }) {
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="ghost" 
-                      className="size-8 p-0 hover:bg-transparent shrink-0 focus-visible:ring-0 data-[state=open]:bg-transparent"
+                      className="h-8 w-8 p-0 hover:bg-transparent shrink-0 focus-visible:ring-0 data-[state=open]:bg-transparent"
                     >
-                      <div className="relative size-6">
+                      <div className="relative w-6 h-6">
                         <Image
                           src={'/images/Birdblack.png'}
                           alt="Bird Interface Logo Light"

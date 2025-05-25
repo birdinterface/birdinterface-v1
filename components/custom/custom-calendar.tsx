@@ -57,7 +57,7 @@ export function CustomCalendar({ selectedDate, onDateSelect, recurringDates = []
           onClick={() => setCurrentMonth(prev => subMonths(prev, 1))}
           className="text-foreground opacity-50 hover:opacity-100"
         >
-          <ChevronLeft className="size-3" />
+          <ChevronLeft className="h-3 w-3" />
         </button>
         <span className="text-xs task-calendar-header">
           {format(currentMonth, 'MMMM yyyy')}
@@ -66,7 +66,7 @@ export function CustomCalendar({ selectedDate, onDateSelect, recurringDates = []
           onClick={() => setCurrentMonth(prev => addMonths(prev, 1))}
           className="text-foreground opacity-50 hover:opacity-100"
         >
-          <ChevronRight className="size-3" />
+          <ChevronRight className="h-3 w-3" />
         </button>
       </div>
 
@@ -88,7 +88,7 @@ export function CustomCalendar({ selectedDate, onDateSelect, recurringDates = []
             <button
               key={date.toISOString()}
               onClick={() => handleDateClick(date)}
-              className={`text-[0.65rem] size-6 flex items-center justify-center font-goodtimes relative ${
+              className={`text-[0.65rem] h-6 w-6 flex items-center justify-center font-goodtimes relative ${
                 isTodayDate
                   ? 'text-blue-500'
                   : isSelected

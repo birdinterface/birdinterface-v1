@@ -2,7 +2,7 @@
 
 import { format, parseISO, isToday, isYesterday, isTomorrow, addDays, addWeeks, addMonths, addYears, getDay, startOfDay } from 'date-fns';
 import { Check, ChevronDown, ChevronUp, Calendar, Repeat } from 'lucide-react';
-import React, { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback, useMemo } from 'react';
+import React, { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback } from 'react';
 
 import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -967,7 +967,7 @@ export function RecurringTaskList({
   onUpdateTask?: (id: string, updates: Partial<RecurringTask>) => void;
   onDeleteTask?: (id: string) => void;
 }) {
-  const memoizedTasks = useMemo(() => externalTasks ?? [], [externalTasks]);
+  const tasks = externalTasks ?? [];
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [showCompletedAnimation, setShowCompletedAnimation] = useState(false);
   const [swipeStartX, setSwipeStartX] = useState<number | null>(null);
@@ -980,13 +980,11 @@ export function RecurringTaskList({
   const maintainFocusRef = useRef(false);
   const focusedTaskPositionRef = useRef<number>(-1);
 
-  const sortedTasks = useMemo(() => {
-    return (memoizedTasks || []).sort((a, b) => {
-      const dateA = new Date(a.dueDate).getTime();
-      const dateB = new Date(b.dueDate).getTime();
-      return dateA - dateB;
-    });
-  }, [memoizedTasks]);
+  const sortedTasks = tasks.sort((a, b) => {
+    const dateA = new Date(a.dueDate).getTime();
+    const dateB = new Date(b.dueDate).getTime();
+    return dateA - dateB;
+  });
 
   const displayTasks = sortedTasks.length > 0 ? sortedTasks : [{
     id: 'empty',
@@ -1090,7 +1088,7 @@ export function RecurringTaskList({
         maintainFocusRef.current = false;
       }
     }
-  }, [sortedTasks, memoizedTasks, focusLastEmptyTask]);
+  }, [sortedTasks, tasks, focusLastEmptyTask]);
 
   const formatDate = (date: string) => {
     if (!date) return '';
@@ -1144,7 +1142,7 @@ export function RecurringTaskList({
         
         // If completing a recurring task, calculate the next occurrence
         if (updates.completed) {
-          const task = memoizedTasks.find(t => t.id === id);
+          const task = tasks.find(t => t.id === id);
           if (task && task.recurrencePattern && task.dueDate) {
             const parsedPattern = parseRecurrencePattern(task.recurrencePattern);
             if (parsedPattern.type !== 'invalid') {
@@ -1223,13 +1221,13 @@ export function RecurringTaskList({
           }
         }
       } else {
-        const task = memoizedTasks.find(t => t.id === taskId);
+        const task = tasks.find(t => t.id === taskId);
         if (task && task.name.trim() !== '') {
           addNewTask();
         }
       }
     } else if (e.key === 'Backspace' && taskId !== 'empty') {
-      const task = memoizedTasks.find(t => t.id === taskId);
+      const task = tasks.find(t => t.id === taskId);
       if (!task) return;
 
       if (e.currentTarget.selectionStart === 0 && e.currentTarget.selectionEnd === 0) {
