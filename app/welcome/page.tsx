@@ -42,7 +42,7 @@ const Welcome = () => {
     }, 150); // Much faster animation, word by word
 
     return () => clearInterval(interval);
-  }, [words]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
