@@ -5,7 +5,14 @@ import { useEffect, useState } from 'react';
 import { auth } from '@/app/(auth)/auth';
 import { RecurringTaskList } from '@/components/custom/recurring-task-list';
 import { TaskList } from '@/components/custom/task-list';
-import { createTask, updateTask as updateTaskApi, deleteTask as deleteTaskApi } from '@/lib/queries';
+import {
+  createTask,
+  updateTask as updateTaskApi,
+  deleteTask as deleteTaskApi,
+  createRecurringTask as createRecurringTaskApi,
+  updateRecurringTask as updateRecurringTaskApi,
+  deleteRecurringTask as deleteRecurringTaskApi,
+} from '@/lib/queries';
 import { Task } from '@/lib/supabase';
 
 import type { RecurringTask } from '@/components/custom/recurring-task-list';
@@ -69,10 +76,19 @@ export default function TasksPage() {
     async function fetchRecurringTasks() {
       try {
         console.log('Frontend: Fetching recurring tasks...');
-        // For now, use empty array since we don't have recurring tasks API yet
-        setRecurringTasks([]);
+        const response = await fetch('/api/recurring-tasks');
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Frontend: Error fetching recurring tasks:', errorData);
+          throw new Error(errorData.error || `Failed to fetch recurring tasks: ${response.status}`);
+        }
+        const data = await response.json();
+        const uiRecurringTasks = data.map(toRecurringTask);
+        console.log('Frontend: Recurring tasks received:', uiRecurringTasks);
+        setRecurringTasks(uiRecurringTasks);
       } catch (err: any) {
         console.error('Frontend: Error fetching recurring tasks:', err);
+        // setError(err.message); // Optionally set error for recurring tasks
       }
     }
 
@@ -110,8 +126,23 @@ export default function TasksPage() {
     const tempId = 'temp-recurring-' + Date.now();
     const optimisticTask = { ...task, id: tempId, userId: realUserId };
     setRecurringTasks((prev) => [...prev, optimisticTask]);
-    // TODO: Implement actual API call for recurring tasks
-    console.log('Adding recurring task:', optimisticTask);
+    try {
+      const created = await createRecurringTaskApi(
+        realUserId,
+        {
+          title: task.name,
+          description: task.description,
+          dueDate: task.dueDate,
+          status: task.status || 'pending',
+          recurrencepattern: task.recurrencePattern,
+        }
+      );
+      setRecurringTasks((prev) => prev.map(t => t.id === tempId ? toRecurringTask(created) : t));
+    } catch (err) {
+      setRecurringTasks((prev) => prev.filter(t => t.id !== tempId));
+      setError('Failed to add recurring task'); // Consider a separate error state for recurring tasks
+      window.alert('Failed to add recurring task');
+    }
   };
 
   const isValidUuid = (id: string) => /^[0-9a-fA-F-]{36}$/.test(id);
@@ -150,8 +181,33 @@ export default function TasksPage() {
   // Handler to update a recurring task (optimistic)
   const handleUpdateRecurringTask = async (id: string, updates: Partial<RecurringTask>) => {
     console.log('Frontend: Updating recurring task', id, 'with updates:', updates);
+    const prevRecurringTasks = recurringTasks;
     setRecurringTasks((prev) => prev.map(t => t.id === id ? { ...t, ...updates } : t));
-    // TODO: Implement actual API call for recurring tasks
+    try {
+      const realUserId = updates.userId || recurringTasks.find(t => t.id === id)?.userId || userId;
+      if (!isValidUuid(realUserId) || !isValidUuid(id)) { // also check if task id is valid
+        // Don't call backend for placeholder/empty tasks or if id is temporary
+        return;
+      }
+      const backendData = {
+        title: updates.name,
+        description: updates.description,
+        dueDate: updates.dueDate,
+        status: updates.status,
+        completed: updates.completed,
+        completedAt: updates.completedAt,
+        recurrencepattern: updates.recurrencePattern,
+      };
+      console.log('Frontend: Sending recurring to backend:', backendData);
+      const updated = await updateRecurringTaskApi(id, realUserId, backendData as any);
+      console.log('Frontend: Backend recurring response:', updated);
+      setRecurringTasks((prev) => prev.map(t => t.id === id ? { ...t, ...updates, ...toRecurringTask(updated) } : t));
+    } catch (err) {
+      console.error('Frontend: Update recurring task error:', err);
+      setRecurringTasks(prevRecurringTasks);
+      setError('Failed to update recurring task'); // Consider a separate error state
+      window.alert('Failed to update recurring task');
+    }
   };
 
   // Handler to delete a task (optimistic)
@@ -174,8 +230,20 @@ export default function TasksPage() {
 
   // Handler to delete a recurring task (optimistic)
   const handleDeleteRecurringTask = async (id: string) => {
+    const prevRecurringTasks = recurringTasks;
     setRecurringTasks((prev) => prev.filter(t => t.id !== id));
-    // TODO: Implement actual API call for recurring tasks
+    try {
+      const realUserId = recurringTasks.find(t => t.id === id)?.userId || userId;
+      if (!isValidUuid(realUserId) || !isValidUuid(id)) { // also check if task id is valid
+         // Don't call backend for placeholder/empty tasks or if id is temporary
+        return;
+      }
+      await deleteRecurringTaskApi(id, realUserId);
+    } catch (err) {
+      setRecurringTasks(prevRecurringTasks);
+      setError('Failed to delete recurring task'); // Consider a separate error state
+      window.alert('Failed to delete recurring task');
+    }
   };
 
   return (

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
@@ -28,7 +29,7 @@ export const Overview = () => {
     >
       <div className="rounded-xl flex flex-col leading-relaxed text-center max-w-xl">
         <h1 className="text-4xl flex flex-col items-center">
-          <img src="/images/blur.png" alt="Blur effect" className="h-[300px] w-[300px]" style={{ filter: 'blur(35px)' }} draggable={false} />
+          <Image src="/images/blur.png" alt="Blur effect" className="size-[300px]" style={{ filter: 'blur(35px)' }} draggable={false} width={300} height={300} />
         </h1>
       </div>
     </motion.div>

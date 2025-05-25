@@ -47,6 +47,20 @@ export type Task = {
   userId: string
 }
 
+export type RecurringTaskSupabase = {
+  id: string
+  title: string
+  description: string | null
+  duedate: string | null // Supabase uses lowercase
+  status: string
+  completed: boolean
+  completedat: string | null // Supabase uses lowercase
+  createdat: string // Supabase uses lowercase
+  updatedat: string // Supabase uses lowercase
+  userid: string // Supabase uses lowercase
+  recurrencepattern: string | null // Supabase uses lowercase
+}
+
 export type ActionLog = {
   id: string
   taskId: string

@@ -15,12 +15,12 @@ interface Flare {
 const GrainyGradientGlow: React.FC = () => {
   const [flares, setFlares] = useState<Flare[]>([]);
 
-  const baseColors = ['#333333', '#666666', '#999999', '#cccccc', '#ffffff']; // Grayscale colors
   const defaultFlareSize = 450;
   const whiteFlareSize = 330;
   const updateInterval = 1000; // Faster update interval (1 second)
 
   useEffect(() => {
+    const baseColors = ['#333333', '#666666', '#999999', '#cccccc', '#ffffff']; // Grayscale colors
     const initialFlares: Flare[] = baseColors.map((color, index) => ({
       id: index,
       x: 50 + (Math.random() - 0.5) * 20,

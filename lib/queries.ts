@@ -1,6 +1,6 @@
 import { genSaltSync, hashSync } from 'bcrypt-ts'
 
-import { supabase, User, Chat, Task, ActionLog, UserPreferences } from './supabase'
+import { supabase, User, Chat, Task, ActionLog, UserPreferences, RecurringTaskSupabase } from './supabase'
 
 // USER
 export async function getUser(email: string): Promise<User[]> {
@@ -299,4 +299,106 @@ export async function saveUserPreferences(userId: string, preferences: Partial<U
     if (error) throw error
     return data[0]
   }
-} 
+}
+
+// RECURRING TASK
+export async function createRecurringTask(userId: string, data: Pick<RecurringTaskSupabase, 'title' | 'description' | 'status' | 'recurrencepattern'> & { dueDate?: string | null }): Promise<RecurringTaskSupabase> {
+  const insertData: Omit<RecurringTaskSupabase, 'id' | 'createdat' | 'updatedat' | 'completedat'> & { duedate?: string | null } = {
+    title: data.title,
+    description: data.description,
+    status: data.status,
+    userid: userId,
+    completed: false, // Default completed to false for new tasks
+    duedate: data.dueDate ? data.dueDate : null, // Map from dueDate to duedate for Supabase
+    recurrencepattern: data.recurrencepattern,
+  };
+
+  console.log('Inserting recurring task:', insertData);
+  const response = await supabase
+    .from('RecurringTask') // Ensure this table name matches your Supabase table
+    .insert(insertData)
+    .select()
+    .single(); // Assuming insert returns a single record
+  console.log('Supabase insert recurring response:', response);
+  if (response.error) {
+    console.error(
+      'Supabase createRecurringTask error details:',
+      {
+        message: response.error.message,
+        details: response.error.details,
+        hint: response.error.hint,
+        code: response.error.code,
+      }
+    );
+    throw response.error;
+  }
+  return response.data;
+}
+
+export async function updateRecurringTask(taskId: string, userId: string, data: Partial<Omit<RecurringTaskSupabase, 'id' | 'createdat' | 'userid'>> & { dueDate?: string | null, completedAt?: string | null }): Promise<RecurringTaskSupabase> {
+  
+  const { dueDate, completedAt, ...restOfData } = data;
+
+  const updatePayload: Partial<Omit<RecurringTaskSupabase, 'id' | 'createdat' | 'userid'>> & { updatedat: string } = {
+    ...restOfData,
+    updatedat: new Date().toISOString(),
+  };
+
+  if (dueDate !== undefined) {
+    updatePayload.duedate = dueDate || null;
+  }
+
+  if (completedAt !== undefined) {
+    updatePayload.completedat = completedAt || null;
+  }
+  
+  // userId is used for the .eq condition and should not be in the update payload
+  // id, createdat are also not updatable here.
+
+  console.log(`Updating recurring task ${taskId} for user ${userId} with data:`, updatePayload);
+  const { data: updated, error, status, statusText } = await supabase
+    .from('RecurringTask') // Ensure this table name matches your Supabase table
+    .update(updatePayload as any) // Using 'as any' here temporarily if type issues persist with supabase client
+    .eq('id', taskId)
+    .eq('userid', userId)
+    .select()
+    .single(); // Assuming update returns a single record
+  console.log('Supabase response from updateRecurringTask:', { data: updated, error, status, statusText });
+  if (error) {
+    console.error('Error updating recurring task:', error);
+    throw error;
+  }
+  return updated;
+}
+
+export async function deleteRecurringTask(taskId: string, userId: string): Promise<void> {
+  console.log(`Deleting recurring task ${taskId} for user ${userId}`);
+  const { error, status, statusText } = await supabase
+    .from('RecurringTask') // Ensure this table name matches your Supabase table
+    .delete()
+    .eq('id', taskId)
+    .eq('userid', userId);
+  console.log('Supabase response from deleteRecurringTask:', { error, status, statusText });
+  if (error) {
+    console.error('Error deleting recurring task:', error);
+    throw error;
+  }
+}
+
+export async function getUserRecurringTasks(userId: string): Promise<RecurringTaskSupabase[]> {
+  console.log(`Fetching recurring tasks for userId: ${userId}`);
+  const { data, error, status, statusText } = await supabase
+    .from('RecurringTask') // Ensure this table name matches your Supabase table
+    .select('*')
+    .eq('userid', userId)
+    .order('updatedat', { ascending: false });
+
+  console.log('Supabase response from getUserRecurringTasks:', { data, error, status, statusText });
+
+  if (error) {
+    console.error('Error fetching user recurring tasks:', error);
+    throw error;
+  }
+  console.log('Recurring tasks fetched for user:', data);
+  return data || [];
+}

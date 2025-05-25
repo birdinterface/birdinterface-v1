@@ -66,7 +66,7 @@ export function Chat({
                   openModal();
                   toast.dismiss();
                 }}
-                className="px-4 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="px-4 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap shrink-0 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
               >
                 Upgrade
               </button>

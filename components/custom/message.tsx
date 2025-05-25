@@ -3,6 +3,7 @@
 import { Attachment, ToolInvocation } from 'ai';
 import { motion } from 'framer-motion';
 import { PencilIcon } from 'lucide-react';
+import Image from 'next/image';
 import { ReactNode, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -67,12 +68,14 @@ export const Message = ({
         "group-data-[role=user]/message:py-3.5 group-data-[role=user]/message:px-5 group-data-[role=user]/message:bg-muted rounded-xl"
       )}>
         {role === 'assistant' && (
-          <img
+          <Image
             src="/images/blur.png"
             alt="Assistant Icon"
             className="size-8 flex items-center rounded-full justify-center shrink-0"
             style={{ filter: 'blur(4.5px)' }}
             draggable={false}
+            width={32} 
+            height={32}
           />
         )}
         
@@ -83,7 +86,7 @@ export const Message = ({
             className="absolute -left-12 top-1/2 -translate-y-1/2 opacity-0 group-hover/message:opacity-100 transition-opacity"
             onClick={() => setIsEditing(true)}
           >
-            <PencilIcon className="h-4 w-4" />
+            <PencilIcon className="size-4" />
           </Button>
         )}
 
