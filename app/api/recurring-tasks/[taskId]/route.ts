@@ -3,14 +3,17 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { updateRecurringTask, deleteRecurringTask } from '@/lib/queries';
 
-export async function PUT(request: Request, { params }: { params: { taskId: string } }) {
+export async function PUT(
+  request: Request, 
+  context: { params: Promise<{ taskId: string }> }
+) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { taskId } = params;
+    const { taskId } = await context.params;
     const body = await request.json();
 
     // Ensure that fields like title, description, etc. are correctly passed
@@ -33,14 +36,17 @@ export async function PUT(request: Request, { params }: { params: { taskId: stri
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { taskId: string } }) {
+export async function DELETE(
+  request: Request, 
+  context: { params: Promise<{ taskId: string }> }
+) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { taskId } = params;
+    const { taskId } = await context.params;
 
     console.log(`API: Deleting recurring task ${taskId} for user ${session.user.id}`);
     await deleteRecurringTask(taskId, session.user.id);
