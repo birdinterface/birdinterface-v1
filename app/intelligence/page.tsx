@@ -4,7 +4,7 @@ import { Chat } from '@/components/custom/chat';
 import { DEFAULT_MODEL_NAME, models } from '@/lib/model';
 import { generateUUID } from '@/lib/utils';
 
-export default async function IntelligencePage() {
+export default async function Page() {
   const id = generateUUID();
 
   const cookieStore = await cookies();
@@ -13,13 +13,12 @@ export default async function IntelligencePage() {
     models.find((m) => m.name === value)?.name || DEFAULT_MODEL_NAME;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
-      <Chat
-        key={id}
-        id={id}
-        initialMessages={[]}
-        selectedModelName={selectedModelName}
-      />
-    </div>
+    <Chat
+      key={id}
+      id={id}
+      initialMessages={[]}
+      selectedModelName={selectedModelName}
+      api="/intelligence/api/chat"
+    />
   );
 } 

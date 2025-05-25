@@ -52,6 +52,7 @@ export function MultimodalInput({
   messages,
   append,
   handleSubmit,
+  uploadApi = '/api/files/upload',
 }: {
   input: string;
   setInput: (value: string) => void;
@@ -70,6 +71,7 @@ export function MultimodalInput({
     },
     chatRequestOptions?: ChatRequestOptions
   ) => void;
+  uploadApi?: string;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -116,19 +118,19 @@ export function MultimodalInput({
     formData.append('file', file);
 
     try {
-      const response = await fetch(`/api/files/upload`, {
+      const response = await fetch(uploadApi, {
         method: 'POST',
         body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-        const { url, pathname, contentType } = data;
+        const { url, name, contentType } = data;
 
         return {
           url,
-          name: pathname,
-          contentType: contentType,
+          name: name || file.name,
+          contentType: contentType || file.type,
         };
       } else {
         const { error } = await response.json();

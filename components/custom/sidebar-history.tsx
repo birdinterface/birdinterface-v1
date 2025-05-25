@@ -45,7 +45,7 @@ import { cn, fetcher } from '@/lib/utils';
 interface ProcessedChat {
   id: string;
   title: string; 
-  updatedAt: string; // Keep if needed for filtering/display, otherwise remove
+  updatedat: string; // Updated to match database schema
   // Add any other properties your UI needs that the API provides
 }
 

@@ -1,36 +1,23 @@
-import { CoreMessage } from 'ai';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { auth } from '@/app/(auth)/auth';
-import { Chat as PreviewChat } from '@/components/custom/chat';
-import { DEFAULT_MODEL_NAME, models } from '@/lib/model';
+import { Chat } from '@/components/custom/chat';
 import { getChatById } from '@/lib/queries';
-import { Chat } from '@/lib/supabase';
-import { convertToUIMessages } from '@/lib/utils';
+import { DEFAULT_MODEL_NAME, models } from '@/lib/model';
 
-export default async function Page(props: { params: Promise<any> }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const { id } = params;
-  const chatFromDb = await getChatById({ id });
-
-  if (!chatFromDb) {
-    notFound();
-  }
-
-  // type casting
-  const chat: Chat = {
-    ...chatFromDb,
-    messages: convertToUIMessages(chatFromDb.messages as Array<CoreMessage>),
-  };
-
   const session = await auth();
 
-  if (!session || !session.user) {
+  if (!session?.user?.id) {
     return notFound();
   }
 
-  if (session.user.id !== chat.userId) {
+  const chat = await getChatById({ id });
+
+  if (!chat || chat.userid !== session.user.id) {
     return notFound();
   }
 
@@ -39,13 +26,18 @@ export default async function Page(props: { params: Promise<any> }) {
   const selectedModelName =
     models.find((m) => m.name === value)?.name || DEFAULT_MODEL_NAME;
 
+  // Parse messages if they're stored as JSON string
+  const messages = typeof chat.messages === 'string' 
+    ? JSON.parse(chat.messages) 
+    : chat.messages;
+
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
-      <PreviewChat
-        id={chat.id}
-        initialMessages={chat.messages}
-        selectedModelName={selectedModelName}
-      />
-    </div>
+    <Chat
+      key={id}
+      id={id}
+      initialMessages={messages}
+      selectedModelName={selectedModelName}
+      api="/intelligence/api/chat"
+    />
   );
 } 

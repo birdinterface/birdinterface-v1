@@ -30,7 +30,7 @@ export default async function Page(props: { params: Promise<any> }) {
     return notFound();
   }
 
-  if (session.user.id !== chat.userId) {
+  if (session.user.id !== chat.userid) {
     return notFound();
   }
 

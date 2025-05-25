@@ -83,7 +83,7 @@ export const Message = ({
             className="absolute -left-12 top-1/2 -translate-y-1/2 opacity-0 group-hover/message:opacity-100 transition-opacity"
             onClick={() => setIsEditing(true)}
           >
-            <PencilIcon className="h-4 w-4" />
+            <PencilIcon className="size-4" />
           </Button>
         )}
 

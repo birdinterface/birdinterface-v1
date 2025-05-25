@@ -28,10 +28,10 @@ export type User = {
 
 export type Chat = {
   id: string
-  createdAt: string
-  updatedAt: string
+  createdat: string
+  updatedat: string
   messages: any[]
-  userId: string
+  userid: string
 }
 
 export type Task = {

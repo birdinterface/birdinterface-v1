@@ -80,7 +80,7 @@ export async function saveChat({ id, messages, userId }: { id: string; messages:
     // Update
     const { data, error } = await supabase
       .from('Chat')
-      .update({ messages: JSON.stringify(messages), updatedAt: new Date().toISOString() })
+      .update({ messages: JSON.stringify(messages), updatedat: new Date().toISOString() })
       .eq('id', id)
       .select()
     if (error) throw error
@@ -91,10 +91,10 @@ export async function saveChat({ id, messages, userId }: { id: string; messages:
       .from('Chat')
       .insert({
         id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdat: new Date().toISOString(),
+        updatedat: new Date().toISOString(),
         messages: JSON.stringify(messages),
-        userId,
+        userid: userId,
       })
       .select()
     if (error) throw error
@@ -114,8 +114,8 @@ export async function getChatsByUserId({ id }: { id: string }) {
   const { data, error } = await supabase
     .from('Chat')
     .select('*')
-    .eq('userId', id)
-    .order('updatedAt', { ascending: false })
+    .eq('userid', id)
+    .order('updatedat', { ascending: false })
   if (error) throw error
   return data || []
 }

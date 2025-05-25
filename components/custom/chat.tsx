@@ -19,16 +19,24 @@ export function Chat({
   id,
   initialMessages,
   selectedModelName,
+  api = '/api/chat',
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedModelName: Model['name'];
+  api?: string;
 }) {
   const { theme } = useTheme();
   const { openModal } = useModal();
 
+  // Determine upload API based on chat API
+  const uploadApi = api.includes('/intelligence/') 
+    ? '/intelligence/api/files/upload' 
+    : '/api/files/upload';
+
   const { messages, append, reload, stop, isLoading, input, setInput, handleSubmit, setMessages } =
     useChat({
+      api,
       id,
       initialMessages,
       body: {
@@ -155,6 +163,7 @@ export function Chat({
           setAttachments={setAttachments}
           messages={messages}
           append={append}
+          uploadApi={uploadApi}
         />
       </div>
     </div>

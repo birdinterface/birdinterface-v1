@@ -30,7 +30,7 @@ export function groupChatsByDate(chats: Chat[]) {
   const monthGroups = new Map<string, Chat[]>();
 
   chats.forEach(chat => {
-    const chatDate = new Date(chat.updatedAt);
+    const chatDate = new Date(chat.updatedat);
     
     // Most Recent (last 3 days)
     if (isWithinInterval(chatDate, { start: subDays(now, 3), end: now })) {

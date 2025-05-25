@@ -1,6 +1,18 @@
 const COST_PER_INPUT_TOKEN = 0.000005; // $5 per million tokens
 const COST_PER_OUTPUT_TOKEN = 0.000015; // $15 per million tokens
 
+// Pricing per 1K tokens
+const PRICING = {
+  default: { // Assumes grok-3, grok-2-vision-1212 (Update if vision model has different pricing)
+    input: 0.002, // $2 per 1M tokens
+    output: 0.01,  // $10 per 1M tokens
+  },
+  'grok-3-mini': {
+    input: 0.0003, // $0.30 per 1M tokens
+    output: 0.0005, // $0.50 per 1M tokens
+  },
+};
+
 // Add system prompt token count
 const SYSTEM_PROMPT_TOKENS = 100; // Approximate tokens in base system prompt
 
@@ -12,14 +24,13 @@ export const USAGE_LIMITS = {
 
 export function calculateCost(
   inputTokens: number, 
-  outputTokens: number
+  outputTokens: number,
+  modelName: string = 'default' // Add modelName parameter, default to avoid breaking other potential calls
 ): number {
-  // Actual Grok-2 pricing
-  const INPUT_COST_PER_1K_TOKENS = 0.002;   // $2 per 1M tokens = $0.002 per 1K tokens
-  const OUTPUT_COST_PER_1K_TOKENS = 0.01;   // $10 per 1M tokens = $0.01 per 1K tokens
+  const pricingTier = PRICING[modelName as keyof typeof PRICING] || PRICING.default;
 
-  const inputCost = (inputTokens / 1000) * INPUT_COST_PER_1K_TOKENS;
-  const outputCost = (outputTokens / 1000) * OUTPUT_COST_PER_1K_TOKENS;
+  const inputCost = (inputTokens / 1000) * pricingTier.input;
+  const outputCost = (outputTokens / 1000) * pricingTier.output;
 
   // Return total cost rounded to 4 decimal places
   return Number((inputCost + outputCost).toFixed(4));
