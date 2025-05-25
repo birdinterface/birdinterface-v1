@@ -3,13 +3,14 @@ import { NextResponse, NextRequest } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { updateRecurringTask, deleteRecurringTask } from '@/lib/queries';
 
-interface PutContext {
+// Define a common type for the context parameters
+type RouteContext = {
   params: {
     taskId: string;
   };
-}
+};
 
-export async function PUT(request: NextRequest, { params }: PutContext) {
+export async function PUT(request: NextRequest, { params }: RouteContext) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -39,7 +40,7 @@ export async function PUT(request: NextRequest, { params }: PutContext) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { taskId: string } }) {
+export async function DELETE(request: NextRequest, { params }: RouteContext) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
