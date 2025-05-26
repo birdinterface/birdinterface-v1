@@ -94,7 +94,6 @@ export function TaskList({
 
         if (taskNameInput) {
           if (document.activeElement !== taskNameInput) {
-            console.log('Focusing task input:', taskId);
             taskNameInput.focus();
             taskNameInput.setSelectionRange(0, 0);
             lastTaskInputRef.current = taskNameInput;
@@ -102,45 +101,35 @@ export function TaskList({
             
             const taskIndex = filteredTasks.findIndex(t => t.id === taskId);
             focusedTaskPositionRef.current = taskIndex;
-            console.log('Set focused task position to:', taskIndex);
           }
-        } else {
-          console.log('Task input not found for ID:', taskId);
         }
       }, 10);
     });
   }, [filteredTasks]);
 
   const focusLastEmptyTask = useCallback(() => {
-    console.log('Attempting to focus last empty task, filteredTasks length:', filteredTasks.length);
-    
     for (let i = filteredTasks.length - 1; i >= 0; i--) {
       const task = filteredTasks[i];
       if (task.name === '' && task.id !== 'empty') {
-        console.log('Found empty task to focus:', task.id);
         focusTaskInput(task.id);
         return true;
       }
     }
     
     if (filteredTasks.length === 1 && filteredTasks[0].name === '' && filteredTasks[0].id !== 'empty') {
-      console.log('Focusing single empty task:', filteredTasks[0].id);
       focusTaskInput(filteredTasks[0].id);
       return true;
     }
     
-    console.log('No empty task found to focus');
     return false;
   }, [filteredTasks, focusTaskInput]);
 
   useEffect(() => {
     if (maintainFocusRef.current && focusedTaskPositionRef.current >= 0) {
       const targetPosition = focusedTaskPositionRef.current;
-      console.log('Attempting to maintain focus at position:', targetPosition);
       
       if (filteredTasks[targetPosition] && filteredTasks[targetPosition].id !== 'empty') {
         const taskId = filteredTasks[targetPosition].id;
-        console.log('Re-focusing task at position', targetPosition, 'with ID:', taskId);
         
         requestAnimationFrame(() => {
           setTimeout(() => {
@@ -152,7 +141,6 @@ export function TaskList({
               taskNameInput.focus();
               taskNameInput.setSelectionRange(0, 0);
               lastTaskInputRef.current = taskNameInput;
-              console.log('Focus restored to:', taskId);
             }
           }, 5);
         });
@@ -163,7 +151,6 @@ export function TaskList({
   useEffect(() => {
     if (shouldFocusNewTaskRef.current && focusAttemptCountRef.current < 3) {
       focusAttemptCountRef.current++;
-      console.log('Focus attempt #', focusAttemptCountRef.current);
       
       const focused = focusLastEmptyTask();
       
@@ -171,7 +158,6 @@ export function TaskList({
         shouldFocusNewTaskRef.current = false;
         focusAttemptCountRef.current = 0;
       } else if (focusAttemptCountRef.current >= 3) {
-        console.log('Giving up focus attempts');
         shouldFocusNewTaskRef.current = false;
         focusAttemptCountRef.current = 0;
         maintainFocusRef.current = false;
@@ -196,7 +182,6 @@ export function TaskList({
       if (isNaN(parsedDate.getTime())) return undefined;
       return parsedDate;
     } catch (error) {
-      console.warn('Failed to parse date:', dateString, error);
       return undefined;
     }
   };
@@ -220,7 +205,6 @@ export function TaskList({
 
   const addNewTask = () => {
     if (onAddTask && userId) {
-      console.log('Adding new task...');
       shouldFocusNewTaskRef.current = true;
       focusAttemptCountRef.current = 0;
       onAddTask({
@@ -244,7 +228,6 @@ export function TaskList({
     } else if (onUpdateTask) {
       const currentFocusedTask = filteredTasks[focusedTaskPositionRef.current];
       if (currentFocusedTask && currentFocusedTask.id === id && updates.name && updates.name !== '') {
-        console.log('Task got a name, stopping focus maintenance');
         maintainFocusRef.current = false;
         focusedTaskPositionRef.current = -1;
       }
@@ -297,7 +280,6 @@ export function TaskList({
       if (taskId === 'empty') {
         if (emptyTaskData.name.trim() !== '') {
           if (onAddTask && userId) {
-            console.log('Adding task from empty row...');
             shouldFocusNewTaskRef.current = true;
             focusAttemptCountRef.current = 0;
             onAddTask({

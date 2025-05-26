@@ -1005,7 +1005,6 @@ export function RecurringTaskList({
 
         if (taskNameInput) {
           if (document.activeElement !== taskNameInput) {
-            console.log('Focusing recurring task input:', taskId);
             taskNameInput.focus();
             taskNameInput.setSelectionRange(0, 0);
             lastTaskInputRef.current = taskNameInput;
@@ -1013,45 +1012,35 @@ export function RecurringTaskList({
             
             const taskIndex = sortedTasks.findIndex(t => t.id === taskId);
             focusedTaskPositionRef.current = taskIndex;
-            console.log('Set focused task position to:', taskIndex);
           }
-        } else {
-          console.log('Recurring task input not found for ID:', taskId);
         }
       }, 10);
     });
   }, [sortedTasks]);
 
   const focusLastEmptyTask = useCallback(() => {
-    console.log('Attempting to focus last empty recurring task, sortedTasks length:', sortedTasks.length);
-    
     for (let i = sortedTasks.length - 1; i >= 0; i--) {
       const task = sortedTasks[i];
       if (task.name === '' && task.id !== 'empty') {
-        console.log('Found empty recurring task to focus:', task.id);
         focusTaskInput(task.id);
         return true;
       }
     }
     
     if (sortedTasks.length === 1 && sortedTasks[0].name === '' && sortedTasks[0].id !== 'empty') {
-      console.log('Focusing single empty recurring task:', sortedTasks[0].id);
       focusTaskInput(sortedTasks[0].id);
       return true;
     }
     
-    console.log('No empty recurring task found to focus');
     return false;
   }, [sortedTasks, focusTaskInput]);
 
   useEffect(() => {
     if (maintainFocusRef.current && focusedTaskPositionRef.current >= 0) {
       const targetPosition = focusedTaskPositionRef.current;
-      console.log('Attempting to maintain focus at position:', targetPosition);
       
       if (sortedTasks[targetPosition] && sortedTasks[targetPosition].id !== 'empty') {
         const taskId = sortedTasks[targetPosition].id;
-        console.log('Re-focusing recurring task at position', targetPosition, 'with ID:', taskId);
         
         requestAnimationFrame(() => {
           setTimeout(() => {
@@ -1063,7 +1052,6 @@ export function RecurringTaskList({
               taskNameInput.focus();
               taskNameInput.setSelectionRange(0, 0);
               lastTaskInputRef.current = taskNameInput;
-              console.log('Focus restored to:', taskId);
             }
           }, 5);
         });
@@ -1074,7 +1062,6 @@ export function RecurringTaskList({
   useEffect(() => {
     if (shouldFocusNewTaskRef.current && focusAttemptCountRef.current < 3) {
       focusAttemptCountRef.current++;
-      console.log('Focus attempt #', focusAttemptCountRef.current);
       
       const focused = focusLastEmptyTask();
       
@@ -1082,7 +1069,6 @@ export function RecurringTaskList({
         shouldFocusNewTaskRef.current = false;
         focusAttemptCountRef.current = 0;
       } else if (focusAttemptCountRef.current >= 3) {
-        console.log('Giving up focus attempts');
         shouldFocusNewTaskRef.current = false;
         focusAttemptCountRef.current = 0;
         maintainFocusRef.current = false;
@@ -1109,7 +1095,6 @@ export function RecurringTaskList({
 
   const addNewTask = () => {
     if (onAddTask && userId) {
-      console.log('Adding new recurring task...');
       shouldFocusNewTaskRef.current = true;
       focusAttemptCountRef.current = 0;
       onAddTask({
@@ -1130,57 +1115,59 @@ export function RecurringTaskList({
         description: typeof updates.description === 'string' ? updates.description : prev.description,
       }));
     } else if (onUpdateTask) {
+      const currentTask = tasks.find(t => t.id === id); // Renamed from 'task' to 'currentTask' for clarity
+      if (!currentTask) return; // Should not happen for non-empty ids
+
       const currentFocusedTask = sortedTasks[focusedTaskPositionRef.current];
       if (currentFocusedTask && currentFocusedTask.id === id && updates.name && updates.name !== '') {
-        console.log('Recurring task got a name, stopping focus maintenance');
         maintainFocusRef.current = false;
         focusedTaskPositionRef.current = -1;
       }
 
-      if (updates.completed !== undefined) {
-        const now = format(new Date(), 'yyyy-MM-dd');
-        
-        // If completing a recurring task, calculate the next occurrence
-        if (updates.completed) {
-          const task = tasks.find(t => t.id === id);
-          if (task && task.recurrencePattern && task.dueDate) {
-            const parsedPattern = parseRecurrencePattern(task.recurrencePattern);
-            if (parsedPattern.type !== 'invalid') {
-              const currentDueDate = parseTaskDate(task.dueDate);
-              if (currentDueDate) {
-                const nextOccurrence = findNextOccurrenceAfterDate(currentDueDate, parsedPattern);
-                if (nextOccurrence) {
-                  // Update to next occurrence and mark as not completed
-                  const updatedTask = {
-                    ...updates,
-                    completed: false,
-                    completedAt: undefined,
-                    dueDate: format(nextOccurrence, 'yyyy-MM-dd')
-                  };
-                  onUpdateTask(id, updatedTask);
-                  
-                  setShowCompletedAnimation(true);
-                  setTimeout(() => setShowCompletedAnimation(false), 1500);
-                  return;
-                }
-              }
+      // If it's a completion update for a recurring task that reschedules:
+      if (updates.completed && currentTask.recurrencePattern && currentTask.dueDate) {
+        const parsedPattern = parseRecurrencePattern(currentTask.recurrencePattern);
+        if (parsedPattern.type !== 'invalid') {
+          const currentDueDate = parseTaskDate(currentTask.dueDate);
+          if (currentDueDate) {
+            const nextOccurrence = findNextOccurrenceAfterDate(currentDueDate, parsedPattern);
+            if (nextOccurrence) {
+              // Update to next occurrence and mark as not completed
+              onUpdateTask(id, {
+                ...updates, // original {completed: true}
+                completed: false, // Reset for next occurrence
+                completedAt: undefined, // Reset
+                dueDate: format(nextOccurrence, 'yyyy-MM-dd'),
+                recurrencePattern: currentTask.recurrencePattern, // Preserve recurrence pattern
+              });
+              
+              setShowCompletedAnimation(true);
+              setTimeout(() => setShowCompletedAnimation(false), 1500);
+              return; // Handled this case
             }
           }
         }
-        
-        // Handle non-recurring task completion or unchecking
-        const updatedTask = {
-          ...updates,
-          completedAt: updates.completed ? now : undefined
-        };
-        onUpdateTask(id, updatedTask);
-        
-        if (updates.completed) {
-          setShowCompletedAnimation(true);
-          setTimeout(() => setShowCompletedAnimation(false), 1500);
-        }
-      } else {
-        onUpdateTask(id, updates);
+      }
+      
+      // For all other updates (failed recurring, non-recurring completion/uncompletion, other field updates):
+      let payloadForParent: Partial<RecurringTask> = { ...updates };
+
+      if (updates.completed !== undefined) {
+        const now = format(new Date(), 'yyyy-MM-dd');
+        payloadForParent.completedAt = updates.completed ? now : undefined;
+      }
+
+      // If `updates` doesn't specify a new recurrencePattern, use the current task's.
+      if (updates.recurrencePattern === undefined && currentTask) {
+        payloadForParent.recurrencePattern = currentTask.recurrencePattern;
+      }
+      
+      onUpdateTask(id, payloadForParent);
+      
+      // Animation for direct completions (not rescheduled ones)
+      if (updates.completed) { 
+        setShowCompletedAnimation(true);
+        setTimeout(() => setShowCompletedAnimation(false), 1500);
       }
     }
   };
@@ -1206,7 +1193,6 @@ export function RecurringTaskList({
       if (taskId === 'empty') {
         if (emptyTaskData.name.trim() !== '') {
           if (onAddTask && userId) {
-            console.log('Adding recurring task from empty row...');
             shouldFocusNewTaskRef.current = true;
             focusAttemptCountRef.current = 0;
             onAddTask({
@@ -1347,13 +1333,10 @@ export function RecurringTaskList({
                                   recurringDates={(() => {
                                     if (task.recurrencePattern && task.dueDate) {
                                       const parsed = parseRecurrencePattern(task.recurrencePattern);
-                                      console.log('Parsed pattern:', parsed, 'for task:', task.id);
                                       if (parsed.type !== 'invalid') {
                                         const startDate = parseTaskDate(task.dueDate);
-                                        console.log('Start date:', startDate, 'from dueDate:', task.dueDate);
                                         if (startDate) {
                                           const dates = generateRecurringDates(startDate, parsed);
-                                          console.log('Generated recurring dates:', dates.length, 'dates for task:', task.id);
                                           return dates;
                                         }
                                       }
@@ -1385,13 +1368,10 @@ export function RecurringTaskList({
                                   recurringDates={(() => {
                                     if (task.recurrencePattern && task.dueDate) {
                                       const parsed = parseRecurrencePattern(task.recurrencePattern);
-                                      console.log('Parsed pattern:', parsed, 'for task:', task.id);
                                       if (parsed.type !== 'invalid') {
                                         const startDate = parseTaskDate(task.dueDate);
-                                        console.log('Start date:', startDate, 'from dueDate:', task.dueDate);
                                         if (startDate) {
                                           const dates = generateRecurringDates(startDate, parsed);
-                                          console.log('Generated recurring dates:', dates.length, 'dates for task:', task.id);
                                           return dates;
                                         }
                                       }
