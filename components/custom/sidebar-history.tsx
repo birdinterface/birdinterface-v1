@@ -141,7 +141,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           asChild 
           isActive={chat.id === id}
           className={cn(
-            "min-h-[38px] py-0 flex-grow",
+            "min-h-[38px] py-0 flex-grow intelligence-text",
             "@media (hover: none) {active:bg-transparent hover:bg-transparent}",
             "@media (hover: hover) {hover:bg-sidebar-accent}"
           )}
@@ -174,7 +174,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="end">
             <DropdownMenuItem
-              className="text-destructive focus:bg-destructive/15 focus:text-destructive"
+              className="text-destructive focus:bg-destructive/15 focus:text-destructive intelligence-text"
               onSelect={() => {
                 setDeleteId(chat.id);
                 setShowDeleteDialog(true);
@@ -193,7 +193,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     return (
       <SidebarGroup>
         <SidebarGroupContent>
-          <div className="text-zinc-500 h-dvh w-full flex flex-row justify-center items-center text-sm gap-2">
+          <div className="text-zinc-500 h-dvh w-full flex flex-row justify-center items-center intelligence-text gap-2">
             <InfoIcon />
             <div>Login to save and revisit previous chats!</div>
           </div>
@@ -234,7 +234,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton>
+              <SidebarMenuButton className="intelligence-text">
                 <InfoIcon />
                 <span>No chats found</span>
               </SidebarMenuButton>
@@ -254,7 +254,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
             {Object.entries(groupedHistoryData).map(([period, chats]: [string, ProcessedChat[]]) => 
               chats.length > 0 && (
                 <div key={period} className="mb-4">
-                  <div className="px-2 mb-2 text-xs font-medium text-muted-foreground">
+                  <div className="px-2 mb-2 intelligence-text text-muted-foreground">
                     {period}
                   </div>
                   {/* Ensure renderChatItem receives ProcessedChat */}
@@ -268,17 +268,17 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="intelligence-text">Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription className="intelligence-content">
               This action cannot be undone. This will permanently delete your chat and remove it from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="intelligence-text">Cancel</AlertDialogCancel>
             <AlertDialogAction
               type="button"
               autoFocus
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 intelligence-text"
               onClick={handleDelete}
             >
               Continue

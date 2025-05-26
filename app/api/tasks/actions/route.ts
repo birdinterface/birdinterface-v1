@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
 import { auth } from '@/app/(auth)/auth';
-import { executeTaskAction, TaskAction } from '@/lib/task-actions';
 import { logTaskAction } from '@/lib/queries';
+import { executeTaskAction, TaskAction } from '@/lib/task-actions';
 
 export async function POST(request: Request) {
   try {

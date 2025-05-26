@@ -273,19 +273,19 @@ export function Weather({
               }
             )}
           />
-          <div className="text-4xl font-medium text-blue-50">
+          <div className="text-xl font-medium text-blue-50">
             {n(weatherAtLocation.current.temperature_2m)}
             {weatherAtLocation.current_units.temperature_2m}
           </div>
         </div>
 
-        <div className="text-blue-50">{`H:${n(currentHigh)}° L:${n(currentLow)}°`}</div>
+        <div className="text-blue-50 intelligence-content">{`H:${n(currentHigh)}° L:${n(currentLow)}°`}</div>
       </div>
 
       <div className="flex flex-row justify-between">
         {displayTimes.map((time, index) => (
           <div key={time} className="flex flex-col items-center gap-1">
-            <div className="text-blue-100 text-xs">
+            <div className="text-blue-100 intelligence-content">
               {format(new Date(time), 'ha')}
             </div>
             <div
@@ -299,7 +299,7 @@ export function Weather({
                 }
               )}
             />
-            <div className="text-blue-50 text-sm">
+            <div className="text-blue-50 intelligence-content">
               {n(displayTemperatures[index])}
               {weatherAtLocation.hourly_units.temperature_2m}
             </div>

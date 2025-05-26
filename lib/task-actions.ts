@@ -1,6 +1,6 @@
 import { createTask, updateTask, deleteTask, getUserTasks } from '@/lib/queries';
-import { clearTaskContextCache } from '@/lib/task-context';
 import { Task } from '@/lib/supabase';
+import { clearTaskContextCache } from '@/lib/task-context';
 
 export interface TaskAction {
   type: 'create' | 'update' | 'delete' | 'complete' | 'prioritize';

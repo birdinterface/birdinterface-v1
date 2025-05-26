@@ -9,8 +9,8 @@ import { auth } from '@/app/(auth)/auth';
 import { getRelevantKnowledge } from '@/lib/knowledge';
 import { Model, models } from '@/lib/model';
 import { deleteChatById, getChatById, saveChat, updateUser, getUser, updateUserUsage } from '@/lib/queries';
-import { calculateCost, hasExceededLimit, getNextResetDate } from '@/lib/usage';
 import { getUserTaskContext, formatTaskContextForAI } from '@/lib/task-context';
+import { calculateCost, hasExceededLimit, getNextResetDate } from '@/lib/usage';
 
 // Create xAI provider instance
 const xai = createOpenAI({

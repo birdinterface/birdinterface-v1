@@ -25,7 +25,7 @@ export function ChatHeader({
         >
           <Link href="/intelligence">
             <Plus />
-            <span className="md:sr-only">New Chat</span>
+            <span className="md:sr-only intelligence-text">New Chat</span>
           </Link>
         </Button>
       </BetterTooltip>

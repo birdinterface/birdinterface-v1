@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import React, { memo, useState } from "react";
+import React, { memo, useState, Children } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -26,9 +26,9 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
           <div className="relative group w-full">
             <div className="flex items-center justify-between px-4 py-2 bg-muted/50 dark:bg-muted border-t border-x rounded-t-lg">
               {language && (
-                <span className="text-sm text-muted-foreground">
-                  {language}
-                </span>
+                              <span className="intelligence-content text-muted-foreground">
+                {language}
+              </span>
               )}
               <CopyButton content={String(children).replace(/\n$/, "")} />
             </div>
@@ -37,13 +37,11 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
                 "mb-4 rounded-b-lg border-b border-x bg-muted px-4 py-4",
                 "dark:bg-muted/50",
                 "overflow-x-auto",
-                "[&_*]:!text-[14px]",
-                "[&_*]:!leading-5",
+                "[&_*]:intelligence-content",
                 className
               )}>
                 <code className={cn(
-                  "!text-[14px]",
-                  "!leading-5",
+                  "intelligence-content",
                   className
                 )} {...props}>
                   {children}
@@ -62,28 +60,28 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
     },
     ol: ({ node, children, ...props }: any) => {
       return (
-        <ol className="list-decimal list-outside ml-4" {...props}>
+        <ol className="list-decimal list-outside ml-4 intelligence-content" {...props}>
           {children}
         </ol>
       );
     },
     li: ({ node, children, ...props }: any) => {
       return (
-        <li className="py-1" {...props}>
+        <li className="py-1 intelligence-content" {...props}>
           {children}
         </li>
       );
     },
     ul: ({ node, children, ...props }: any) => {
       return (
-        <ul className="list-decimal list-outside ml-4" {...props}>
+        <ul className="list-decimal list-outside ml-4 intelligence-content" {...props}>
           {children}
         </ul>
       );
     },
     strong: ({ node, children, ...props }: any) => {
       return (
-        <span className="font-semibold" {...props}>
+        <span className="font-semibold intelligence-content" {...props}>
           {children}
         </span>
       );
@@ -91,7 +89,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
     a: ({ node, children, ...props }: any) => {
       return (
         <Link
-          className="text-blue-500 hover:underline"
+          className="text-blue-500 hover:underline intelligence-content"
           target="_blank"
           rel="noreferrer"
           {...props}
@@ -101,7 +99,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
       );
     },
     p: ({ node, children, ...props }: any) => {
-      if (React.Children.toArray(children).every(child => 
+      if (Children.toArray(children).every(child => 
         typeof child === 'string' && child.trim() === ''
       )) {
         return <br />;
@@ -109,7 +107,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
       
       return (
         <p 
-          className="whitespace-pre-wrap mb-2 [&:last-child]:mb-0" 
+          className="whitespace-pre-wrap mb-2 [&:last-child]:mb-0 intelligence-content" 
           {...props}
         >
           {children}
@@ -119,9 +117,11 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   };
 
   return (
-    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-      {children}
-    </ReactMarkdown>
+    <div className="intelligence-content">
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+        {children}
+      </ReactMarkdown>
+    </div>
   );
 };
 

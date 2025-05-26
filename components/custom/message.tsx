@@ -95,7 +95,7 @@ export const Message = ({
                   <Textarea
                     value={editedContent}
                     onChange={(e) => setEditedContent(e.target.value)}
-                    className="min-h-[100px] w-full"
+                    className="min-h-[100px] w-full intelligence-input"
                     disabled={isLoading}
                   />
                   <div className="flex gap-2 justify-end">
@@ -103,12 +103,14 @@ export const Message = ({
                       variant="ghost" 
                       onClick={() => setIsEditing(false)}
                       disabled={isLoading}
+                      className="intelligence-text"
                     >
                       Cancel
                     </Button>
                     <Button 
                       onClick={handleSave}
                       disabled={isLoading}
+                      className="intelligence-text"
                     >
                       {isLoading ? 'Saving...' : 'Save'}
                     </Button>

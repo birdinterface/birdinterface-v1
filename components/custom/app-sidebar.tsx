@@ -25,9 +25,9 @@ export function AppSidebar({ user }: { user: User | undefined }) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild className="intelligence-text">
               <Link href="/intelligence" onClick={() => setOpenMobile(false)}>
-                <span className="text-sm font-medium">New Chat</span>
+                <span>New Chat</span>
               </Link>
             </SidebarMenuButton>
             <BetterTooltip content="New Chat">

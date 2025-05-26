@@ -38,7 +38,7 @@ export function ModelSelector({
           className
         )}
       >
-        <Button variant="ghost">
+        <Button variant="ghost" className="intelligence-text">
           {selectModel?.label}
           <ChevronDown className="text-muted-foreground" />
         </Button>
@@ -55,13 +55,13 @@ export function ModelSelector({
                 saveModel(model.name);
               });
             }}
-            className="gap-4 group/item"
+            className="gap-4 group/item intelligence-text"
             data-active={model.name === optimisticModelName}
           >
             <div className="flex flex-col gap-1 items-start">
               {model.label}
               {model.description && (
-                <div className="text-xs text-muted-foreground">
+                <div className="intelligence-content text-muted-foreground">
                   {model.description}
                 </div>
               )}

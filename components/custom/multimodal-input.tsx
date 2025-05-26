@@ -190,7 +190,7 @@ export function MultimodalInput({
                       content: suggestedAction.action,
                     });
                   }}
-                  className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start break-words overflow-hidden"
+                  className="text-left border rounded-xl px-4 py-3.5 intelligence-text flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start break-words overflow-hidden"
                 >
                   <span className="font-medium">{suggestedAction.title}</span>
                   <span className="text-muted-foreground">
@@ -236,7 +236,7 @@ export function MultimodalInput({
         placeholder="Ask AdvancersAI anything"
         value={input}
         onChange={handleInput}
-        className="min-h-[24px] overflow-hidden resize-none rounded-xl p-4 pb-12 focus-visible:ring-0 focus-visible:ring-offset-0 text-base bg-muted border-none"
+        className="min-h-[24px] overflow-hidden resize-none rounded-xl p-4 pb-12 focus-visible:ring-0 focus-visible:ring-offset-0 intelligence-input bg-muted border-none"
         rows={2}
         onKeyDown={(event) => {
           if (event.key === 'Enter' && !event.shiftKey) {

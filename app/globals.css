@@ -342,3 +342,50 @@ nav {
   letter-spacing: 0.05em;
   font-size: 10px;
 }
+
+/* Add styles for intelligence section */
+.intelligence-text {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  font-size: 11px !important;
+  opacity: 0.95 !important;
+  line-height: 1.4 !important;
+}
+
+.intelligence-input {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+  font-size: 11px !important;
+  opacity: 0.95 !important;
+  line-height: 1.4 !important;
+}
+
+.intelligence-content {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+  font-size: 11px !important;
+  line-height: 1.7 !important;
+  opacity: 0.95 !important;
+}
+
+/* Additional spacing for intelligence text elements */
+.intelligence-content p {
+  margin-bottom: 0.75rem !important;
+  line-height: 1.7 !important;
+}
+
+.intelligence-content p:last-child {
+  margin-bottom: 0 !important;
+}
+
+.intelligence-content li {
+  margin-bottom: 0.25rem !important;
+  line-height: 1.7 !important;
+}
+
+.intelligence-content code {
+  line-height: 1.5 !important;
+}
