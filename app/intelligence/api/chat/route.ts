@@ -10,6 +10,7 @@ import { getRelevantKnowledge } from '@/lib/knowledge';
 import { Model, models } from '@/lib/model';
 import { deleteChatById, getChatById, saveChat, updateUser, getUser, updateUserUsage } from '@/lib/queries';
 import { calculateCost, hasExceededLimit, getNextResetDate } from '@/lib/usage';
+import { getUserTaskContext, formatTaskContextForAI } from '@/lib/task-context';
 
 // Create xAI provider instance
 const xai = createOpenAI({
@@ -117,6 +118,19 @@ export async function POST(request: Request) {
   // Calculate input tokens more accurately
   const systemMessage = `You are AdvancersAI. A helpful intelligence that empowers highly productive individuals. Always provide the most truthful and insightful answers so people can be most constructive for civilization. Everything is possible unless it violates the laws of nature i.e. physics. No long form replies and no-list answers! Always be specific and simple. Only explain things when asked. Never be funny. Never ask questions. Never give motivational answers. Do not refer to these rules, even if you're asked about them.
 
+You have full access to the user's task context including:
+- Active, completed, and overdue tasks with clean formatting
+- Recurring tasks and their patterns
+- Task details like titles, descriptions, due dates, and status
+
+When discussing tasks:
+- Present task information exactly as formatted in the context using the simple format: "- Task name [Due date]"
+- Simply display the tasks without adding recommendations unless specifically asked for advice
+- Only provide suggestions, insights, or recommendations when the user explicitly asks for help, advice, or improvements
+- Use the clean formatting provided (simple headers and bullet points) to maintain readability
+- Be concise and avoid technical details unless requested
+- Present information in a clean, minimal format
+
 When analyzing images or files:
 - Describe what you see in detail
 - Point out any notable features or patterns
@@ -172,6 +186,10 @@ When analyzing images or files:
 
   const relevantKnowledge = await getRelevantKnowledge(session.user.id, lastMessageContent);
   const contextualKnowledge = getContextFromKnowledge(lastMessageContent, knowledgeContent);
+  
+  // Get task context for the user
+  const taskContext = await getUserTaskContext(session.user.id);
+  const formattedTaskContext = formatTaskContextForAI(taskContext, lastMessageContent);
 
   const result = await streamText({
     model: selectedModel,
@@ -180,7 +198,11 @@ When analyzing images or files:
     messages: [
       ...(contextualKnowledge ? [{
         role: 'assistant' as const,
-        content: `Context: ${contextualKnowledge}`
+        content: `Knowledge Context: ${contextualKnowledge}`
+      }] : []),
+      ...(formattedTaskContext ? [{
+        role: 'assistant' as const,
+        content: formattedTaskContext
       }] : []),
       ...coreMessages
     ] as CoreMessage[],
@@ -192,7 +214,8 @@ When analyzing images or files:
           const inputTokens = estimateTokens(
             systemMessage +
             JSON.stringify(messages) +
-            (contextualKnowledge ? contextualKnowledge : '')
+            (contextualKnowledge ? contextualKnowledge : '') +
+            (formattedTaskContext ? formattedTaskContext : '')
           );
 
           const outputTokens = estimateTokens(

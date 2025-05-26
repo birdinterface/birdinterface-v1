@@ -224,32 +224,77 @@ export async function getUserTasks(userId: string): Promise<Task[]> {
 
 // ACTION LOG
 export async function logTaskAction(data: Omit<ActionLog, 'id' | 'timestamp'>): Promise<ActionLog> {
+  // Map camelCase to lowercase for database
+  const insertData = {
+    taskid: data.taskId,
+    userid: data.userId,
+    actortype: data.actorType,
+    actorid: data.actorId,
+    actiontype: data.actionType,
+    details: data.details,
+    timestamp: new Date().toISOString()
+  };
+  
   const { data: inserted, error } = await supabase
     .from('ActionLog')
-    .insert({ ...data, timestamp: new Date().toISOString() })
+    .insert(insertData)
     .select()
   if (error) throw error
-  return inserted?.[0]
+  
+  // Convert from database format to application format
+  const log = inserted?.[0];
+  return {
+    id: log.id,
+    taskId: log.taskid,
+    userId: log.userid,
+    actorType: log.actortype,
+    actorId: log.actorid,
+    actionType: log.actiontype,
+    details: log.details,
+    timestamp: log.timestamp
+  }
 }
 
 export async function getTaskActionLogs(taskId: string): Promise<ActionLog[]> {
   const { data, error } = await supabase
     .from('ActionLog')
     .select('*')
-    .eq('taskId', taskId)
+    .eq('taskid', taskId)
     .order('timestamp', { ascending: false })
   if (error) throw error
-  return data || []
+  
+  // Convert from database format to application format
+  return (data || []).map((log: any) => ({
+    id: log.id,
+    taskId: log.taskid,
+    userId: log.userid,
+    actorType: log.actortype,
+    actorId: log.actorid,
+    actionType: log.actiontype,
+    details: log.details,
+    timestamp: log.timestamp
+  }))
 }
 
 export async function getUserActionLogs(userId: string): Promise<ActionLog[]> {
   const { data, error } = await supabase
     .from('ActionLog')
     .select('*')
-    .eq('userId', userId)
+    .eq('userid', userId)
     .order('timestamp', { ascending: false })
   if (error) throw error
-  return data || []
+  
+  // Convert from database format to application format
+  return (data || []).map((log: any) => ({
+    id: log.id,
+    taskId: log.taskid,
+    userId: log.userid,
+    actorType: log.actortype,
+    actorId: log.actorid,
+    actionType: log.actiontype,
+    details: log.details,
+    timestamp: log.timestamp
+  }))
 }
 
 // USER PREFERENCES

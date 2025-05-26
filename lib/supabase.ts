@@ -72,6 +72,17 @@ export type ActionLog = {
   timestamp: string
 }
 
+export type ActionLogSupabase = {
+  id: string
+  taskid: string
+  userid: string
+  actortype: string
+  actorid: string
+  actiontype: string
+  details: any
+  timestamp: string
+}
+
 export type UserPreferences = {
   id: string
   userId: string
