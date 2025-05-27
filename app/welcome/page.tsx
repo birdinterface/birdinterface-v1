@@ -103,7 +103,7 @@ const Welcome = () => {
         <div className="absolute inset-0 flex flex-col items-center z-20">
           <div className="relative size-[160px] mt-10 mb-9">
             <Image
-              src="/images/logowhites.png"
+              src="/images/Birdinterface-white.png"
               alt="Bird Interface Logo"
               width={200}
               height={200}
