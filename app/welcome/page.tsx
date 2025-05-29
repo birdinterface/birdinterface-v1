@@ -23,7 +23,7 @@ const Welcome = () => {
   const [error, setError] = useState('');
   const [displayText, setDisplayText] = useState('');
   const [isTextComplete, setIsTextComplete] = useState(false);
-  const fullText = "An intelligent personal interface that understands your whole life.";
+  const fullText = "An AI that understands your whole life.";
   const words = fullText.split(' ');
 
   useEffect(() => {
