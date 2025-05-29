@@ -23,7 +23,7 @@ const Welcome = () => {
   const [error, setError] = useState('');
   const [displayText, setDisplayText] = useState('');
   const [isTextComplete, setIsTextComplete] = useState(false);
-  const fullText = "A next generation computer interface.";
+  const fullText = "An intelligent personal interface.";
   const words = fullText.split(' ');
 
   useEffect(() => {
