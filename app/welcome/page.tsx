@@ -174,7 +174,7 @@ const Welcome = () => {
               The first essential step is to unify a user&apos;s core data into one elegant interface, with all core components built from the ground up - starting with tasks, calendar, a g-drive-like system, curator (to store and organize anything online like videos, posts, websites, books, movies, music), an AI chat interface, maps, mail, audio/video/messaging,  financial overview, and browser.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              This unique combination creates a big unlock in many ways. For example, we can now bring the best and most relevant knowledge, insights and capabilities from the internet directly to the interface of the user, and serve it in the right places and at the right time.
+              This unique combination creates a big unlock in many ways. For example, we can bring the best and most relevant knowledge, insights and capabilities from the internet directly to the interface of the user, and serve it in the right places and at the right time.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               Once we achieve unification of the core data, we&apos;ll then train LLMs to emulate the interface so every pixel can be generated, which sets the AI free to better serve the user&apos;s needs and preferences while maintaining UI and data consistency.
@@ -221,7 +221,7 @@ const Welcome = () => {
               <li className="text-base">Explore blockchain integration for data ownership</li>
             </ol>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              If you find it important to unify a user&apos;s core data, empower individuals fundamentally in their own pursuits and are excited about the mission - let&apos;s come together. I&apos;m seeking founding engineers and partners with expertise in AI systems, model optimization, hardware, and scalable architecture to help build the future. Reach out directly: <a href="mailto:alex@birdinterface.com" className="text-blue-600 underline decoration-transparent underline-offset-4 transition-all duration-300 hover:text-gray-400 hover:decoration-current">alex@birdinterface.com</a>
+              If you also find it important to unify a user&apos;s core data and are excited about the mission - let&apos;s come together. I&apos;m seeking founding engineers and partners with expertise in AI systems, model optimization, hardware, and scalable architecture to help build the future. Reach out directly: <a href="mailto:alex@birdinterface.com" className="text-blue-600 underline decoration-transparent underline-offset-4 transition-all duration-300 hover:text-gray-400 hover:decoration-current">alex@birdinterface.com</a>
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
