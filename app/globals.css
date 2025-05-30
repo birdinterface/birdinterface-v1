@@ -389,3 +389,33 @@ nav {
 .intelligence-content code {
   line-height: 1.5 !important;
 }
+
+/* Always show scrollbar and make it thinner */
+::-webkit-scrollbar {
+  width: 8px; /* Adjust as needed */
+  height: 8px; /* Adjust as needed */
+}
+
+/* Make scrollbar track transparent */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--primary)); /* Or your desired color */
+  border-radius: 10px;
+  border: 2px solid transparent; /* Adjusts thumb size relative to track and adds padding */
+  background-clip: content-box;
+}
+
+/* Make scrollbar thumb visible on hover (optional, as it's always visible now) */
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--primary-foreground)); /* Or a slightly different color on hover */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin; /* "auto" or "thin" */
+  scrollbar-color: hsl(var(--primary)) transparent; /* thumb and track color */
+}

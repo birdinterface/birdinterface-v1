@@ -13,6 +13,7 @@ import '../../public/css/stars.css';
 import { PreloadImages } from '@/components/PreloadImages';
 import { criticalImages } from '@/lib/images';
 import { cn } from "@/lib/utils";
+import FlashlightEffect from '../../components/custom/flashlight-effect';
 
 const Welcome = () => {
   const [email, setEmail] = useState('');
@@ -83,7 +84,8 @@ const Welcome = () => {
       {/* Outer container now allows scrolling */}
       <div className="w-full bg-black min-h-screen">
         {/* Hero Section - Adjusted for scrolling */}
-        <div className="relative flex flex-col items-center z-20 h-screen">
+        <div className="hero-section-for-flashlight relative flex flex-col items-center z-20 h-screen">
+          <FlashlightEffect />
           <div className="relative size-[160px] mt-10 mb-9">
             <Image
               src="/images/Birdinterface-white.png"
