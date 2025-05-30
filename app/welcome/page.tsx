@@ -22,9 +22,9 @@ const Welcome = () => {
   const [displayText, setDisplayText] = useState('');
   const [isTextComplete, setIsTextComplete] = useState(false);
   const fullText = "An AI that understands your whole life.";
-  const words = fullText.split(' ');
 
   useEffect(() => {
+    const words = fullText.split(' ');
     let currentWordIndex = 0;
     const interval = setInterval(() => {
       if (currentWordIndex <= words.length) {
@@ -39,7 +39,7 @@ const Welcome = () => {
     }, 150); // Much faster animation, word by word
 
     return () => clearInterval(interval);
-  }, [words]);
+  }, [fullText]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,7 +167,7 @@ const Welcome = () => {
               I founded Birdinterface to tackle the problem of data fragmentation by building an AI that understands the whole life of a user.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              The first essential step is to unify a user&apos;s core data into one elegant interface, with all core components built from the ground up - starting with tasks, calendar, a g-drive-like system, curator (to store and organize anything online like videos, posts, websites, books, movies, music), an AI chat interface, maps, mail, audio/video/messaging, economics for financial tracking, and browser.
+              The first essential step is to unify a user&apos;s core data into one elegant interface, with all core components built from the ground up - starting with tasks, calendar, a g-drive-like system, curator (to store and organize anything online like videos, posts, websites, books, movies, music), an AI chat interface, maps, mail, audio/video/messaging,  financial overview, and browser.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               This unique combination creates a big unlock in many ways. For example, we can now bring the best and most relevant knowledge, insights and capabilities from the internet directly to the interface of the user, and serve it in the right places and at the right time.
@@ -193,7 +193,7 @@ const Welcome = () => {
               In today&apos;s world, a user&apos;s core data is scattered across incoherent apps, devices, and platforms. This fragmentation creates friction, wastes time, and hinders users to have a state-of-the-art overview over their lives.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Birdinterface will solve this by bringing all important user data into one elegant interface. Bird constantly analyzes this data to predict and serve user&apos;s needs better, e.g. instantly bringing users to desired information pieces/snippets across all data—whether it&apos;s text, messages, files, code, videos, websites, posts, movies, or music. It can also point out gaps or errors in a user&apos;s thinking and visualize real opportunities for value creation in the world, that I call &ldquo;potentials&rdquo;.
+              Birdinterface will solve this by bringing all important user data into one elegant interface. Bird constantly analyzes this data to predict and serve user&apos;s needs better, e.g. instantly bringing users to desired information pieces/snippets across all data—whether it&apos;s text, messages, files, code, videos, websites, posts, movies, or music. It can also point out gaps or errors in a user&apos;s thinking and visualize real opportunities for value creation in the world, that I call &ldquo;Potentials&rdquo;.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
@@ -207,7 +207,7 @@ const Welcome = () => {
               What&apos;s Next
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              With my Alpha launch planned for summer 2025, I aim to build the first five core data components (tasks, calendar, database, curator, intelligence) and grow my user base. Every 1-2 months and over a period of 6-9 months I plan to ship the other five core components (maps, mail, people, economics, browser), while beginning data collection for training our first generative interface model. Looking further ahead, Birdinterface plans to:
+              With my Alpha launch planned for summer 2025, I aim to build the first five core data components (Tasks, Calendar, Database, Curator, Intelligence) and grow my user base. Every 1-2 months and over a period of 6-9 months I plan to ship the other five core components (Map, Mail, People, Finance, Internet), while beginning data collection for training our first generative interface model. Looking further ahead, Birdinterface plans to:
             </p>
             <ol className="list-decimal list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
               <li className="text-base">Develop new innovative displays and devices powered by generative computing, adapting in real-time to user needs</li>
