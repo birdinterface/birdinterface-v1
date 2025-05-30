@@ -177,7 +177,7 @@ const Welcome = () => {
               This unique combination creates a big unlock in many ways. For example, we can bring the best and most relevant knowledge, insights and capabilities from the internet directly to the interface of the user, and serve it in the right places and at the right time.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Once we achieve unification of the core data, we&apos;ll then train LLMs to emulate the interface so every pixel can be generated, which sets the AI free to better serve the user&apos;s needs and preferences while maintaining UI and data consistency.
+              Once we achieve unification of the core data, we&apos;ll then train LLMs to emulate the interface, which sets the AI free to better serve the user&apos;s needs and preferences while maintaining UI and data consistency.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               Today, I&apos;m at an early stage with a prototype used by over 1,000 people every day. I have direct access to these users as my first potential customers, and I&apos;m preparing for an Alpha launch in summer 2025.
@@ -232,7 +232,7 @@ const Welcome = () => {
             </p>
             <ol className="list-decimal list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
               <li className="text-base">Unify core data, build components from the ground up</li>
-              <li className="text-base">Train LLMs to generate every pixel</li>
+              <li className="text-base">Train LLMs to emulate the interface</li>
               <li className="text-base">Build own displays and devices</li>
               <li className="text-base">Build augmentation hardware</li>
               <li className="text-base">Predict people&apos;s actions with high accuracy</li>
