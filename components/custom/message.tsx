@@ -2,8 +2,8 @@
 
 import { Attachment, ToolInvocation } from 'ai';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { PencilIcon } from 'lucide-react';
+import Image from 'next/image';
 import { ReactNode, useState } from 'react';
 import { toast } from 'sonner';
 

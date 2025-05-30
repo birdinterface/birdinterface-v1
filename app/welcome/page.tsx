@@ -187,7 +187,7 @@ const Welcome = () => {
               The Mission
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              At Birdinterface, the mission is to empower individuals in their own pursuits and from an early age. My drive and motivation is to bring more freedom, independence and power to individuals by creating a new computer interface that aligns with the user&apos;s best interests, adapts to its thinking, removes all friction and respects its time. As pointed out in <a href="https://advancers.org" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-400">my philosophy</a>, I believe most systems and structures in civilization/computers/internet are still fundamentally misaligned with people&apos;s best interests - prioritizing control, inefficiency, or profit over individual freedom and advancement.
+              At Birdinterface, the mission is to empower individuals in their own pursuits and from an early age. My drive and motivation is to bring more freedom, independence and power to individuals by creating a new computer interface that aligns with the user&apos;s best interests, adapts to its thinking, removes all friction and respects its time. As pointed out in <a href="https://advancers.org" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline decoration-transparent underline-offset-4 transition-all duration-300 hover:text-gray-400 hover:decoration-current">my philosophy</a>, I believe most systems and structures in civilization/computers/internet are still fundamentally misaligned with people&apos;s best interests - prioritizing control, inefficiency, or profit over individual freedom and advancement.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
@@ -204,7 +204,7 @@ const Welcome = () => {
               Building a Unified Data Interface
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              Birdinterface is a personal research project I&apos;ve developed over 10+ years through continuous friction removal in my computer+phone experience. The latest prototype uses Chrome bookmarks and simplified tools like Todoist, Google Calendar, Google Drive, <a href="https://advancers.ai/welcome" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-400">AdvancersAI</a> (the most aligned AI - that prioritizes truth, user empowerment, and constructive outcomes over biases or commercial agendas), Google Maps, and Google Sheets. My approach is to build all components from the ground up and in their most elegant forms that adhere to strict principles of simplicity and prioritization.
+              Birdinterface is a personal research project I&apos;ve developed over 10+ years through continuous friction removal in my computer+phone experience. The latest prototype uses Chrome bookmarks and simplified tools like Todoist, Google Calendar, Google Drive, <a href="https://advancers.ai/welcome" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline decoration-transparent underline-offset-4 transition-all duration-300 hover:text-gray-400 hover:decoration-current">AdvancersAI</a> (the most aligned AI - that prioritizes truth, user empowerment, and constructive outcomes over biases or commercial agendas), Google Maps, and Google Sheets. My approach is to build all components from the ground up and in their most elegant forms that adhere to strict principles of simplicity and prioritization.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
@@ -221,7 +221,7 @@ const Welcome = () => {
               <li className="text-base">Explore blockchain integration for data ownership</li>
             </ol>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              If you find it important to unify a user&apos;s core data, empower individuals fundamentally in their own pursuits and are excited about the mission - let&apos;s come together. I&apos;m seeking founding engineers and partners with expertise in AI systems, model optimization, hardware, and scalable architecture to help build the future. Reach out directly: <a href="mailto:alex@birdinterface.com" className="text-blue-600 hover:text-blue-400">alex@birdinterface.com</a>
+              If you find it important to unify a user&apos;s core data, empower individuals fundamentally in their own pursuits and are excited about the mission - let&apos;s come together. I&apos;m seeking founding engineers and partners with expertise in AI systems, model optimization, hardware, and scalable architecture to help build the future. Reach out directly: <a href="mailto:alex@birdinterface.com" className="text-blue-600 underline decoration-transparent underline-offset-4 transition-all duration-300 hover:text-gray-400 hover:decoration-current">alex@birdinterface.com</a>
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">

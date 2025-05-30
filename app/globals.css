@@ -248,6 +248,10 @@ html, body {
   html.dark {
     background-color: black;
   }
+
+  a:hover {
+    color: hsl(var(--foreground));
+  }
 }
 
 .skeleton {
