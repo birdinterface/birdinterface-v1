@@ -1,12 +1,11 @@
 "use client";
 
 import { motion, AnimatePresence } from 'framer-motion';
-// import { Bold } from 'lucide-react'; // This was in the original thought but not used. Keeping it commented.
+import { ArrowDown } from 'lucide-react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-// Removed GrainyGradientGlow and DotPattern imports
 import '../../public/css/normalize.css';
 import '../../public/css/webflow.css';
 import '../../public/css/advancers-club-ef3cf37311bfc4b53cc064fc.webflow.css';
@@ -14,7 +13,6 @@ import '../../public/css/stars.css';
 import { PreloadImages } from '@/components/PreloadImages';
 import { criticalImages } from '@/lib/images';
 import { cn } from "@/lib/utils";
-import { ArrowDown } from 'lucide-react'; // Added for the arrow
 
 const Welcome = () => {
   const [email, setEmail] = useState('');
@@ -41,7 +39,7 @@ const Welcome = () => {
     }, 150); // Much faster animation, word by word
 
     return () => clearInterval(interval);
-  }, []);
+  }, [words]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,7 +139,7 @@ const Welcome = () => {
           {/* Arrow pointing down */}
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 cursor-pointer">
             <ArrowDown 
-              className="h-8 w-8 text-neutral-400"
+              className="size-8 text-neutral-400"
               onClick={() => {
                 const missionSection = document.getElementById('mission-section');
                 if (missionSection) {
@@ -159,7 +157,7 @@ const Welcome = () => {
               Mission and Masterplan
             </h2>
             <p className="text-center text-xs font-medium" style={{ color: '#555555', marginBottom: '2rem' }}>
-              Alex Gisbrecht, Founder & CEO of Birdinterface • May 30, 2025
+              Alex Gisbrecht, Founder &amp; CEO of Birdinterface • May 30, 2025
             </p>
             
             <h2 className="text-xl font-bold text-black mb-6 mt-12">
@@ -169,44 +167,44 @@ const Welcome = () => {
               I founded Birdinterface to tackle the problem of data fragmentation by building an AI that understands the whole life of a user.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              The first essential step is to unify a user's core data into one elegant interface, with all core components built from the ground up - starting with tasks, calendar, a g-drive-like system, curator (to store and organize anything online like videos, posts, websites, books, movies, music), an AI chat interface, maps, mail, audio/video/messaging, economics for financial tracking, and browser.
+              The first essential step is to unify a user&apos;s core data into one elegant interface, with all core components built from the ground up - starting with tasks, calendar, a g-drive-like system, curator (to store and organize anything online like videos, posts, websites, books, movies, music), an AI chat interface, maps, mail, audio/video/messaging, economics for financial tracking, and browser.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               This unique combination creates a big unlock in many ways. For example, we can now bring the best and most relevant knowledge, insights and capabilities from the internet directly to the interface of the user, and serve it in the right places and at the right time.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Once we achieve unification of the core data, we'll then train LLMs to emulate the interface so every pixel can be generated, which sets the AI free to better serve the user's needs and preferences while maintaining UI and data consistency.
+              Once we achieve unification of the core data, we&apos;ll then train LLMs to emulate the interface so every pixel can be generated, which sets the AI free to better serve the user&apos;s needs and preferences while maintaining UI and data consistency.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Today, I'm at an early stage with a prototype used by over 1,000 people every day. I have direct access to these users as my first potential customers, and I'm preparing for an Alpha launch in summer 2025.
+              Today, I&apos;m at an early stage with a prototype used by over 1,000 people every day. I have direct access to these users as my first potential customers, and I&apos;m preparing for an Alpha launch in summer 2025.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
               The Mission
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              At Birdinterface, the mission is to empower individuals in their own pursuits and from an early age. My drive and motivation is to bring more freedom, independence and power to individuals by creating a new computer interface that aligns with the user's best interests, adapts to its thinking, removes all friction and respects its time. As pointed out in <a href="https://advancers.org" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-400">my philosophy</a>, I believe most systems and structures in civilization/computers/internet are still fundamentally misaligned with people's best interests - prioritizing control, inefficiency, or profit over individual freedom and advancement.
+              At Birdinterface, the mission is to empower individuals in their own pursuits and from an early age. My drive and motivation is to bring more freedom, independence and power to individuals by creating a new computer interface that aligns with the user&apos;s best interests, adapts to its thinking, removes all friction and respects its time. As pointed out in <a href="https://advancers.org" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-400">my philosophy</a>, I believe most systems and structures in civilization/computers/internet are still fundamentally misaligned with people&apos;s best interests - prioritizing control, inefficiency, or profit over individual freedom and advancement.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
               The Data Fragmentation Problem
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              In today's world, a user's core data is scattered across incoherent apps, devices, and platforms. This fragmentation creates friction, wastes time, and hinders users to have a state-of-the-art overview over their lives.
+              In today&apos;s world, a user&apos;s core data is scattered across incoherent apps, devices, and platforms. This fragmentation creates friction, wastes time, and hinders users to have a state-of-the-art overview over their lives.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Birdinterface will solve this by bringing all important user data into one elegant interface. Bird constantly analyzes this data to predict and serve user's needs better, e.g. instantly bringing users to desired information pieces/snippets across all data—whether it's text, messages, files, code, videos, websites, posts, movies, or music. It can also point out gaps or errors in a user's thinking and visualize real opportunities for value creation in the world, that I call "potentials".
+              Birdinterface will solve this by bringing all important user data into one elegant interface. Bird constantly analyzes this data to predict and serve user&apos;s needs better, e.g. instantly bringing users to desired information pieces/snippets across all data—whether it&apos;s text, messages, files, code, videos, websites, posts, movies, or music. It can also point out gaps or errors in a user&apos;s thinking and visualize real opportunities for value creation in the world, that I call &ldquo;potentials&rdquo;.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
               Building a Unified Data Interface
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              Birdinterface is a personal research project I've developed over 10+ years through continuous friction removal in my computer+phone experience. The latest prototype uses Chrome bookmarks and simplified tools like Todoist, Google Calendar, Google Drive, <a href="https://advancers.ai/welcome" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-400">AdvancersAI</a> (the most aligned AI - that prioritizes truth, user empowerment, and constructive outcomes over biases or commercial agendas), Google Maps, and Google Sheets. My approach is to build all components from the ground up and in their most elegant forms that adhere to strict principles of simplicity and prioritization.
+              Birdinterface is a personal research project I&apos;ve developed over 10+ years through continuous friction removal in my computer+phone experience. The latest prototype uses Chrome bookmarks and simplified tools like Todoist, Google Calendar, Google Drive, <a href="https://advancers.ai/welcome" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-400">AdvancersAI</a> (the most aligned AI - that prioritizes truth, user empowerment, and constructive outcomes over biases or commercial agendas), Google Maps, and Google Sheets. My approach is to build all components from the ground up and in their most elegant forms that adhere to strict principles of simplicity and prioritization.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
-              What's Next
+              What&apos;s Next
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
               With my Alpha launch planned for summer 2025, I aim to build the first five core data components (tasks, calendar, database, curator, intelligence) and grow my user base. Every 1-2 months and over a period of 6-9 months I plan to ship the other five core components (maps, mail, people, economics, browser), while beginning data collection for training our first generative interface model. Looking further ahead, Birdinterface plans to:
@@ -219,7 +217,7 @@ const Welcome = () => {
               <li className="text-base">Explore blockchain integration for data ownership</li>
             </ol>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              If you find it important to unify a user's core data, empower individuals fundamentally in their own pursuits and are excited about the mission - let's come together. I'm seeking founding engineers and partners with expertise in AI systems, model optimization, hardware, and scalable architecture to help build the future. Reach out directly: <a href="mailto:alex@birdinterface.com" className="text-blue-600 hover:text-blue-400">alex@birdinterface.com</a>
+              If you find it important to unify a user&apos;s core data, empower individuals fundamentally in their own pursuits and are excited about the mission - let&apos;s come together. I&apos;m seeking founding engineers and partners with expertise in AI systems, model optimization, hardware, and scalable architecture to help build the future. Reach out directly: <a href="mailto:alex@birdinterface.com" className="text-blue-600 hover:text-blue-400">alex@birdinterface.com</a>
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
@@ -233,7 +231,7 @@ const Welcome = () => {
               <li className="text-base">Train LLMs to generate every pixel</li>
               <li className="text-base">Build own displays and devices</li>
               <li className="text-base">Build augmentation hardware</li>
-              <li className="text-base">Predict people's actions with high accuracy</li>
+              <li className="text-base">Predict people&apos;s actions with high accuracy</li>
             </ol>
             
             <hr className="my-12 border-gray-300" />
