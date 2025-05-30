@@ -10,9 +10,11 @@ import '../../public/css/normalize.css';
 import '../../public/css/webflow.css';
 import '../../public/css/advancers-club-ef3cf37311bfc4b53cc064fc.webflow.css';
 import '../../public/css/stars.css';
+
 import { PreloadImages } from '@/components/PreloadImages';
 import { criticalImages } from '@/lib/images';
 import { cn } from "@/lib/utils";
+
 import FlashlightEffect from '../../components/custom/flashlight-effect';
 
 const Welcome = () => {

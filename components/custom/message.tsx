@@ -2,6 +2,7 @@
 
 import { Attachment, ToolInvocation } from 'ai';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { PencilIcon } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 import { toast } from 'sonner';
@@ -67,9 +68,11 @@ export const Message = ({
         "group-data-[role=user]/message:py-3.5 group-data-[role=user]/message:px-5 group-data-[role=user]/message:bg-muted rounded-xl"
       )}>
         {role === 'assistant' && (
-          <img
+          <Image
             src="/images/blur.png"
             alt="Assistant Icon"
+            width={32}
+            height={32}
             className="size-8 flex items-center rounded-full justify-center shrink-0"
             style={{ filter: 'blur(4.5px)' }}
             draggable={false}

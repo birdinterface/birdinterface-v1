@@ -2,7 +2,7 @@
 
 import { format, parseISO, isToday, isYesterday, isTomorrow, addDays, addWeeks, addMonths, addYears, getDay, startOfDay } from 'date-fns';
 import { Check, ChevronDown, ChevronUp, Calendar, Repeat } from 'lucide-react';
-import React, { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback } from 'react';
+import React, { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback, useMemo } from 'react';
 
 import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -967,7 +967,7 @@ export function RecurringTaskList({
   onUpdateTask?: (id: string, updates: Partial<RecurringTask>) => void;
   onDeleteTask?: (id: string) => void;
 }) {
-  const tasks = externalTasks ?? [];
+  const [internalTasks, setInternalTasks] = useState<RecurringTask[]>(externalTasks || []);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [showCompletedAnimation, setShowCompletedAnimation] = useState(false);
   const [swipeStartX, setSwipeStartX] = useState<number | null>(null);
@@ -979,6 +979,15 @@ export function RecurringTaskList({
   const focusAttemptCountRef = useRef(0);
   const maintainFocusRef = useRef(false);
   const focusedTaskPositionRef = useRef<number>(-1);
+
+  // Use useMemo for tasks to prevent unnecessary re-renders if externalTasks is stable
+  const tasks = useMemo(() => externalTasks || [], [externalTasks]);
+
+  useEffect(() => {
+    if (externalTasks) {
+      setInternalTasks(externalTasks);
+    }
+  }, [externalTasks]);
 
   const sortedTasks = tasks.sort((a, b) => {
     const dateA = new Date(a.dueDate).getTime();

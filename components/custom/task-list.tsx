@@ -2,7 +2,8 @@
 
 import { format, parseISO, isToday, isYesterday, isTomorrow } from 'date-fns';
 import { Check, ChevronDown, ChevronUp, Calendar, Edit2 } from 'lucide-react';
-import React, { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback } from 'react';
+import * as React from 'react';
+import { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback, useMemo } from 'react';
 
 import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
@@ -36,8 +37,8 @@ export function TaskList({
   onUpdateTask?: (id: string, updates: Partial<Task>) => void;
   onDeleteTask?: (id: string) => void;
 }) {
-  // If tasks are provided as a prop, use them directly (controlled component)
-  const tasks = externalTasks ?? [];
+  // Use useMemo for tasks to prevent unnecessary re-renders if externalTasks is stable
+  const tasks = useMemo(() => externalTasks || [], [externalTasks]);
   const [activeTab, setActiveTab] = useState<Tab>('todo');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [showCompletedAnimation, setShowCompletedAnimation] = useState(false);
@@ -57,10 +58,10 @@ export function TaskList({
   const [dragOverTarget, setDragOverTarget] = useState<Tab | null>(null);
   const [emptyTaskData, setEmptyTaskData] = useState({ name: '', description: '' });
   const lastTaskInputRef = useRef<HTMLInputElement | null>(null);
-  const shouldFocusNewTaskRef = useRef(false);
-  const focusAttemptCountRef = useRef(0);
-  const maintainFocusRef = useRef(false);
-  const focusedTaskPositionRef = useRef<number>(-1);
+  const shouldFocusNewTaskRef = React.useRef(false);
+  const focusAttemptCountRef = React.useRef(0);
+  const maintainFocusRef = React.useRef(false);
+  const focusedTaskPositionRef = React.useRef<number>(-1);
 
   const filteredTasks = tasks
     .filter(task => task.status === activeTab)
@@ -124,7 +125,7 @@ export function TaskList({
     return false;
   }, [filteredTasks, focusTaskInput]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (maintainFocusRef.current && focusedTaskPositionRef.current >= 0) {
       const targetPosition = focusedTaskPositionRef.current;
       
@@ -148,7 +149,7 @@ export function TaskList({
     }
   }, [filteredTasks]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (shouldFocusNewTaskRef.current && focusAttemptCountRef.current < 3) {
       focusAttemptCountRef.current++;
       
@@ -165,7 +166,7 @@ export function TaskList({
     }
   }, [filteredTasks, tasks, activeTab, focusLastEmptyTask]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     shouldFocusNewTaskRef.current = false;
     focusAttemptCountRef.current = 0;
     maintainFocusRef.current = false;

@@ -60,7 +60,7 @@ const GrainyGradientGlow: React.FC = () => {
     }, updateInterval);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [baseColors, whiteFlareSize, defaultFlareSize, updateInterval]);
 
   return (
     <div className={styles.grainyGradientContainer}>

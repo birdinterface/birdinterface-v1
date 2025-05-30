@@ -1,6 +1,7 @@
 "use client";
 
 import Head from 'next/head';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import '../../public/css/normalize.css';
 import '../../public/css/webflow.css';
@@ -58,7 +59,7 @@ const Terms = () => {
           <div className="container navbar-container">
             <div className="navbar-holder">
               <div className="navbar-container">
-                <a href="/welcome" className="brand w-nav-brand"><img src="/images/file.png" loading="eager" alt="" className="brand-image" /></a>
+                <a href="/welcome" className="brand w-nav-brand"><Image src="/images/file.png" loading="eager" alt="" width={100} height={24} className="brand-image" /></a>
                 <nav role="navigation" className="nav-menu w-nav-menu">
                   <div className="nav-menu-link-holder" style={{ display: 'none' }}>
                     <div className="nav-menu-link-container adjustingmiddlemobilenav">
@@ -75,7 +76,7 @@ const Terms = () => {
                       <div role="dialog" data-node-type="commerce-cart-container" className="w-commerce-commercecartcontainer cart-container">
                         <div className="w-commerce-commercecartheader cart-header">
                           <h4 className="w-commerce-commercecartheading">Your Cart</h4>
-                          <a href="#" data-node-type="commerce-cart-close-link" role="button" aria-label="Close cart" className="w-commerce-commercecartcloselink w-inline-block"><img src="/images/X-Icon.svg" loading="eager" alt="" className="x-icon" /></a>
+                          <a href="#" data-node-type="commerce-cart-close-link" role="button" aria-label="Close cart" className="w-commerce-commercecartcloselink w-inline-block"><Image src="/images/X-Icon.svg" loading="eager" alt="" width={24} height={24} className="x-icon" /></a>
                         </div>
                         <div className="w-commerce-commercecartformwrapper cart-form-wrapper">
                           <form data-node-type="commerce-cart-form" style={{ display: 'none' }} className="w-commerce-commercecartform">
