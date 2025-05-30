@@ -86,7 +86,7 @@ const Welcome = () => {
       {/* Outer container now allows scrolling */}
       <div className="w-full bg-black min-h-screen">
         {/* Hero Section - Adjusted for scrolling */}
-        <div className="hero-section-for-flashlight relative flex flex-col items-center z-20 h-screen">
+        <div className="hero-section-for-flashlight relative flex flex-col items-center z-20 min-h-screen">
           <FlashlightEffect />
           <div className="relative size-[160px] mt-10 mb-9">
             <Image
