@@ -3,11 +3,11 @@
 import { Attachment, Message } from 'ai';
 import { useChat } from 'ai/react';
 import { ChevronDown, ChevronUp, MessageSquare, History, Plus } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import Image from 'next/image';
-import Link from 'next/link';
 
 import { ChatHistoryModal } from '@/components/custom/chat-history-modal';
 import { Message as PreviewMessage } from '@/components/custom/message';
@@ -152,14 +152,14 @@ export function Chat({
                   }}
                   className="p-1 hover:bg-transparent rounded-md cursor-pointer transition-colors"
                 >
-                  <History className="w-4 h-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
+                  <History className="size-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
                 </div>
                 <Link
                   href="/chat"
                   onClick={(e) => e.stopPropagation()}
                   className="p-1 hover:bg-transparent rounded-md block transition-colors"
                 >
-                  <Plus className="w-4 h-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
+                  <Plus className="size-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
                 </Link>
               </div>
               <div className="flex items-center gap-2">

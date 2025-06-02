@@ -3,10 +3,10 @@
 import { Attachment, Message } from 'ai';
 import { useChat } from 'ai/react';
 import { History, MessageSquare } from 'lucide-react';
+import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import Image from 'next/image';
 
 import { ChatHistoryModal } from '@/components/custom/chat-history-modal';
 import { Message as PreviewMessage } from '@/components/custom/message';
@@ -146,14 +146,14 @@ export function SimplifiedChat({
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-muted-foreground" />
+                <MessageSquare className="size-4 text-muted-foreground" />
                 <span className="text-xs text-foreground task-tab">Intelligence Chat</span>
               </div>
               <button
                 onClick={() => setShowHistoryModal(true)}
                 className="p-1 hover:bg-transparent rounded-md transition-colors"
               >
-                <History className="w-4 h-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
+                <History className="size-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
               </button>
             </div>
           </div>

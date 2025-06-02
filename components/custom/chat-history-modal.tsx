@@ -1,11 +1,11 @@
 'use client';
 
+import { Search, X } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { type User } from 'next-auth';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { Search, X } from 'lucide-react';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
@@ -25,7 +25,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Modal } from '@/components/ui/Modal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Modal } from '@/components/ui/Modal';
 import { cn, fetcher } from '@/lib/utils';
 
 // Define the expected shape of a processed chat object from the API
@@ -266,7 +266,7 @@ export function ChatHistoryModal({ open, onOpenChange, user }: ChatHistoryModalP
             {/* Search Bar */}
             <div className="mb-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
                   placeholder="Search chats..."
                   value={searchQuery}

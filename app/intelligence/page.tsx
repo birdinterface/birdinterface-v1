@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers';
 
 import { auth } from '@/app/(auth)/auth';
+import { IntelligenceInterface } from '@/app/intelligence/intelligence-interface';
 import { DEFAULT_MODEL_NAME, models } from '@/lib/model';
 import { generateUUID } from '@/lib/utils';
-import { IntelligenceInterface } from '@/app/intelligence/intelligence-interface';
 
 export default async function Page() {
   const id = generateUUID();
