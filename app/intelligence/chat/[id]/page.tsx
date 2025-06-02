@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { auth } from '@/app/(auth)/auth';
-import { Chat } from '@/components/custom/chat';
+import { IntelligenceInterface } from '@/app/intelligence/intelligence-interface';
 import { DEFAULT_MODEL_NAME, models } from '@/lib/model';
 import { getChatById } from '@/lib/queries';
 import { convertToUIMessages } from '@/lib/utils';
@@ -49,12 +49,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
 
     return (
-      <Chat
-        key={id}
+      <IntelligenceInterface
         id={id}
-        initialMessages={messages}
         selectedModelName={selectedModelName}
-        api="/intelligence/api/chat"
+        user={session?.user}
+        initialMessages={messages}
       />
     );
   } catch (error) {

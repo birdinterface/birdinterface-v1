@@ -20,7 +20,7 @@ export function ChatHeader({
       <BetterTooltip content="New Chat">
         <Button
           variant="ghost"
-          className="w-auto md:size-8 [&>svg]:!size-5 md:[&>svg]:!size-4 pl-2 md:p-0 order-2 md:order-1 ml-auto md:ml-0 md:hidden group-data-[state=collapsed]/sidebar-wrapper:flex"
+          className="w-auto md:size-8 [&>svg]:!size-5 md:[&>svg]:!size-4 pl-2 md:p-0 order-2 md:order-1 ml-auto md:ml-0 md:hidden group-data-[state=collapsed]/sidebar-wrapper:flex hover:bg-transparent hover:opacity-80 transition-opacity text-black dark:text-white"
           asChild
         >
           <Link href="/intelligence">

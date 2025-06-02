@@ -248,7 +248,7 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="w-full flex flex-col items-center justify-center space-y-4 py-4">
       <TaskList
         tasks={tasks}
         userId={userId}

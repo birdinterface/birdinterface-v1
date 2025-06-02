@@ -163,7 +163,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuAction
               className={cn(
-                "hover:bg-transparent active:bg-transparent h-[25px] flex items-center",
+                "hover:bg-transparent hover:text-black dark:hover:text-white transition-colors active:bg-transparent h-[25px] flex items-center",
                 chat.id !== id ? "hidden md:opacity-0 md:group-hover/menu-item:opacity-100 md:block" : ""
               )}
               showOnHover={chat.id !== id}

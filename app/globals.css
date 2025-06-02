@@ -137,6 +137,8 @@ html, body {
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
     --radius: 0.5rem;
+    /* Chat input background - slightly lighter than muted */
+    --chat-input: 0 0% 98%;
     /* Chart colors (adjust if needed for light theme) */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -178,6 +180,8 @@ html, body {
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
+    /* Chat input background - darker than card */
+    --chat-input: 0 0% 2%;
     /* Chart colors are often kept the same or adjusted slightly */
     /* Sidebar variables (dark theme) */
     --sidebar-background: 0 0% 3.9%; /* Dark */

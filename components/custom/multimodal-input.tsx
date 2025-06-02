@@ -19,29 +19,6 @@ import useWindowSize from './use-window-size';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 
-const suggestedActions = [
-  {
-    title: 'What\'s the',  
-    label: 'Advancers Philosophy?',    
-    action: 'What\'s the Advancers Philosophy?', 
-  },
-  {
-    title: "Describe",
-    label: 'the next 50 years',
-    action: "Describe the next 50 years",
-  },
-  {
-    title: "How can I",
-    label: 'be useful?',
-    action: "How can I be useful?",
-  },
-  {
-    title: "What are the",
-    label: 'misaligned structures?',
-    action: "What are the misaligned structures?",
-  },
-];
-
 export function MultimodalInput({
   input,
   setInput,
@@ -169,39 +146,6 @@ export function MultimodalInput({
 
   return (
     <div className="relative w-full flex flex-col gap-4 max-w-full overflow-x-hidden">
-      {messages.length === 0 &&
-        attachments.length === 0 &&
-        uploadQueue.length === 0 && (
-          <div className="grid sm:grid-cols-2 gap-2 w-full overflow-x-hidden">
-            {suggestedActions.map((suggestedAction, index) => (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ delay: 0.05 * index }}
-                key={index}
-                className={`${index > 1 ? 'hidden sm:block' : 'block'} w-full overflow-hidden`}
-              >
-                <Button
-                  variant="ghost"
-                  onClick={async () => {
-                    append({
-                      role: 'user',
-                      content: suggestedAction.action,
-                    });
-                  }}
-                  className="text-left border rounded-xl px-4 py-3.5 intelligence-text flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start break-words overflow-hidden"
-                >
-                  <span className="font-medium">{suggestedAction.title}</span>
-                  <span className="text-muted-foreground">
-                    {suggestedAction.label}
-                  </span>
-                </Button>
-              </motion.div>
-            ))}
-          </div>
-        )}
-
       <input
         type="file"
         className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
@@ -233,10 +177,10 @@ export function MultimodalInput({
 
       <Textarea
         ref={textareaRef}
-        placeholder="Ask AdvancersAI anything"
+        placeholder="AI that understands your whole life"
         value={input}
         onChange={handleInput}
-        className="min-h-[24px] overflow-hidden resize-none rounded-xl p-4 pb-12 focus-visible:ring-0 focus-visible:ring-offset-0 intelligence-input bg-muted border-none"
+        className="min-h-[24px] overflow-hidden resize-none rounded-xl p-4 pb-12 focus-visible:ring-0 focus-visible:ring-offset-0 intelligence-input bg-chat-input border-none"
         rows={2}
         onKeyDown={(event) => {
           if (event.key === 'Enter' && !event.shiftKey) {
@@ -253,24 +197,29 @@ export function MultimodalInput({
 
       {isLoading ? (
         <Button
-          className="rounded-full p-1.5 h-fit absolute bottom-2 right-2 m-0.5"
+          variant="ghost"
+          className="p-1.5 h-fit absolute bottom-2 right-2 m-0.5 hover:bg-transparent"
           onClick={(event) => {
             event.preventDefault();
             stop();
           }}
         >
-          <StopIcon size={14} />
+          <StopIcon size={14} className="text-black dark:text-white" />
         </Button>
       ) : (
         <Button
-          className="rounded-full p-1.5 h-fit absolute bottom-2 right-2 m-0.5"
+          variant="ghost"
+          className="p-1.5 h-fit absolute bottom-2 right-2 m-0.5 hover:bg-transparent"
           onClick={(event) => {
             event.preventDefault();
             submitForm();
           }}
           disabled={input.length === 0 || uploadQueue.length > 0}
         >
-          <ArrowUpIcon size={14} />
+          <ArrowUpIcon 
+            size={14} 
+            className={input.length > 0 ? "text-black dark:text-white" : "text-muted-foreground"} 
+          />
         </Button>
       )}
     </div>

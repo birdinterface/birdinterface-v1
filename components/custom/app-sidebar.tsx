@@ -32,7 +32,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
             </SidebarMenuButton>
             <BetterTooltip content="New Chat">
               <SidebarMenuAction asChild>
-                <Link href="/intelligence" onClick={() => setOpenMobile(false)}>
+                <Link href="/intelligence" onClick={() => setOpenMobile(false)} className="hover:bg-transparent hover:opacity-80 transition-opacity text-black dark:text-white">
                   <Plus />
                 </Link>
               </SidebarMenuAction>

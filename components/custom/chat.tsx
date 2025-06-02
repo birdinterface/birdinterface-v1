@@ -2,17 +2,19 @@
 
 import { Attachment, Message } from 'ai';
 import { useChat } from 'ai/react';
+import { ChevronDown, ChevronUp, MessageSquare, History, Plus } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { ChatHeader } from '@/components/custom/chat-header';
+import { ChatHistoryModal } from '@/components/custom/chat-history-modal';
 import { Message as PreviewMessage } from '@/components/custom/message';
 import { useScrollToBottom } from '@/components/custom/use-scroll-to-bottom';
 import { Model } from '@/lib/model';
 
 import { MultimodalInput } from './multimodal-input';
-import { Overview } from './overview';
 import { useModal } from '../context/modal-context';
 
 export function Chat({
@@ -20,14 +22,18 @@ export function Chat({
   initialMessages,
   selectedModelName,
   api = '/api/chat',
+  user,
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedModelName: Model['name'];
   api?: string;
+  user?: any;
 }) {
   const { theme } = useTheme();
   const { openModal } = useModal();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   // Ensure initialMessages is an array
   const validInitialMessages = Array.isArray(initialMessages) ? initialMessages : [];
@@ -130,45 +136,114 @@ export function Chat({
   };
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      <ChatHeader selectedModelName={selectedModelName} />
-      <div
-        ref={messagesContainerRef}
-        className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-auto"
-      >
-        {messages.length === 0 && <Overview />}
+    <>
+      <div className="w-full flex items-start justify-center py-4">
+        <div className="w-full max-w-4xl px-4 bg-task-light dark:bg-task-dark rounded-lg mb-4">
+          <div className="p-4">
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="flex items-center justify-between w-full text-left"
+            >
+              <div className="flex items-center gap-2">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowHistoryModal(true);
+                  }}
+                  className="p-1 hover:bg-transparent rounded-md cursor-pointer transition-colors"
+                >
+                  <History className="w-4 h-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
+                </div>
+                <Link
+                  href="/chat"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1 hover:bg-transparent rounded-md block transition-colors"
+                >
+                  <Plus className="w-4 h-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
+                </Link>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground task-tab">[{selectedModelName}]</span>
+                {isCollapsed ? (
+                  <ChevronDown className="size-4 text-muted-foreground" />
+                ) : (
+                  <ChevronUp className="size-4 text-muted-foreground" />
+                )}
+              </div>
+            </button>
+          </div>
+          
+          {!isCollapsed && (
+            <div className="pb-4 px-4">
+              <div className="bg-task-light dark:bg-task-dark rounded-lg overflow-hidden">
+                <div className="h-[calc(100vh-12rem)] flex flex-col">
+                  {/* Messages Area */}
+                  <div
+                    ref={messagesContainerRef}
+                    className="flex-1 overflow-y-auto p-4 space-y-4"
+                  >
+                    {messages.length === 0 && (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="flex flex-col items-center">
+                          <Image 
+                            src="/images/blur.png" 
+                            alt="Birdinterface Logo" 
+                            width={200} 
+                            height={200} 
+                            className="size-[200px] opacity-60" 
+                            style={{ filter: 'blur(25px)' }} 
+                            draggable={false} 
+                          />
+                        </div>
+                      </div>
+                    )}
 
-        {messages.map((message) => (
-          <PreviewMessage
-            key={message.id}
-            id={message.id}
-            role={message.role}
-            content={message.content}
-            attachments={message.experimental_attachments}
-            toolInvocations={message.toolInvocations}
-            onEdit={handleMessageEdit}
-          />
-        ))}
+                    {messages.map((message) => (
+                      <PreviewMessage
+                        key={message.id}
+                        id={message.id}
+                        role={message.role}
+                        content={message.content}
+                        attachments={message.experimental_attachments}
+                        toolInvocations={message.toolInvocations}
+                        onEdit={handleMessageEdit}
+                      />
+                    ))}
 
-        <div
-          ref={messagesEndRef}
-          className="shrink-0 min-w-[24px] min-h-[24px]"
-        />
+                    <div
+                      ref={messagesEndRef}
+                      className="shrink-0 min-w-[24px] min-h-[24px]"
+                    />
+                  </div>
+                  
+                  {/* Input Area */}
+                  <div className="p-4">
+                    <MultimodalInput
+                      input={input}
+                      setInput={setInput}
+                      handleSubmit={handleSubmit}
+                      isLoading={isLoading}
+                      stop={stop}
+                      attachments={attachments}
+                      setAttachments={setAttachments}
+                      messages={messages}
+                      append={append}
+                      uploadApi={uploadApi}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-      <div className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
-        <MultimodalInput
-          input={input}
-          setInput={setInput}
-          handleSubmit={handleSubmit}
-          isLoading={isLoading}
-          stop={stop}
-          attachments={attachments}
-          setAttachments={setAttachments}
-          messages={messages}
-          append={append}
-          uploadApi={uploadApi}
-        />
-      </div>
-    </div>
+
+      {/* Chat History Modal */}
+      <ChatHistoryModal
+        open={showHistoryModal}
+        onOpenChange={setShowHistoryModal}
+        user={user}
+      />
+    </>
   );
 }
