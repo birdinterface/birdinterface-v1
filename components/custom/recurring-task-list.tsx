@@ -1184,13 +1184,24 @@ export function RecurringTaskList({
   const deleteTask = (taskId: string) => {
     if (onDeleteTask) {
       const taskIndex = sortedTasks.findIndex(t => t.id === taskId);
-      onDeleteTask(taskId);
-      
+      onDeleteTask(taskId); // This will eventually update sortedTasks and the DOM
+
       requestAnimationFrame(() => {
+        // Query for task inputs *after* the state update and re-render
         const taskInputs = document.querySelectorAll('.recurring-task-container .task-input[data-task-id]');
-        const targetIndex = Math.min(taskIndex, taskInputs.length - 1);
-        if (targetIndex >= 0) {
-          (taskInputs[targetIndex] as HTMLInputElement)?.focus();
+        
+        if (taskInputs.length > 0) {
+          let newFocusIndex;
+          if (taskIndex > 0) {
+            // If not the first item was deleted, target the one that was above it
+            newFocusIndex = taskIndex - 1;
+          } else {
+            // If the first item was deleted, target the new first item
+            newFocusIndex = 0;
+          }
+          // Ensure the index is within the bounds of the current task inputs
+          const finalFocusIndex = Math.min(newFocusIndex, taskInputs.length - 1);
+          (taskInputs[finalFocusIndex] as HTMLInputElement)?.focus();
         }
       });
     }

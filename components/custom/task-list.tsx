@@ -255,17 +255,25 @@ export function TaskList({
 
   const deleteTask = (taskId: string) => {
     if (onDeleteTask) {
-      // Store the index of the task being deleted
       const taskIndex = filteredTasks.findIndex(t => t.id === taskId);
-      onDeleteTask(taskId);
-      
-      // After deletion, focus the previous task if it exists, but only within this component
+      onDeleteTask(taskId); // This will eventually update filteredTasks and the DOM
+
       requestAnimationFrame(() => {
-        // Use a more specific selector to avoid interfering with recurring tasks
+        // Query for task inputs *after* the state update and re-render
         const taskInputs = document.querySelectorAll('.task-list-container .task-input[data-task-id]');
-        const targetIndex = Math.min(taskIndex, taskInputs.length - 1);
-        if (targetIndex >= 0) {
-          (taskInputs[targetIndex] as HTMLInputElement)?.focus();
+        
+        if (taskInputs.length > 0) {
+          let newFocusIndex;
+          if (taskIndex > 0) {
+            // If not the first item was deleted, target the one that was above it
+            newFocusIndex = taskIndex - 1;
+          } else {
+            // If the first item was deleted, target the new first item
+            newFocusIndex = 0;
+          }
+          // Ensure the index is within the bounds of the current task inputs
+          const finalFocusIndex = Math.min(newFocusIndex, taskInputs.length - 1);
+          (taskInputs[finalFocusIndex] as HTMLInputElement)?.focus();
         }
       });
     }
