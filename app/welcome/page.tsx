@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
 import Head from 'next/head';
 import Image from 'next/image';
+import { Inter } from 'next/font/google';
 import { useEffect, useState } from 'react';
 
 import '../../public/css/normalize.css';
@@ -16,6 +17,8 @@ import { criticalImages } from '@/lib/images';
 import { cn } from "@/lib/utils";
 
 import FlashlightEffect from '../../components/custom/flashlight-effect';
+
+const interFont = Inter({ subsets: ['latin'] });
 
 const Welcome = () => {
   const [email, setEmail] = useState('');
@@ -104,7 +107,8 @@ const Welcome = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full -mt-10">
             <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
               <motion.h1 
-                className="text-white text-3xl font-light mb-12 text-center px-4 h-[80px]"
+                className="text-white text-3xl font-light mb-12 text-center px-4 h-[80px] normal-case"
+                style={{ fontFamily: interFont.style.fontFamily }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
@@ -156,7 +160,10 @@ const Welcome = () => {
       
         {/* New Section for the Mission and Masterplan */}
         <div id="mission-section" className="bg-white py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
+          <div 
+            className="max-w-3xl mx-auto normal-case font-normal" 
+            style={{ fontFamily: interFont.style.fontFamily }}
+          >
             <h2 className="text-3xl font-bold text-black mb-1 text-center">
               Mission and Masterplan
             </h2>
