@@ -175,16 +175,21 @@ const Welcome = () => {
               Unifying Our Life For AI
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              I founded Birdinterface to solve data fragmentation by building an AI that understands a user&apos;s entire life.
+              I founded Birdinterface to solve data fragmentation by building an AI-integrated personal interface.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              The first step is unifying core data into one elegant, ground-up interface—starting with tasks, calendar, a G-Drive-like system, a curator (to organize online content like videos, posts, websites, books, movies, music), AI chat, maps, mail, messaging, financial overview, and browser.
+              The first essential step is unifying core data+tools into one elegant, ground-up interface—starting with tasks, calendar, an improved G-Drive-like system, a curator (to store and organize online content like videos, posts, websites, books, movies, music), agentic AI, maps, mail, messaging, financial overview, and browser.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              This creates a major unlock: we can deliver the most relevant knowledge, insights, and tools from the internet directly to the user—at the right place and time.
+              This creates 3 major unlocks:
             </p>
+            <ol className="list-decimal list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
+              <li className="text-base">The user has all his important data in one place.</li>
+              <li className="text-base">Birdinterface now understands the whole life of a user.</li>
+              <li className="text-base">Birdinterface can deliver the best and most relevant knowledge, insights, and tools from the internet directly to the user—at the right place and time. Knowledge is Power - but only if it&apos;s the right knowledge.</li>
+            </ol>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Once core data is unified, we&apos;ll train LLMs to emulate the interface itself, enabling the AI to serve the user more intelligently while keeping UI and data consistent.
+              As soon as core data is unified (which is the essential first step to create a truly magical experience), we&apos;ll start training LLMs to emulate the interface, freeing AI to serve the user&apos;s needs and preferences more intelligently while maintaining UI and data consistency.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               Currently, we&apos;re in the early stages with a prototype used daily by 1,000+ people. I&apos;m preparing for the Alpha launch in summer 2025.
@@ -194,48 +199,54 @@ const Welcome = () => {
               The Mission
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              At Birdinterface, the mission is to empower individuals—starting from an early age. My goal is to bring more freedom, independence, and power to people by creating a new computer interface that aligns with their best interests, adapts to their thinking, removes friction, and respects their time.
+              At Birdinterface, the mission is to empower humans in their own pursuits and from an early age. We want to bring more freedom, independence, and power to people by creating a completely new, adaptive, intuitive and generative computer interface that aligns with a user&apos;s best interests, adapts to his/her thinking, removes friction, and respects their time.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              As outlined in <a href="https://advancers.org" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline decoration-transparent underline-offset-4 transition-all duration-300 hover:text-gray-400 hover:decoration-current">my philosophy</a>, I believe most systems in civilization, tech, and the internet are still misaligned—favoring control, inefficiency, or profit over individual freedom and progress.
+              As outlined in <a href="https://advancers.org" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline decoration-transparent underline-offset-4 transition-all duration-300 hover:text-gray-400 hover:decoration-current">my philosophy</a>, I believe most systems in civilization, tech, and the internet are still misaligned with true advancement—favoring control, inefficiency, or profit over individual freedom and progress.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
               The Data Fragmentation Problem
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              Today, a user&apos;s core data is scattered across disconnected apps, devices, and platforms—creating friction, wasting time, and blocking a clear overview of life.
+              The fundamental problem is the fragmentation of core data (=what drives one&apos;s curiosity, creativity and will to contribute).
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Birdinterface solves this by unifying all key data into one elegant interface. It continuously analyzes this data to predict and serve user needs—for example, instantly surfacing the right snippet from messages, files, code, videos, websites, or music.
+              Today, a user&apos;s core data is fragmented across disconnected data silos and environments—creating friction, wasting time, and blocking a clear overview of life.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              It can also highlight gaps in thinking and reveal real-world opportunities for value creation—what I call &quot;Potentials.&quot;
+              Birdinterface aims to solve this problem by creating a unified, AI-integrated and high-capability environment, that would be unwise not to use.
+            </p>
+            <p className="text-base mt-4" style={{ color: '#555555' }}>
+              Among other things Birdinterface continuously and automatically analyzes a user&apos;s data to predict and serve user needs better. Bird can almost instantly surface or teleport the user to a desired data snippet across messages, files, code, videos, websites, or music. Bird can also point out gaps or errors in a user&apos;s thinking and visualize real opportunities for value creation, that I call &quot;Potentials&quot;.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
               Building a Unified Data Interface
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              Birdinterface started as a personal research project I&apos;ve developed over 10+ years by continuously removing friction from my computer and phone experience. The current prototype uses Chrome bookmarks with simplified tools like Todoist, Google Calendar, Google Drive, Google Maps, Google Sheets, and my own AI. My approach is to rebuild all components from the ground up—stripped to their most elegant, simple, and prioritized forms.
+              Birdinterface started as a personal research project I&apos;ve developed over 10+ years by continuously removing friction from my computer and phone experience. The current prototype uses Chrome bookmarks with simplified tools like Todoist, Google Calendar, Google Drive, Google Maps, Google Sheets, my own AI and more. My approach is to rebuild all components from the ground up—stripped to their most elegant, simple, and prioritized forms.
             </p>
 
             <h2 className="text-xl font-bold text-black mb-6 mt-12">
               What&apos;s Next
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              With the Alpha launch planned for summer 2025, I aim to build the first five core data components—Tasks, Calendar, Database, Curator, and Intelligence—and grow the user base. Every 1–2 months over the next 6–9 months, I&apos;ll ship the next five—Map, Mail, People, Finance, and Internet—while starting data collection to train our first generative interface model.
+              For the Alpha launch planned in summer 2025, I aim to build the first five core data components—Tasks, Calendar, Database, Curator, and Intelligence—with core functionalities such as full AI context, agentic capabilities within the interface and the ability to generate new functioning components that can also be shared with other users.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Looking ahead, Birdinterface plans to:
+              Thereafter, every 1–2 months and over 6–9 months, we&apos;ll ship the next five—Map, Mail, People (communications hub), Finance, and Internet (sandboxed browser)—while starting data collection to train our first generative interface model.
             </p>
-            <ul className="list-decimal list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
+            <p className="text-base mt-4" style={{ color: '#555555' }}>
+              Looking further ahead, Birdinterface plans to:
+            </p>
+            <ol className="list-decimal list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
               <li className="text-base">Develop adaptive displays and devices powered by generative computing</li>
               <li className="text-base">Integrate a virtual world using real-world models for social, work, and play—with Bird as the HUD</li>
               <li className="text-base">Build augmentation hardware to boost cognition and monitor health</li>
-              <li className="text-base">Sharpen prediction to stay fully in sync with the user</li>
+              <li className="text-base">Enhance prediction accuracy to be truly in-sync with the user</li>
               <li className="text-base">Explore blockchain for data ownership</li>
-            </ul>
+            </ol>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               If rethinking the current computer experience excites you, let&apos;s talk. I&apos;m seeking founding engineers and partners with expertise in AI systems, model optimization, hardware, and scalable architecture.
             </p>
@@ -250,7 +261,7 @@ const Welcome = () => {
               Empower humans—in their own pursuits and from an early age.
             </p>
             <ul className="list-decimal list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
-              <li className="text-base">Unify core data, build components from the ground up</li>
+              <li className="text-base">Unify core data, build core components from the ground up</li>
               <li className="text-base">Train LLMs to emulate the interface</li>
               <li className="text-base">Build custom displays and devices</li>
               <li className="text-base">Develop augmentation hardware</li>
