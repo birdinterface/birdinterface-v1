@@ -24,7 +24,7 @@ const Welcome = () => {
   const [error, setError] = useState('');
   const [displayText, setDisplayText] = useState('');
   const [isTextComplete, setIsTextComplete] = useState(false);
-  const fullText = "An adaptive, intuitive, and generative AI interface that understands a user's entire life.";
+  const fullText = "An intelligent personal interface.";
 
   useEffect(() => {
     const words = fullText.split(' ');
@@ -222,7 +222,7 @@ const Welcome = () => {
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               Looking ahead, Birdinterface plans to:
             </p>
-            <ul className="list-disc list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
+            <ul className="list-decimal list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
               <li className="text-base">Develop adaptive displays and devices powered by generative computing</li>
               <li className="text-base">Integrate a virtual world using real-world models for social, work, and play—with Bird as the HUD</li>
               <li className="text-base">Build augmentation hardware to boost cognition and monitor health</li>
@@ -242,7 +242,7 @@ const Welcome = () => {
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               Empower humans—in their own pursuits and from an early age.
             </p>
-            <ul className="list-disc list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
+            <ul className="list-decimal list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
               <li className="text-base">Unify core data, build components from the ground up</li>
               <li className="text-base">Train LLMs to emulate the interface</li>
               <li className="text-base">Build custom displays and devices</li>
