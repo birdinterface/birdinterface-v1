@@ -180,7 +180,7 @@ export function MultimodalInput({
 
       <Textarea
         ref={textareaRef}
-        placeholder="AI that understands your whole life"
+        placeholder="What's on your mind?"
         value={input}
         onChange={handleInput}
         className="min-h-[24px] overflow-hidden resize-none rounded-xl p-4 pb-12 focus-visible:ring-0 focus-visible:ring-offset-0 intelligence-input bg-chat-input border-none"
