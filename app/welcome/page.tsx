@@ -180,7 +180,7 @@ const Welcome = () => {
               Once core data is unified, we&apos;ll train LLMs to emulate the interface itself, enabling the AI to serve the user more intelligently while keeping UI and data consistent.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Currently, we&apos;re in the early stages with a prototype used daily by 1,000+ people. I&apos;m preparing for an Alpha launch in summer 2025.
+              Currently, we&apos;re in the early stages with a prototype used daily by 1,000+ people. I&apos;m preparing for the Alpha launch in summer 2025.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">
@@ -217,7 +217,7 @@ const Welcome = () => {
               What&apos;s Next
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              With an Alpha launch planned for summer 2025, I aim to build the first five core data components—Tasks, Calendar, Database, Curator, and Intelligence—and grow the user base. Every 1–2 months over the next 6–9 months, I&apos;ll ship the next five—Map, Mail, People, Finance, and Internet—while starting data collection to train our first generative interface model.
+              With the Alpha launch planned for summer 2025, I aim to build the first five core data components—Tasks, Calendar, Database, Curator, and Intelligence—and grow the user base. Every 1–2 months over the next 6–9 months, I&apos;ll ship the next five—Map, Mail, People, Finance, and Internet—while starting data collection to train our first generative interface model.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               Looking ahead, Birdinterface plans to:
