@@ -168,20 +168,25 @@ export async function createTask(userId: string, data: Pick<Task, 'title' | 'des
 export async function updateTask(taskId: string, userId: string, data: Partial<Task>): Promise<Task> {
   const updateData: any = { ...data, updatedat: new Date().toISOString() };
   if (updateData.dueDate !== undefined) {
-    updateData.duedate = updateData.dueDate || null; // Set to null if empty string
+    updateData.duedate = updateData.dueDate || null;
     delete updateData.dueDate;
   }
   if (updateData.completedAt !== undefined) {
-    updateData.completedat = updateData.completedAt || null; // Set to null if empty string
+    updateData.completedat = updateData.completedAt || null;
     delete updateData.completedAt;
   }
+  // Handle the link field
+  if (data.hasOwnProperty('link')) { // Check if link is explicitly being updated
+    updateData.link = data.link === '' ? null : data.link; 
+  }
+
   console.log(`Updating task ${taskId} for user ${userId} with data:`, updateData);
   const { data: updated, error, status, statusText } = await supabase
     .from('Task')
     .update(updateData)
     .eq('id', taskId)
     .eq('userid', userId)
-    .select();
+    .select('*'); // Select all fields, which will include 'link' after DB migration
   console.log('Supabase response from updateTask:', { data: updated, error, status, statusText });
   if (error) {
     console.error('Error updating task:', error);
@@ -208,7 +213,7 @@ export async function getUserTasks(userId: string): Promise<Task[]> {
   console.log(`Fetching tasks for userId: ${userId}`);
   const { data, error, status, statusText } = await supabase
     .from('Task')
-    .select('*')
+    .select('*') // Select all fields, including 'link'
     .eq('userid', userId)
     .order('updatedat', { ascending: false });
 

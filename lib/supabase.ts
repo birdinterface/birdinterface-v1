@@ -45,6 +45,7 @@ export type Task = {
   createdAt: string
   updatedAt: string
   userId: string
+  link: string | null
 }
 
 export type RecurringTaskSupabase = {

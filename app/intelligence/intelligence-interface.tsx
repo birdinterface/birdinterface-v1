@@ -1,7 +1,7 @@
 'use client';
 
 import { Message } from 'ai';
-import { ChevronDown, ChevronUp, MessageSquare, History, Plus } from 'lucide-react';
+import { MessageSquare, History, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -21,18 +21,14 @@ export function IntelligenceInterface({
   user?: any;
   initialMessages?: Array<Message>;
 }) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   return (
     <>
       <div className="w-full flex items-start justify-center py-4">
-        <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-lg mb-4">
+        <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-none mb-4">
           <div className="p-4">
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="flex items-center justify-between w-full text-left"
-            >
+            <div className="flex items-center justify-between w-full text-left">
               <div className="flex items-center gap-2">
                 <div
                   onClick={(e) => {
@@ -52,31 +48,24 @@ export function IntelligenceInterface({
                 </Link>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground task-tab">[{selectedModelName}]</span>
-                {isCollapsed ? (
-                  <ChevronDown className="size-4 text-muted-foreground" />
-                ) : (
-                  <ChevronUp className="size-4 text-muted-foreground" />
-                )}
-              </div>
-            </button>
-          </div>
-          
-          {!isCollapsed && (
-            <div className="pb-4 px-4">
-              <div className="bg-task-light dark:bg-task-dark rounded-lg overflow-hidden">
-                <SimplifiedChat
-                  key={id}
-                  id={id}
-                  initialMessages={initialMessages}
-                  selectedModelName={selectedModelName}
-                  api="/intelligence/api/chat"
-                  user={user}
-                  hideHeader={true}
-                />
+                <span className="text-xs text-muted-foreground task-tab">{selectedModelName}</span>
               </div>
             </div>
-          )}
+          </div>
+          
+          <div className="pb-4">
+            <div className="bg-task-light dark:bg-task-dark rounded-none overflow-hidden">
+              <SimplifiedChat
+                key={id}
+                id={id}
+                initialMessages={initialMessages}
+                selectedModelName={selectedModelName}
+                api="/intelligence/api/chat"
+                user={user}
+                hideHeader={true}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

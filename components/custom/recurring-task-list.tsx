@@ -1269,7 +1269,7 @@ export function RecurringTaskList({
 
   return (
     <div className="w-full flex items-start justify-center recurring-task-container">
-      <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-lg mb-4">
+      <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-none mb-4">
         <div className="p-4">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
@@ -1302,36 +1302,40 @@ export function RecurringTaskList({
                 )}
                 <div
                   className={cn(
-                    "bg-task-light dark:bg-task-dark rounded-lg p-2 transition-transform flex items-start gap-2",
+                    "bg-task-light dark:bg-task-dark rounded-none p-2 transition-transform flex items-start gap-2",
                     { "transform -translate-x-full": taskToDelete === task.id && swipeDistance >= 100 }
                   )}
                   style={{ transform: taskToDelete === task.id ? `translateX(-${swipeDistance}px)` : 'none' }}
                 >
                   <button 
                     className="mt-1 text-foreground hover:text-foreground transition-colors"
-                    onClick={() => updateTask(task.id, { completed: !task.completed })}
+                    onClick={(e) => { e.stopPropagation(); updateTask(task.id, { completed: !task.completed }); }}
                   >
                     <Check className="size-3" />
                   </button>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center justify-between gap-8">
+                      <div className="flex items-center gap-8 min-w-0">
                         <input
                           type="text"
                           value={typeof task.name === 'string' ? task.name : ''}
-                          onChange={(e) => updateTask(task.id, { name: e.target.value })}
-                          onKeyDown={(e) => handleKeyDown(e, task.id)}
-                          className="flex-1 bg-transparent text-xs font-medium focus:outline-none task-input"
+                          onChange={(e) => { e.stopPropagation(); updateTask(task.id, { name: e.target.value }); }}
+                          onKeyDown={(e) => { e.stopPropagation(); handleKeyDown(e, task.id); }}
+                          onMouseDown={(e) => { e.stopPropagation(); }}
+                          onDragStart={(e) => { e.preventDefault(); }}
+                          className="flex-1 bg-transparent text-xs font-medium focus:outline-none task-input tracking-widest"
                           data-task-id={task.id}
                           placeholder={task.id === 'empty' ? "Task Name" : "Task name"}
                         />
                         <input
                           type="text"
                           value={typeof task.description === 'string' ? task.description : ''}
-                          onChange={(e) => updateTask(task.id, { description: e.target.value })}
-                          onKeyDown={(e) => handleKeyDown(e, task.id)}
-                          className="flex-1 bg-transparent text-xs text-muted-foreground focus:outline-none task-input"
+                          onChange={(e) => { e.stopPropagation(); updateTask(task.id, { description: e.target.value }); }}
+                          onKeyDown={(e) => { e.stopPropagation(); handleKeyDown(e, task.id); }}
+                          onMouseDown={(e) => { e.stopPropagation(); }}
+                          onDragStart={(e) => { e.preventDefault(); }}
+                          className="flex-1 bg-transparent text-xs text-muted-foreground focus:outline-none task-input tracking-widest"
                           placeholder="Description"
                         />
                       </div>

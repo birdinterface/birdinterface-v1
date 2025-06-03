@@ -2,6 +2,7 @@
 
 import { Attachment, ChatRequestOptions, CreateMessage, Message } from 'ai';
 import { motion } from 'framer-motion';
+import { Plus, File, Paperclip, SendHorizontal, XIcon } from 'lucide-react';
 import React, {
   useRef,
   useEffect,
@@ -13,11 +14,13 @@ import React, {
 } from 'react';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+
 import { ArrowUpIcon, StopIcon } from './icons';
 import { PreviewAttachment } from './preview-attachment';
 import useWindowSize from './use-window-size';
-import { Button } from '../ui/button';
-import { Textarea } from '../ui/textarea';
 
 export function MultimodalInput({
   input,
@@ -181,7 +184,7 @@ export function MultimodalInput({
         value={input}
         onChange={handleInput}
         className="min-h-[24px] overflow-hidden resize-none rounded-xl p-4 pb-12 focus-visible:ring-0 focus-visible:ring-offset-0 intelligence-input bg-chat-input border-none"
-        rows={2}
+        rows={1}
         onKeyDown={(event) => {
           if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
@@ -194,6 +197,15 @@ export function MultimodalInput({
           }
         }}
       />
+
+      <Button
+        variant="ghost"
+        className="p-1.5 h-fit absolute bottom-2 left-2 m-0.5 hover:bg-transparent"
+        onClick={() => fileInputRef.current?.click()}
+        aria-label="Add attachment"
+      >
+        <Paperclip size={16} className="text-muted-foreground hover:text-black dark:hover:text-white transition-colors -rotate-45" />
+      </Button>
 
       {isLoading ? (
         <Button

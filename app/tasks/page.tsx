@@ -14,6 +14,7 @@ import {
   deleteRecurringTask as deleteRecurringTaskApi,
 } from '@/lib/queries';
 import { Task } from '@/lib/supabase';
+import { clearTaskContextCache } from '@/lib/task-context';
 
 import type { RecurringTask } from '@/components/custom/recurring-task-list';
 import type { Task as UiTask } from '@/components/custom/task-list';
@@ -29,6 +30,7 @@ function toUiTask(task: any): UiTask {
     status: task.status,
     completedAt: task.completedat || '',
     userId: task.userid,
+    link: task.link || undefined,
   };
 }
 
@@ -113,6 +115,7 @@ export default function TasksPage() {
           status: task.status,
         }
       );
+      clearTaskContextCache(realUserId);
       setTasks((prev) => prev.map(t => t.id === tempId ? toUiTask(created) : t));
     } catch (err) {
       setTasks((prev) => prev.filter(t => t.id !== tempId));
@@ -138,6 +141,7 @@ export default function TasksPage() {
           recurrencepattern: task.recurrencePattern || null,
         }
       );
+      clearTaskContextCache(realUserId);
       setRecurringTasks((prev) => prev.map(t => t.id === tempId ? toRecurringTask(created) : t));
     } catch (err) {
       setRecurringTasks((prev) => prev.filter(t => t.id !== tempId));
@@ -166,9 +170,11 @@ export default function TasksPage() {
         status: updates.status,
         completed: updates.completed,
         completedAt: updates.completedAt,
+        link: updates.link,
       };
       console.log('Frontend: Sending to backend:', backendData);
       const updated = await updateTaskApi(id, realUserId, backendData);
+      clearTaskContextCache(realUserId);
       console.log('Frontend: Backend response:', updated);
       setTasks((prev) => prev.map(t => t.id === id ? { ...t, ...updates, ...toUiTask(updated) } : t));
     } catch (err) {
@@ -201,6 +207,7 @@ export default function TasksPage() {
       };
       console.log('Frontend: Sending recurring to backend:', backendData);
       const updated = await updateRecurringTaskApi(id, realUserId, backendData as any);
+      clearTaskContextCache(realUserId);
       console.log('Frontend: Backend recurring response:', updated);
       setRecurringTasks((prev) => prev.map(t => t.id === id ? { ...t, ...updates, ...toRecurringTask(updated) } : t));
     } catch (err) {
@@ -222,6 +229,7 @@ export default function TasksPage() {
         return;
       }
       await deleteTaskApi(id, realUserId);
+      clearTaskContextCache(realUserId);
     } catch (err) {
       setTasks(prevTasks);
       setError('Failed to delete task');
@@ -240,6 +248,7 @@ export default function TasksPage() {
         return;
       }
       await deleteRecurringTaskApi(id, realUserId);
+      clearTaskContextCache(realUserId);
     } catch (err) {
       setRecurringTasks(prevRecurringTasks);
       setError('Failed to delete recurring task'); // Consider a separate error state

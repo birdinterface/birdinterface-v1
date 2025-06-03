@@ -1,5 +1,5 @@
-/* Import Space Grotesk font */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+/* Import Orbitron font */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -25,7 +25,7 @@ html, body {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
-  --font-good-times: 'Good Times', sans-serif;
+  --font-orbitron: 'Orbitron', monospace;
   --dot-size: 1px;
   --dot-space: 22px;
 }
@@ -155,8 +155,8 @@ html, body {
     --sidebar-border: 0 0% 89.8%; /* Lighter border */
     --sidebar-ring: 217.2 91.2% 59.8%; /* Keep blue? */
     /* Task background */
-    --task-background-light: 0 0% 96.1%; /* Light grey (same as secondary) */
-    --task-background-dark: 0 0% 3.9%; /* Original dark card/popover color */
+    --task-background-light: 0 0% 93%; /* Darker grey in light mode - was 96.1% */
+    --task-background-dark: 0 0% 7%; /* Lighter in dark mode - was 3.9% */
   }
 
   .dark {
@@ -193,7 +193,7 @@ html, body {
     --sidebar-border: 0 0% 14.9%; /* Darker border */
     /* --sidebar-ring: ...; /* Adjust if needed */
     /* Task background */
-    --task-background-dark: 0 0% 3.9%; /* Original dark card/popover color */
+    --task-background-dark: 0 0% 7%; /* Lighter in dark mode - was 3.9% */
   }
 
   .theme {
@@ -207,7 +207,9 @@ html, body {
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-good-times);
+    font-family: var(--font-orbitron);
+    text-transform: uppercase;
+    font-weight: 600;
   }
 
   /* Remove dot pattern from body */
@@ -290,10 +292,11 @@ html, body {
 
 /* Add styles moved from navigation.tsx */
 .nav-text {
-  font-family: var(--font-good-times);
-  font-weight: bold;
-  letter-spacing: 0.05em;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  letter-spacing: 0.1em;
   font-size: 10px;
+  text-transform: uppercase;
 }
 
 nav {
@@ -313,21 +316,44 @@ nav {
 
 /* Add styles for tasks */
 .task-tab {
-  font-family: var(--font-good-times);
-  font-weight: bold;
-  letter-spacing: 0.05em;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  letter-spacing: 0.1em;
   font-size: 9px;
+  text-transform: uppercase;
 }
 
 .task-input {
-  font-family: var(--font-good-times);
+  font-family: var(--font-orbitron);
   letter-spacing: 0.05em;
   font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 500;
+  user-select: text;
+  overflow-x: auto;
+  white-space: nowrap;
+  cursor: text;
+  min-width: 0;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  pointer-events: auto;
+}
+
+.task-input::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.task-input:focus {
+  outline: none;
+  user-select: text;
+  cursor: text;
+  pointer-events: auto;
 }
 
 /* Add styles for task calendar */
 .task-calendar-date {
-  font-family: var(--font-good-times);
+  font-family: var(--font-orbitron);
   letter-spacing: 0.05em;
   font-size: 9px;
   min-width: 40px;
@@ -337,46 +363,55 @@ nav {
   align-items: center;
   justify-content: center;
   text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .task-calendar button {
-  font-family: var(--font-good-times);
+  font-family: var(--font-orbitron);
   letter-spacing: 0.05em;
   font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .task-calendar-header {
-  font-family: var(--font-good-times);
+  font-family: var(--font-orbitron);
   letter-spacing: 0.05em;
   font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
 }
 
 /* Add styles for intelligence section */
 .intelligence-text {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+  font-family: var(--font-orbitron) !important;
   font-weight: 600 !important;
   letter-spacing: 0.02em !important;
   font-size: 11px !important;
   opacity: 0.95 !important;
   line-height: 1.4 !important;
+  text-transform: lowercase !important;
 }
 
 .intelligence-input {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+  font-family: var(--font-orbitron) !important;
   font-weight: 400 !important;
   letter-spacing: 0.01em !important;
   font-size: 11px !important;
   opacity: 0.95 !important;
   line-height: 1.4 !important;
+  text-transform: none !important;
 }
 
 .intelligence-content {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+  font-family: var(--font-orbitron) !important;
   font-weight: 400 !important;
   letter-spacing: 0.01em !important;
   font-size: 11px !important;
   line-height: 1.7 !important;
   opacity: 0.95 !important;
+  text-transform: none !important;
 }
 
 /* Additional spacing for intelligence text elements */

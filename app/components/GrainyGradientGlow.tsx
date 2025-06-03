@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 import styles from './GrainyGradientGlow.module.css';
 
@@ -15,7 +15,7 @@ interface Flare {
 const GrainyGradientGlow: React.FC = () => {
   const [flares, setFlares] = useState<Flare[]>([]);
 
-  const baseColors = ['#333333', '#666666', '#999999', '#cccccc', '#ffffff']; // Grayscale colors
+  const baseColors = useMemo(() => ['#333333', '#666666', '#999999', '#cccccc', '#ffffff'], []); // Grayscale colors
   const defaultFlareSize = 450;
   const whiteFlareSize = 330;
   const updateInterval = 1000; // Faster update interval (1 second)

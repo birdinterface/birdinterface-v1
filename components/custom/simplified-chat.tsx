@@ -118,8 +118,11 @@ export function SimplifiedChat({
       return false;
     }
 
+    // Get the original message to preserve its attachments
+    const originalMessage = messages[messageIndex];
+
     // Create a new array with messages up to (but not including) the edited message
-    const updatedMessages = messages.slice(0, messageIndex).map(message => message);
+    const updatedMessages = messages.slice(0, messageIndex);
 
     // Update the messages state immediately
     setMessages(updatedMessages);
@@ -127,10 +130,15 @@ export function SimplifiedChat({
     // Create a new prompt with the edited message
     try {
       // This will add the edited message as a new message
-      append({
-        role: 'user',
-        content: newContent,
-      });
+      await append(
+        {
+          role: 'user',
+          content: newContent,
+        },
+        {
+          experimental_attachments: originalMessage.experimental_attachments,
+        }
+      );
       return true;
     } catch (error) {
       toast.error('Failed to update conversation');
@@ -164,22 +172,6 @@ export function SimplifiedChat({
           ref={messagesContainerRef}
           className="flex-1 overflow-y-auto p-4 space-y-4"
         >
-          {messages.length === 0 && (
-            <div className="flex items-center justify-center h-full">
-              <div className="flex flex-col items-center">
-                <Image 
-                  src="/images/blur.png" 
-                  alt="Birdinterface Logo" 
-                  width={200} 
-                  height={200} 
-                  className="size-[200px] opacity-60" 
-                  style={{ filter: 'blur(25px)' }} 
-                  draggable={false} 
-                />
-              </div>
-            </div>
-          )}
-
           {messages.map((message) => (
             <PreviewMessage
               key={message.id}

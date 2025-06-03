@@ -138,7 +138,7 @@ export function Chat({
   return (
     <>
       <div className="w-full flex items-start justify-center py-4">
-        <div className="w-full max-w-4xl px-4 bg-task-light dark:bg-task-dark rounded-lg mb-4">
+        <div className="w-full max-w-4xl px-4 bg-task-light dark:bg-task-dark rounded-none mb-4">
           <div className="p-4">
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
@@ -175,7 +175,7 @@ export function Chat({
           
           {!isCollapsed && (
             <div className="pb-4 px-4">
-              <div className="bg-task-light dark:bg-task-dark rounded-lg overflow-hidden">
+              <div className="bg-task-light dark:bg-task-dark rounded-none overflow-hidden">
                 <div className="h-[calc(100vh-12rem)] flex flex-col">
                   {/* Messages Area */}
                   <div

@@ -96,6 +96,7 @@ export function convertToUIMessages(
 
     let textContent = "";
     let toolInvocations: Array<ToolInvocation> = [];
+    let attachments: Message['experimental_attachments'] = undefined;
 
     if (typeof message.content === "string") {
       textContent = message.content;
@@ -114,11 +115,16 @@ export function convertToUIMessages(
       }
     }
 
+    if ('experimental_attachments' in message && message.experimental_attachments) {
+      attachments = message.experimental_attachments as Message['experimental_attachments'];
+    }
+
     chatMessages.push({
-      id: generateId(),
+      id: (message as any).id || generateId(),
       role: message.role,
       content: textContent,
       toolInvocations,
+      experimental_attachments: attachments,
     });
 
     return chatMessages;

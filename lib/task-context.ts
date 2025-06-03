@@ -96,47 +96,69 @@ export async function getUserTaskContext(userId: string): Promise<TaskContext> {
 function generateTaskSummary(context: Omit<TaskContext, 'summary' | 'insights' | 'suggestions'>): string {
   const { activeTasks, completedTasks, overdueTasks, recurringTasks } = context;
   
-  let summary = ``;
+  let summaryLines: string[] = [];
+
+  const formatDateDisplay = (dateString: string | null | undefined, isOverdueBase?: boolean): string => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const taskDate = new Date(date);
+    taskDate.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.ceil((taskDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (isOverdueBase) { // For overdue tasks, always show how many days overdue
+        const daysOverdue = Math.abs(diffDays);
+        return `${daysOverdue}d overdue`;
+    }
+
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays < 0) return `${Math.abs(diffDays)}d overdue`;
+    return date.toLocaleDateString(); // Default date format
+  };
 
   // Show overdue tasks first if any
   if (overdueTasks.length > 0) {
-    summary += `Overdue Tasks\n`;
-    overdueTasks.forEach(task => {
-      const daysOverdue = Math.floor((Date.now() - new Date(task.dueDate!).getTime()) / (1000 * 60 * 60 * 24));
-      summary += `${task.title} [${daysOverdue}d overdue]\n`;
+    summaryLines.push(`Overdue Tasks`);
+    overdueTasks.slice(0, 10).forEach(task => {
+      const parts = [task.title];
+      if (task.description) parts.push(task.description);
+      const dateDisplay = formatDateDisplay(task.dueDate, true);
+      if (dateDisplay) parts.push(dateDisplay);
+      summaryLines.push(parts.join(' • '));
     });
-    summary += `\n`;
+    summaryLines.push(''); // Add a blank line for separation
   }
 
   // Show active tasks
   if (activeTasks.length > 0) {
-    summary += `Tasks\n`;
+    summaryLines.push(`Tasks`);
     activeTasks.slice(0, 10).forEach(task => {
-      if (task.dueDate) {
-        const dueDate = new Date(task.dueDate);
-        const today = new Date();
-        const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-        const dueDateDisplay = diffDays === 0 ? 'Today' : 
-                              diffDays === 1 ? 'Tomorrow' : 
-                              diffDays > 0 ? dueDate.toLocaleDateString() : 
-                              `${Math.abs(diffDays)}d overdue`;
-        summary += `${task.title} [${dueDateDisplay}]\n`;
-      } else {
-        summary += `${task.title} [No date]\n`;
-      }
+      const parts = [task.title];
+      if (task.description) parts.push(task.description);
+      const dateDisplay = formatDateDisplay(task.dueDate);
+      if (dateDisplay) parts.push(dateDisplay);
+      summaryLines.push(parts.join(' • '));
     });
-    summary += `\n`;
+    summaryLines.push(''); // Add a blank line for separation
   }
 
   // Show recurring tasks
   if (recurringTasks.length > 0) {
-    // Add horizontal line before recurring tasks if there's already content
-    if (summary.length > 0) {
-      summary += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    if (summaryLines.length > 0 && summaryLines[summaryLines.length -1] !== '') {
+      // Only add separator if there was content and last line wasn't already a separator
+       summaryLines.push(''); // Add a blank line for separation before the horizontal line
     }
-    summary += `Recurring Tasks`;
+     // Add horizontal line before recurring tasks if there's already content
+    if (summaryLines.length > 1) { // Check if there's more than just a potential initial blank line
+        summaryLines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    }
+    summaryLines.push(`Recurring Tasks`);
     
-    // Sort recurring tasks: Tomorrow first, then by date, then no date
     const sortedRecurringTasks = [...recurringTasks].sort((a, b) => {
       if (!a.duedate && !b.duedate) return 0;
       if (!a.duedate) return 1;
@@ -145,30 +167,41 @@ function generateTaskSummary(context: Omit<TaskContext, 'summary' | 'insights' |
       const dateA = new Date(a.duedate);
       const dateB = new Date(b.duedate);
       const today = new Date();
+      today.setHours(0,0,0,0);
+      const taskDateA = new Date(dateA);
+      taskDateA.setHours(0,0,0,0);
+      const taskDateB = new Date(dateB);
+      taskDateB.setHours(0,0,0,0);
       
-      const diffA = Math.ceil((dateA.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-      const diffB = Math.ceil((dateB.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      const diffA = Math.ceil((taskDateA.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      const diffB = Math.ceil((taskDateB.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
       
       return diffA - diffB;
     });
     
     sortedRecurringTasks.slice(0, 10).forEach(task => {
-      if (task.duedate) {
-        const dueDate = new Date(task.duedate);
-        const today = new Date();
-        const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-        const dueDateDisplay = diffDays === 0 ? 'Today' : 
-                              diffDays === 1 ? 'Tomorrow' : 
-                              diffDays > 0 ? dueDate.toLocaleDateString() : 
-                              `${Math.abs(diffDays)}d overdue`;
-        summary += `${task.title} [${dueDateDisplay}]\n`;
-      } else {
-        summary += `${task.title} [No date]\n`;
+      const parts = [task.title];
+      if (task.description) parts.push(task.description);
+      let dateDisplay = formatDateDisplay(task.duedate);
+      if (dateDisplay && task.recurrencepattern) {
+        // Capitalize first letter of recurrence pattern
+        const pattern = task.recurrencepattern.charAt(0).toUpperCase() + task.recurrencepattern.slice(1).toLowerCase();
+        dateDisplay += `, ${pattern}`;
+      } else if (!dateDisplay && task.recurrencepattern) {
+        const pattern = task.recurrencepattern.charAt(0).toUpperCase() + task.recurrencepattern.slice(1).toLowerCase();
+        dateDisplay = pattern; // Show recurrence pattern even if no date
       }
+      if (dateDisplay) parts.push(dateDisplay);
+      summaryLines.push(parts.join(' • '));
     });
   }
 
-  return summary.trim();
+  // Remove last empty line if it exists
+  if (summaryLines.length > 0 && summaryLines[summaryLines.length - 1] === '') {
+    summaryLines.pop();
+  }
+
+  return summaryLines.join('\n').trim();
 }
 
 function getStatusLabel(status: string): string {
@@ -255,41 +288,80 @@ export function formatTaskContextForAI(context: TaskContext, userQuery: string):
 }
 
 function formatTaskDetails(task: Task): string {
-  if (task.dueDate) {
-    const dueDate = new Date(task.dueDate);
-    const today = new Date();
-    const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0 && !task.completed) {
-      return `${task.title} [${Math.abs(diffDays)}d overdue]\n`;
-    } else if (diffDays === 0) {
-      return `${task.title} [Today]\n`;
-    } else if (diffDays === 1) {
-      return `${task.title} [Tomorrow]\n`;
-    } else if (diffDays > 0) {
-      return `${task.title} [${dueDate.toLocaleDateString()}]\n`;
-    }
-  }
+  const parts = [task.title];
+  if (task.description) parts.push(task.description);
   
-  return `${task.title} [No date]\n`;
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const taskDate = new Date(date);
+    taskDate.setHours(0, 0, 0, 0);
+    const diffDays = Math.ceil((taskDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays < 0) return `${Math.abs(diffDays)}d overdue`;
+    return date.toLocaleDateString();
+  };
+
+  const dateDisplay = formatDate(task.dueDate);
+  if (dateDisplay) parts.push(dateDisplay);
+  
+  let detailString = parts.join(' • ');
+
+  if (task.status) {
+    detailString += ` [Status: ${getStatusLabel(task.status)}]`;
+  }
+  if (task.link) {
+    detailString += ` [Link: ${task.link}]`;
+  }
+  if (task.completed && task.completedAt) {
+    detailString += ` [Completed: ${getTimeAgo(new Date(task.completedAt))}]`;
+  }
+  return `- ${detailString}\n`;
 }
 
 function formatRecurringTaskDetails(task: RecurringTaskSupabase): string {
-  if (task.duedate) {
-    const dueDate = new Date(task.duedate);
+  const parts = [task.title];
+  if (task.description) parts.push(task.description);
+
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     const today = new Date();
-    const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) {
-      return `${task.title} [Today]\n`;
-    } else if (diffDays === 1) {
-      return `${task.title} [Tomorrow]\n`;
+    today.setHours(0, 0, 0, 0);
+    const taskDate = new Date(date);
+    taskDate.setHours(0, 0, 0, 0);
+    const diffDays = Math.ceil((taskDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays < 0) return `${Math.abs(diffDays)}d overdue`;
+    return date.toLocaleDateString();
+  };
+  
+  let dateDisplay = formatDate(task.duedate);
+  
+  if (task.recurrencepattern) {
+    const pattern = task.recurrencepattern.charAt(0).toUpperCase() + task.recurrencepattern.slice(1).toLowerCase();
+    if (dateDisplay) {
+      dateDisplay += `, ${pattern}`;
     } else {
-      return `${task.title} [${dueDate.toLocaleDateString()}]\n`;
+      dateDisplay = pattern;
     }
   }
-  
-  return `${task.title} [No date]\n`;
+  if (dateDisplay) parts.push(dateDisplay);
+
+  let detailString = parts.join(' • ');
+
+  if (task.status) {
+    detailString += ` [Status: ${getStatusLabel(task.status)}]`;
+  }
+  // Recurring tasks don't have a direct 'link' or 'completedAt' in the same way singular tasks do in this context.
+  // They generate instances which are then completed.
+  return `- ${detailString}\n`;
 }
 
 function getTimeAgo(date: Date): string {

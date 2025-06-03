@@ -1,12 +1,13 @@
 'use client';
 
 import { format, parseISO, isToday, isYesterday, isTomorrow } from 'date-fns';
-import { Check, ChevronDown, ChevronUp, Calendar, Edit2 } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, Calendar, Edit2, Link as LinkIcon } from 'lucide-react';
 import * as React from 'react';
 import { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback, useMemo } from 'react';
 
 import { CustomCalendar } from '@/components/custom/custom-calendar';
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
+import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
@@ -20,6 +21,7 @@ export type Task = {
   status: 'todo' | 'watch' | 'later' | 'done';
   completedAt?: string;
   userId: string;
+  link?: string;
 };
 
 type Tab = 'todo' | 'watch' | 'later' | 'done';
@@ -62,6 +64,21 @@ export function TaskList({
   const focusAttemptCountRef = React.useRef(0);
   const maintainFocusRef = React.useRef(false);
   const focusedTaskPositionRef = React.useRef<number>(-1);
+  const pointerDownOnInputRef = useRef(false);
+
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [showLinkConfirmationModal, setShowLinkConfirmationModal] = useState(false);
+  const [linkForModal, setLinkForModal] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobileDevice(window.innerWidth < 768);
+    if (typeof window !== 'undefined') {
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      return () => window.removeEventListener('resize', checkMobile);
+    }
+    return () => {};
+  }, []);
 
   const filteredTasks = tasks
     .filter(task => task.status === activeTab)
@@ -227,6 +244,33 @@ export function TaskList({
       }));
       // Do not call onUpdateTask for the placeholder
     } else if (onUpdateTask) {
+      // const currentTask = tasks.find(t => t.id === id); // Not strictly needed here anymore for link logic
+
+      if (updates.description !== undefined) {
+        const urlRegex = /(https?:\/\/\S+)/g; // Regex to find URLs
+        const foundLinks = [];
+        let currentMatch;
+        let newDescription = updates.description;
+
+        while ((currentMatch = urlRegex.exec(updates.description)) !== null) {
+          foundLinks.push(currentMatch[0]);
+          newDescription = newDescription.replace(currentMatch[0], ''); // Remove the found URL
+        }
+        newDescription = newDescription.trim(); // Clean up extra spaces
+
+        if (foundLinks.length > 0) {
+          const existingLinks = tasks.find(t => t.id === id)?.link?.split(',').filter(l => l.trim() !== '') || [];
+          const allLinks = [...new Set([...existingLinks, ...foundLinks])]; // Combine and deduplicate
+          updates.link = allLinks.join(',');
+          updates.description = newDescription;
+        }
+        // If no new links are found, the existing link (if any) and description are preserved
+        // unless the description was explicitly changed to remove links.
+        // If description is changed and no links are found in the new description,
+        // we don't automatically clear existing links unless /removelink is used or similar.
+        // For now, if new links are pasted, they are added. If description is cleared of links, they remain.
+      }
+
       const currentFocusedTask = filteredTasks[focusedTaskPositionRef.current];
       if (currentFocusedTask && currentFocusedTask.id === id && updates.name && updates.name !== '') {
         maintainFocusRef.current = false;
@@ -346,8 +390,25 @@ export function TaskList({
     return () => document.removeEventListener('keydown', handleGlobalKeyDown as any);
   }, []);
 
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      pointerDownOnInputRef.current = false;
+    };
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+    return () => {
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, []);
+
   // Drag and Drop Handlers
   const handleDragStart = (e: DragEvent<HTMLDivElement>, taskId: string) => {
+    if (pointerDownOnInputRef.current) {
+      pointerDownOnInputRef.current = false; // Reset immediately to handle this drag instance
+      e.preventDefault();
+      return;
+    }
+    
+    // If mousedown wasn't on an input, proceed with drag as normal
     e.dataTransfer.setData('text/plain', taskId);
     setDraggingTaskId(taskId);
   };
@@ -470,7 +531,7 @@ export function TaskList({
 
   return (
     <div className="w-full flex items-start justify-center task-list-container">
-      <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-lg mb-4">
+      <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-none mb-4">
         <div className="pt-4 px-4">
           <div className="flex justify-between items-center">
             <div className="flex gap-2">
@@ -530,7 +591,7 @@ export function TaskList({
               )}
               <div
                 className={cn(
-                  "bg-task-light dark:bg-task-dark rounded-lg p-2 transition-transform flex items-start gap-2",
+                  "bg-task-light dark:bg-task-dark rounded-none p-2 transition-transform flex items-start gap-2",
                   { "transform -translate-x-full": taskToDelete === task.id && swipeDistance >= 100 }
                 )}
                 style={{ transform: taskToDelete === task.id ? `translateX(-${swipeDistance}px)` : 'none' }}
@@ -551,13 +612,18 @@ export function TaskList({
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center gap-8 min-w-0">
                       <input
                         type="text"
                         value={typeof task.name === 'string' ? task.name : ''}
                         onChange={(e) => updateTask(task.id, { name: e.target.value })}
                         onKeyDown={(e) => handleKeyDown(e, task.id)}
-                        className="flex-1 bg-transparent text-xs font-medium focus:outline-none task-input"
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                          pointerDownOnInputRef.current = true;
+                        }}
+                        onDragStart={(e) => e.preventDefault()}
+                        className="flex-1 bg-transparent text-xs font-medium focus:outline-none task-input tracking-widest"
                         data-task-id={task.id}
                         placeholder={task.id === 'empty' ? "Task Name" : "Task name"}
                       />
@@ -566,12 +632,39 @@ export function TaskList({
                         value={typeof task.description === 'string' ? task.description : ''}
                         onChange={(e) => updateTask(task.id, { description: e.target.value })}
                         onKeyDown={(e) => handleKeyDown(e, task.id)}
-                        className="flex-1 bg-transparent text-xs text-muted-foreground focus:outline-none task-input"
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                          pointerDownOnInputRef.current = true;
+                        }}
+                        onDragStart={(e) => e.preventDefault()}
+                        className="flex-1 bg-transparent text-xs text-muted-foreground focus:outline-none task-input tracking-widest"
                         placeholder="Description"
                       />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground whitespace-nowrap min-w-[60px] flex justify-end">
+                    <div className="flex items-center gap-2 h-5">
+                      {task.link && (
+                        task.link.split(',').map((link, index) => (
+                          <a
+                            key={index}
+                            href={link.trim()}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1 rounded-md"
+                            onClick={(e) => {
+                              if (isMobileDevice) {
+                                e.preventDefault();
+                                setLinkForModal(link.trim());
+                                setShowLinkConfirmationModal(true);
+                              }
+                              e.stopPropagation();
+                            }}
+                            aria-label="Task link"
+                          >
+                            <LinkIcon className="size-3 text-blue-500" />
+                          </a>
+                        ))
+                      )}
+                      <span className="text-xs text-muted-foreground whitespace-nowrap min-w-[60px] flex justify-end items-center">
                         {(activeTab as Tab) === 'done' ? (
                           task.completedAt ? (
                             <Popover>
@@ -652,6 +745,40 @@ export function TaskList({
           ))}
         </div>
       </div>
+      {isMobileDevice && showLinkConfirmationModal && linkForModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowLinkConfirmationModal(false)}
+          aria-modal="true"
+          role="dialog"
+        >
+          <div
+            className="bg-card text-card-foreground p-6 rounded-lg shadow-xl w-full max-w-md"
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold mb-3">Open Link</h3>
+            <p className="mb-4 text-sm break-all">
+              <span className="font-medium text-blue-500">{linkForModal}</span>
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowLinkConfirmationModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  if (linkForModal) window.open(linkForModal, '_blank', 'noopener,noreferrer');
+                  setShowLinkConfirmationModal(false);
+                }}
+              >
+                Proceed
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -731,7 +858,7 @@ function TabButton(props: {
       onClick={onClick}
       onDoubleClick={onDoubleClick}
       className={cn(
-        "px-2 py-1 text-xs transition-colors task-tab rounded-md",
+        "px-2 py-1 text-xs transition-colors task-tab rounded-none",
         active 
           ? "text-foreground" 
           : "text-muted-foreground hover:text-foreground",
