@@ -83,7 +83,7 @@ interface ExtendedMessage extends Message {
 }
 
 export async function POST(request: Request) {
-  const { id, messages, model } = await request.json();
+  const { id, messages, model, isIncognito } = await request.json();
   const session = await auth();
 
   if (!session?.user?.email || !session?.user?.id) {
@@ -237,32 +237,35 @@ When analyzing images or files:
             newUsage
           );
 
-          // Save messages with attachment URLs
-          await saveChat({
-            id,
-            messages: [
-              ...messages.map((msg: ExtendedMessage) => ({
-                id: msg.id || generateId(),
-                role: msg.role,
-                content: typeof msg.content === 'string'
-                  ? msg.content
-                  : Array.isArray(msg.content)
-                    ? (msg.content as TextContent[]).find((c: TextContent) => c.type === 'text')?.text || (msg.content as TextContent[]).map(c => c.text).join(' ')
-                    : msg.content,
-                experimental_attachments: msg.experimental_attachments?.map((attachment: Attachment) => ({
-                  ...attachment,
-                  url: attachment.url // Ensure URL is saved
+          // Only save chat if not in incognito mode
+          if (!isIncognito) {
+            // Save messages with attachment URLs
+            await saveChat({
+              id,
+              messages: [
+                ...messages.map((msg: ExtendedMessage) => ({
+                  id: msg.id || generateId(),
+                  role: msg.role,
+                  content: typeof msg.content === 'string'
+                    ? msg.content
+                    : Array.isArray(msg.content)
+                      ? (msg.content as TextContent[]).find((c: TextContent) => c.type === 'text')?.text || (msg.content as TextContent[]).map(c => c.text).join(' ')
+                      : msg.content,
+                  experimental_attachments: msg.experimental_attachments?.map((attachment: Attachment) => ({
+                    ...attachment,
+                    url: attachment.url // Ensure URL is saved
+                  }))
+                })),
+                ...responseMessages.map((msg: CoreMessage) => ({
+                  id: generateId(),
+                  role: msg.role,
+                  content: msg.content,
+                  experimental_attachments: undefined
                 }))
-              })),
-              ...responseMessages.map((msg: CoreMessage) => ({
-                id: generateId(),
-                role: msg.role,
-                content: msg.content,
-                experimental_attachments: undefined
-              }))
-            ],
-            userId: session.user.id,
-          });
+              ],
+              userId: session.user.id,
+            });
+          }
         } catch (error) {
           console.error('Failed to save chat or update usage:', error);
         }

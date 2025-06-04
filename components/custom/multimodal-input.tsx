@@ -33,6 +33,7 @@ export function MultimodalInput({
   append,
   handleSubmit,
   uploadApi = '/api/files/upload',
+  isIncognito = false,
 }: {
   input: string;
   setInput: (value: string) => void;
@@ -52,27 +53,30 @@ export function MultimodalInput({
     chatRequestOptions?: ChatRequestOptions
   ) => void;
   uploadApi?: string;
+  isIncognito?: boolean;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      adjustHeight();
-    }
-  }, []);
-
-  const adjustHeight = () => {
+  const adjustHeight = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight + 2}px`;
     }
-  };
+  }, []);
 
-  const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  useEffect(() => {
+    adjustHeight();
+  }, [adjustHeight]);
+
+  useEffect(() => {
+    adjustHeight();
+  }, [input, adjustHeight]);
+
+  const handleInput = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
     adjustHeight();
-  };
+  }, [setInput, adjustHeight]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
@@ -83,10 +87,6 @@ export function MultimodalInput({
     });
 
     setAttachments([]);
-
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
 
     if (width && width > 768) {
       textareaRef.current?.focus();
@@ -183,7 +183,12 @@ export function MultimodalInput({
         placeholder="What's on your mind?"
         value={input}
         onChange={handleInput}
-        className="min-h-[24px] overflow-hidden resize-none rounded-xl p-4 pb-12 focus-visible:ring-0 focus-visible:ring-offset-0 intelligence-input bg-chat-input border-none"
+        className={cn(
+          "min-h-[24px] overflow-hidden resize-none rounded-xl p-4 pb-12 focus-visible:ring-0 focus-visible:ring-offset-0 intelligence-input border-none font-chat",
+          isIncognito
+            ? "bg-purple-100 dark:bg-purple-900/40"
+            : "bg-chat-input"
+        )}
         rows={1}
         onKeyDown={(event) => {
           if (event.key === 'Enter' && !event.shiftKey) {

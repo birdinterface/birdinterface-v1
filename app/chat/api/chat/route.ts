@@ -60,7 +60,7 @@ function estimateTokens(text: string): number {
 }
 
 export async function POST(request: Request) {
-  const { id, messages, model } = await request.json();
+  const { id, messages, model, isIncognito } = await request.json();
   const session = await auth();
 
   if (!session?.user?.email || !session?.user?.id) {
@@ -150,11 +150,14 @@ export async function POST(request: Request) {
           const [updatedUser] = await getUser(session.user.email);
           console.log('Updated usage in DB:', updatedUser?.usage);
 
-          await saveChat({
-            id,
-            messages: [...coreMessages, ...responseMessages],
-            userId: session.user.id,
-          });
+          // Only save chat if not in incognito mode
+          if (!isIncognito) {
+            await saveChat({
+              id,
+              messages: [...coreMessages, ...responseMessages],
+              userId: session.user.id,
+            });
+          }
         } catch (error) {
           console.error('Failed to save chat or update usage:', error);
         }

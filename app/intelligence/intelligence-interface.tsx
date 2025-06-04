@@ -1,9 +1,9 @@
 'use client';
 
 import { Message } from 'ai';
-import { MessageSquare, History, Plus } from 'lucide-react';
+import { MessageSquare, History, Plus, Ghost } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { ChatHistoryModal } from '@/components/custom/chat-history-modal';
 import { SimplifiedChat } from '@/components/custom/simplified-chat';
@@ -22,6 +22,31 @@ export function IntelligenceInterface({
   initialMessages?: Array<Message>;
 }) {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [isIncognito, setIsIncognito] = useState(false);
+  const [chatKey, setChatKey] = useState(0); // Key to force re-render of chat
+
+  // Hide incognito toggle once messages exist and we're in incognito mode
+  const [hasMessages, setHasMessages] = useState(initialMessages.length > 0);
+
+  const handleIncognitoToggle = () => {
+    const newIncognitoState = !isIncognito;
+    setIsIncognito(newIncognitoState);
+    
+    // If switching to incognito, clear the chat by forcing a re-render
+    if (newIncognitoState) {
+      setChatKey(prev => prev + 1);
+      setHasMessages(false);
+    }
+  };
+
+  // Update hasMessages when we receive new messages in incognito mode
+  const handleMessagesChange = (messages: Message[]) => {
+    if (isIncognito) {
+      setHasMessages(messages.length > 0);
+    }
+  };
+
+  const shouldShowIncognitoToggle = initialMessages.length === 0 && (!isIncognito || !hasMessages);
 
   return (
     <>
@@ -48,6 +73,17 @@ export function IntelligenceInterface({
                 </Link>
               </div>
               <div className="flex items-center gap-2">
+                {shouldShowIncognitoToggle && (
+                  <button
+                    onClick={handleIncognitoToggle}
+                    className={`p-1 hover:bg-transparent rounded-md transition-colors ${
+                      isIncognito ? 'text-purple-500 hover:text-purple-600' : 'text-muted-foreground hover:text-black dark:hover:text-white'
+                    }`}
+                    title={isIncognito ? 'Exit incognito mode' : 'Incognito mode'}
+                  >
+                    <Ghost className="size-4" />
+                  </button>
+                )}
                 <span className="text-xs text-muted-foreground task-tab">{selectedModelName}</span>
               </div>
             </div>
@@ -56,13 +92,15 @@ export function IntelligenceInterface({
           <div className="pb-4">
             <div className="bg-task-light dark:bg-task-dark rounded-none overflow-hidden">
               <SimplifiedChat
-                key={id}
+                key={`${id}-${chatKey}`} // Force re-render when toggling incognito
                 id={id}
-                initialMessages={initialMessages}
+                initialMessages={isIncognito && chatKey > 0 ? [] : initialMessages}
                 selectedModelName={selectedModelName}
                 api="/intelligence/api/chat"
                 user={user}
                 hideHeader={true}
+                isIncognito={isIncognito}
+                onMessagesChange={handleMessagesChange}
               />
             </div>
           </div>

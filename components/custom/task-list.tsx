@@ -660,7 +660,7 @@ export function TaskList({
                             }}
                             aria-label="Task link"
                           >
-                            <LinkIcon className="size-3 text-blue-500" />
+                            <LinkIcon className="size-2.5 text-blue-500" />
                           </a>
                         ))
                       )}

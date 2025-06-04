@@ -4,6 +4,7 @@ import { Attachment, ToolInvocation } from 'ai';
 import { motion } from 'framer-motion';
 import { PencilIcon, Copy, Check } from 'lucide-react';
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
 import { ReactNode, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -22,18 +23,26 @@ export const Message = ({
   attachments,
   onEdit,
   id,
+  isIncognito = false,
 }: {
   role: string;
-  content: string | ReactNode;
-  toolInvocations: Array<ToolInvocation> | undefined;
+  content: ReactNode;
+  toolInvocations: ToolInvocation[] | undefined;
   attachments?: Array<Attachment>;
   onEdit?: (messageId: string, newContent: string) => Promise<boolean>;
   id?: string;
+  isIncognito?: boolean;
 }) => {
+  const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content as string);
   const [isLoading, setIsLoading] = useState(false);
   const [showCopyCheck, setShowCopyCheck] = useState(false);
+
+  const handleEdit = () => {
+    setEditedContent(typeof content === 'string' ? content : '');
+    setIsEditing(true);
+  };
 
   const handleSave = async () => {
     if (!onEdit || !id) {
@@ -76,20 +85,13 @@ export const Message = ({
         isEditing 
           ? "group-data-[role=user]/message:w-full group-data-[role=user]/message:max-w-3xl" 
           : "group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl",
-        "group-data-[role=user]/message:py-3.5 group-data-[role=user]/message:px-5 group-data-[role=user]/message:bg-chat-input rounded-xl"
+        "group-data-[role=user]/message:py-3.5 group-data-[role=user]/message:px-5 rounded-xl",
+        role === 'user' 
+          ? isIncognito
+            ? 'group-data-[role=user]/message:bg-purple-100 dark:group-data-[role=user]/message:bg-purple-900/40'
+            : 'group-data-[role=user]/message:bg-chat-input'
+          : ''
       )}>
-        {role === 'assistant' && (
-          <Image
-            src="/images/blur.png"
-            alt="Assistant Icon"
-            width={32}
-            height={32}
-            className="size-8 flex items-center rounded-full justify-center shrink-0"
-            style={{ filter: 'blur(4.5px)' }}
-            draggable={false}
-          />
-        )}
-
         <div className="flex flex-col gap-2 w-full min-w-0">
           {content && (
             <div className="flex flex-col gap-4 w-full min-w-0">
@@ -128,7 +130,7 @@ export const Message = ({
                 </div>
               ) : (
                 <div className="w-full min-w-0">
-                  <Markdown>{content as string}</Markdown>
+                  <Markdown className="font-chat">{content as string}</Markdown>
                 </div>
               )}
             </div>

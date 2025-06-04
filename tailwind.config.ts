@@ -12,6 +12,7 @@ const config: Config = {
     fontFamily: {
       sans: ['geist'],
       mono: ['geist-mono'],
+      chat: ['Montserrat', 'sans-serif'],
     },
     extend: {
       borderRadius: {

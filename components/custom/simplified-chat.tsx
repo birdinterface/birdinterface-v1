@@ -5,7 +5,7 @@ import { useChat } from 'ai/react';
 import { History, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { ChatHistoryModal } from '@/components/custom/chat-history-modal';
@@ -24,6 +24,8 @@ interface SimplifiedChatProps {
   api?: string;
   user?: any;
   hideHeader?: boolean;
+  isIncognito?: boolean;
+  onMessagesChange?: (messages: Message[]) => void;
 }
 
 export function SimplifiedChat({
@@ -33,6 +35,8 @@ export function SimplifiedChat({
   api = '/api/chat',
   user,
   hideHeader = false,
+  isIncognito = false,
+  onMessagesChange,
 }: SimplifiedChatProps) {
   const { theme } = useTheme();
   const { openModal } = useModal();
@@ -54,6 +58,7 @@ export function SimplifiedChat({
       body: {
         id,
         model: selectedModelName,
+        isIncognito, // Pass incognito mode to API
       },
       onError: (error) => {
         // Handle the error response
@@ -104,12 +109,23 @@ export function SimplifiedChat({
           toast.error(errorMessage);
         }
       },
+      onFinish: () => {
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      },
     });
 
-  const [messagesContainerRef, messagesEndRef] =
-    useScrollToBottom<HTMLDivElement>();
+  // Notify parent component about message changes in incognito mode
+  useEffect(() => {
+    if (isIncognito && onMessagesChange) {
+      onMessagesChange(messages);
+    }
+  }, [messages, isIncognito, onMessagesChange]);
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+
+  const [messagesContainerRef, messagesEndRef] = useScrollToBottom<HTMLDivElement>();
 
   const handleMessageEdit = async (messageId: string, newContent: string): Promise<boolean> => {
     const messageIndex = messages.findIndex(msg => msg.id === messageId);
@@ -181,6 +197,7 @@ export function SimplifiedChat({
               attachments={message.experimental_attachments}
               toolInvocations={message.toolInvocations}
               onEdit={handleMessageEdit}
+              isIncognito={isIncognito && message.role === 'user'}
             />
           ))}
 
@@ -191,7 +208,7 @@ export function SimplifiedChat({
         </div>
 
         {/* Input Area */}
-        <div className="p-4">
+        <div className="p-4 relative">
           <MultimodalInput
             input={input}
             setInput={setInput}
@@ -203,7 +220,13 @@ export function SimplifiedChat({
             messages={messages}
             append={append}
             uploadApi={uploadApi}
+            isIncognito={isIncognito}
           />
+          {isIncognito && (
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-normal text-muted-foreground opacity-60 normal-case pointer-events-none">
+              This chat won&apos;t be saved.
+            </div>
+          )}
         </div>
       </div>
 

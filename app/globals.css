@@ -1,5 +1,6 @@
 /* Import Orbitron font */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -324,7 +325,7 @@ nav {
 }
 
 .task-input {
-  font-family: var(--font-orbitron);
+  font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.05em;
   font-size: 9px;
   text-transform: uppercase;
@@ -355,7 +356,7 @@ nav {
 .task-calendar-date {
   font-family: var(--font-orbitron);
   letter-spacing: 0.05em;
-  font-size: 9px;
+  font-size: 8px;
   min-width: 40px;
   min-height: 18px;
   line-height: 18px;
@@ -385,52 +386,52 @@ nav {
 
 /* Add styles for intelligence section */
 .intelligence-text {
-  font-family: var(--font-orbitron) !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.02em !important;
-  font-size: 11px !important;
-  opacity: 0.95 !important;
-  line-height: 1.4 !important;
-  text-transform: lowercase !important;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: 11px;
+  opacity: 0.95;
+  line-height: 1.4;
+  text-transform: lowercase;
 }
 
 .intelligence-input {
-  font-family: var(--font-orbitron) !important;
-  font-weight: 400 !important;
-  letter-spacing: 0.01em !important;
-  font-size: 11px !important;
-  opacity: 0.95 !important;
-  line-height: 1.4 !important;
-  text-transform: none !important;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  font-size: 11px;
+  opacity: 0.95;
+  line-height: 1.4;
+  text-transform: none;
 }
 
 .intelligence-content {
-  font-family: var(--font-orbitron) !important;
-  font-weight: 400 !important;
-  letter-spacing: 0.01em !important;
-  font-size: 11px !important;
-  line-height: 1.7 !important;
-  opacity: 0.95 !important;
-  text-transform: none !important;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  font-size: 11px;
+  line-height: 1.7;
+  opacity: 0.95;
+  text-transform: none;
 }
 
 /* Additional spacing for intelligence text elements */
 .intelligence-content p {
-  margin-bottom: 0.75rem !important;
-  line-height: 1.7 !important;
+  margin-bottom: 0.75rem;
+  line-height: 1.7;
 }
 
 .intelligence-content p:last-child {
-  margin-bottom: 0 !important;
+  margin-bottom: 0;
 }
 
 .intelligence-content li {
-  margin-bottom: 0.25rem !important;
-  line-height: 1.7 !important;
+  margin-bottom: 0.25rem;
+  line-height: 1.7;
 }
 
 .intelligence-content code {
-  line-height: 1.5 !important;
+  line-height: 1.5;
 }
 
 /* Always show scrollbar and make it thinner */
