@@ -156,7 +156,7 @@ const Welcome = () => {
                 className="text-white text-sm text-center px-4 font-medium"
                 style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
               >
-                Your data – unified in a high-capability environment. Generate, manipulate, and innovate with an interface that acts on your behalf, accesses the web in real-time, and adapts to your every need. The future of computing is here – and it&apos;s limitless.
+                Your data – unified in a high-capability environment. Generate, manipulate, and innovate with an interface that acts on your behalf, accesses the web in real-time, and adapts to your every need. The future of computing is coming – and it&apos;s limitless.
               </p>
             </div>
           </div>
