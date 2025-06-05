@@ -5,7 +5,7 @@ import { ArrowDown } from 'lucide-react';
 import { Inter } from 'next/font/google';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import '../../public/css/normalize.css';
 import '../../public/css/webflow.css';
@@ -26,6 +26,7 @@ const Welcome = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const fullText = "The intelligent personal interface";
+  const emailInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-submit when valid email is entered
   useEffect(() => {
@@ -56,6 +57,19 @@ const Welcome = () => {
         }
         e.preventDefault();
         e.stopPropagation();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Focus input when Enter is pressed
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && emailInputRef.current && document.activeElement !== emailInputRef.current) {
+        e.preventDefault();
+        emailInputRef.current.focus();
       }
     };
 
@@ -178,6 +192,7 @@ const Welcome = () => {
               <form onSubmit={handleSubmit} className="w-full max-w-xs mx-auto px-4">
                 <div className="flex flex-col gap-2 items-center">
                   <input
+                    ref={emailInputRef}
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -195,15 +210,21 @@ const Welcome = () => {
             </div>
           </div>
           {/* Arrow pointing down with text */}
-          <div className="absolute bottom-10 w-full flex items-end justify-between px-4 md:justify-center md:gap-2 md:px-0 cursor-pointer">
+          <div className="absolute bottom-10 w-full flex items-end justify-between px-4 md:justify-center md:gap-2 md:px-0 cursor-pointer group">
             <p 
-              className="text-neutral-400 text-sm"
+              className="text-neutral-400 text-sm cursor-pointer group-hover:text-white transition-colors"
               style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
+              onClick={() => {
+                const missionSection = document.getElementById('mission-section');
+                if (missionSection) {
+                  missionSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
             >
               Coming at the end of summer 2025
             </p>
             <ArrowDown 
-              className="size-5 text-neutral-400 hover:text-white relative bottom-[10px]"
+              className="size-5 text-neutral-400 group-hover:text-white transition-colors relative bottom-[10px]"
               onClick={() => {
                 const missionSection = document.getElementById('mission-section');
                 if (missionSection) {
