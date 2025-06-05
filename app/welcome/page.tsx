@@ -186,7 +186,7 @@ const Welcome = () => {
                       ) : isSubmitted ? (
                         'Thank You'
                       ) : (
-                        <span className="flex items-center justify-center">
+                        <span className="flex items-center justify-center flex-nowrap">
                           Sign Up for Alpha <span className="text-lg ml-2">↵</span>
                         </span>
                       )}
@@ -200,7 +200,7 @@ const Welcome = () => {
             </div>
           </div>
           {/* Arrow pointing down with text */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 cursor-pointer">
+          <div className="absolute bottom-10 w-full flex items-end justify-between px-4 md:justify-center md:gap-2 md:px-0 cursor-pointer">
             <p 
               className="text-neutral-400 text-sm"
               style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
