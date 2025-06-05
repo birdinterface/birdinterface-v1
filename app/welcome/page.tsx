@@ -25,27 +25,7 @@ const Welcome = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [displayText, setDisplayText] = useState('');
-  const [isTextComplete, setIsTextComplete] = useState(false);
   const fullText = "The intelligent personal interface";
-
-  useEffect(() => {
-    const words = fullText.split(' ');
-    let currentWordIndex = 0;
-    const interval = setInterval(() => {
-      if (currentWordIndex <= words.length) {
-        setDisplayText(words.slice(0, currentWordIndex).join(' '));
-        if (currentWordIndex === words.length) {
-          setIsTextComplete(true);
-        }
-        currentWordIndex++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 150); // Much faster animation, word by word
-
-    return () => clearInterval(interval);
-  }, [fullText]);
 
   // Prevent copy/paste keyboard shortcuts
   useEffect(() => {
@@ -152,31 +132,26 @@ const Welcome = () => {
         {/* Hero Section - Adjusted for scrolling */}
         <div className="hero-section-for-flashlight relative flex flex-col items-center z-20 min-h-screen">
           <FlashlightEffect />
-          <div className="relative size-[160px] mt-10 mb-9">
-            <Image
-              src="/images/Birdinterface-white.png"
-              alt="Bird Interface Logo"
-              width={200}
-              height={200}
-              className="object-contain"
-              priority
-              draggable={false}
-              quality={85}
-              loading="eager"
-            />
+          
+          {/* Logo positioned separately */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[-210px]">
+            <div className="relative w-[340px] h-[340px] sm:w-[400px] sm:h-[400px] md:w-[460px] md:h-[460px] lg:w-[520px] lg:h-[520px] xl:w-[560px] xl:h-[560px]">
+              <Image
+                src="/images/darkergrey.png"
+                alt="Bird Interface Logo"
+                width={1000} 
+                height={1000}
+                className="object-contain w-full h-full"
+                priority
+                draggable={false}
+                quality={85}
+              />
+            </div>
           </div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full -mt-10">
+          
+          {/* Form positioned separately */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full mt-[-2px]">
             <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
-              <motion.h1 
-                className="text-white text-3xl font-light mb-12 text-center px-4 h-[80px] normal-case"
-                style={{ fontFamily: interFont.style.fontFamily }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                {displayText}
-              </motion.h1>
-              
               <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto px-4">
                 <div className="flex flex-col gap-2">
                   <div className="flex gap-2">
@@ -187,34 +162,47 @@ const Welcome = () => {
                       placeholder="Email"
                       required
                       disabled={isSubmitting}
-                      className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50"
-                      style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                      className="flex-1 px-4 py-2 rounded-lg bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50"
                     />
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-6 py-2 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors disabled:opacity-50 min-w-[120px]"
+                      className="px-6 py-2 bg-black text-gray-400 rounded-lg font-medium hover:text-white transition-colors disabled:opacity-50 min-w-[120px]"
                     >
-                      {isSubmitting ? 'Joining...' : isSubmitted ? 'Thank You' : 'Sign Up for Alpha'}
+                      {isSubmitting ? (
+                        'Joining...'
+                      ) : isSubmitted ? (
+                        'Thank You'
+                      ) : (
+                        <span className="flex items-center justify-center">
+                          Sign Up for Alpha <span className="text-lg ml-2">↵</span>
+                        </span>
+                      )}
                     </button>
                   </div>
                   {error && (
                     <p className="text-red-400 text-sm mt-2">{error}</p>
                   )}
                 </div>
-                <p 
-                  className="text-gray-400 text-sm text-center mt-3"
-                  style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
-                >
-                  Coming at the end of summer 2025
-                </p>
               </form>
+              <p 
+                className="text-white text-sm text-center mt-4 px-4"
+                style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
+              >
+                Your data – unified in a high-capability environment. Generate, manipulate, and innovate with an interface that acts on your behalf, accesses the web in real-time, and adapts to your every need. The future of computing is here – and it's limitless.
+              </p>
             </div>
           </div>
-          {/* Arrow pointing down */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 cursor-pointer">
+          {/* Arrow pointing down with text */}
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 cursor-pointer">
+            <p 
+              className="text-neutral-400 text-sm"
+              style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
+            >
+              Coming at the end of summer 2025
+            </p>
             <ArrowDown 
-              className="size-8 text-neutral-400"
+              className="size-5 text-neutral-400 hover:text-white relative bottom-[6px]"
               onClick={() => {
                 const missionSection = document.getElementById('mission-section');
                 if (missionSection) {

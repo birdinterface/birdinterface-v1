@@ -33,11 +33,12 @@ const FlashlightEffect: React.FC = () => {
       style={{
         background: `radial-gradient(
           circle at ${position.x}px ${position.y}px,
-          rgba(255, 255, 255, 0.15) 0px,    /* Softer, less intense center */
-          rgba(255, 255, 255, 0.1) 75px,   /* Wider core light area with softer intensity */
-          rgba(255, 255, 255, 0.05) 150px,  /* Start of a very soft, broad vignette */
-          rgba(255, 255, 255, 0.01) 200px, /* Further softening the edge */
-          transparent 225px               /* Completely transparent at 225px radius (450px diameter) */
+          rgba(200, 200, 255, 0.2) 0px,    /* Light purple-blue-white center */
+          rgba(180, 180, 245, 0.15) 50px,  /* Soft purple-blue */
+          rgba(160, 160, 225, 0.1) 100px,  /* Purple-blue transition */
+          rgba(140, 140, 205, 0.05) 150px, /* Smokey purple-blue */
+          rgba(120, 120, 185, 0.02) 200px, /* Fading purple-blue smoke */
+          transparent 225px                /* Completely transparent */
         )`,
       }}
     />
