@@ -236,7 +236,7 @@ const Welcome = () => {
               Unifying Our Life For AI
             </h2>
             <p className="text-base" style={{ color: '#555555' }}>
-              I founded Birdinterface to solve data fragmentation by building an AI-integrated personal interface.
+              I founded Birdinterface to solve data fragmentation by building a unified and AI-integrated personal interface.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
               The first essential step is unifying core data+tools into one elegant, ground-up interface—starting with tasks, calendar, an improved G-Drive-like system, a curator (to store and organize online content like videos, posts, websites, books, movies, music), agentic AI, maps, mail, messaging, financial overview, and browser.
