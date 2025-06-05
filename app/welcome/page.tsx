@@ -187,7 +187,7 @@ const Welcome = () => {
           </div>
 
           {/* Form positioned separately */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full mt-[20px]">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full mt-[45px]">
             <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
               <form onSubmit={handleSubmit} className="w-full max-w-xs mx-auto px-4">
                 <div className="flex flex-col gap-2 items-center">
