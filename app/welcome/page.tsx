@@ -87,7 +87,7 @@ const Welcome = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to join waitlist');
+        throw new Error('Failed to join Alpha');
       }
 
       // Show success state
@@ -99,7 +99,7 @@ const Welcome = () => {
         setIsSubmitted(false);
       }, 2000);
     } catch (err) {
-      setError('Failed to join waitlist. Please try again.');
+      setError('Failed to join Alpha. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -195,13 +195,19 @@ const Welcome = () => {
                       disabled={isSubmitting}
                       className="px-6 py-2 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors disabled:opacity-50 min-w-[120px]"
                     >
-                      {isSubmitting ? 'Joining...' : isSubmitted ? 'Thank You' : 'Join waitlist'}
+                      {isSubmitting ? 'Joining...' : isSubmitted ? 'Thank You' : 'Sign Up for Alpha'}
                     </button>
                   </div>
                   {error && (
                     <p className="text-red-400 text-sm mt-2">{error}</p>
                   )}
                 </div>
+                <p 
+                  className="text-gray-400 text-sm text-center mt-3"
+                  style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
+                >
+                  Coming at the end of summer 2025
+                </p>
               </form>
             </div>
           </div>

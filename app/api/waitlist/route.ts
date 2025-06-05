@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       // Check if the error is because the email is already subscribed
       if (mailchimpError.response?.body?.title === 'Member Exists') {
         return NextResponse.json(
-          { message: 'You\'re already on the waitlist!' },
+          { message: 'You\'re already signed up!' },
           { status: 200 }
         );
       }
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Waitlist submission error:', error);
     return NextResponse.json(
-      { error: 'Failed to join waitlist' },
+      { error: 'Failed to join Alpha' },
       { status: 500 }
     );
   }
