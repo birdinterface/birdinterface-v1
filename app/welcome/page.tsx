@@ -27,6 +27,17 @@ const Welcome = () => {
   const [error, setError] = useState('');
   const fullText = "The intelligent personal interface";
 
+  // Auto-submit when valid email is entered
+  useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && emailRegex.test(email) && !isSubmitting && !isSubmitted) {
+      const timer = setTimeout(() => {
+        handleSubmit(new Event('submit') as any);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [email, isSubmitting, isSubmitted]);
+
   // Prevent copy/paste keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -156,7 +167,7 @@ const Welcome = () => {
                 className="text-white text-sm text-center px-4 font-medium"
                 style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
               >
-                Your data – unified in a high-capability environment. Generate, manipulate, and innovate with an interface that acts on your behalf, accesses the web in real-time, and adapts to your every need. The future of computing is coming – and it&apos;s limitless.
+                Your core data – unified in a high-capability environment. Generate, manipulate, and innovate with an interface that acts on your behalf, accesses the web in real-time, and adapts to your every need. The future of computing is coming – and it&apos;s limitless.
               </p>
             </div>
           </div>
@@ -164,7 +175,7 @@ const Welcome = () => {
           {/* Form positioned separately */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full mt-[20px]">
             <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
-              <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto px-4">
+              <form onSubmit={handleSubmit} className="w-full max-w-xs mx-auto px-4">
                 <div className="flex flex-col gap-2 items-center">
                   <input
                     type="email"
@@ -174,7 +185,7 @@ const Welcome = () => {
                     autoComplete="email"
                     required
                     disabled={isSubmitting}
-                    className="px-4 py-2 rounded-lg bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 text-center"
+                    className="w-full px-4 py-2 rounded-lg bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 text-center"
                   />
                   {error && (
                     <p className="text-red-400 text-sm mt-2">{error}</p>
