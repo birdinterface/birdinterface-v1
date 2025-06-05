@@ -165,33 +165,17 @@ const Welcome = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full mt-[20px]">
             <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
               <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto px-4">
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-2">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Email"
-                      required
-                      disabled={isSubmitting}
-                      className="flex-1 px-4 py-2 rounded-lg bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50"
-                    />
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-6 py-2 bg-black text-gray-400 rounded-lg font-medium hover:text-white transition-colors disabled:opacity-50 min-w-[120px]"
-                    >
-                      {isSubmitting ? (
-                        'Joining...'
-                      ) : isSubmitted ? (
-                        'Thank You'
-                      ) : (
-                        <span className="flex items-center justify-center flex-nowrap">
-                          Sign Up for Alpha <span className="text-lg ml-2">↵</span>
-                        </span>
-                      )}
-                    </button>
-                  </div>
+                <div className="flex flex-col gap-2 items-center">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={isSubmitting ? "Joining..." : isSubmitted ? "Thank You" : "Sign Up for Alpha ↵"}
+                    autoComplete="email"
+                    required
+                    disabled={isSubmitting}
+                    className="px-4 py-2 rounded-lg bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 text-center"
+                  />
                   {error && (
                     <p className="text-red-400 text-sm mt-2">{error}</p>
                   )}
@@ -208,7 +192,7 @@ const Welcome = () => {
               Coming at the end of summer 2025
             </p>
             <ArrowDown 
-              className="size-5 text-neutral-400 hover:text-white relative bottom-[6px]"
+              className="size-5 text-neutral-400 hover:text-white relative bottom-[10px]"
               onClick={() => {
                 const missionSection = document.getElementById('mission-section');
                 if (missionSection) {
