@@ -27,7 +27,7 @@ const Welcome = () => {
   const [error, setError] = useState('');
   const [displayText, setDisplayText] = useState('');
   const [isTextComplete, setIsTextComplete] = useState(false);
-  const fullText = "An intelligent personal interface.";
+  const fullText = "The intelligent personal interface";
 
   useEffect(() => {
     const words = fullText.split(' ');
@@ -46,6 +46,31 @@ const Welcome = () => {
 
     return () => clearInterval(interval);
   }, [fullText]);
+
+  // Prevent copy/paste keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Prevent Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, F12, and right-click related shortcuts
+      if (
+        (e.ctrlKey && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x')) ||
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+        (e.ctrlKey && e.key === 'u')
+      ) {
+        // Allow these shortcuts only when focused on the email input
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'INPUT' && target.getAttribute('type') === 'email') {
+          return; // Allow normal input behavior
+        }
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,10 +109,46 @@ const Welcome = () => {
     <>
       <Head>
         <title>Birdinterface</title>
-        <style>{`body { background-color: black; }`}</style>
+        <style>{`
+          body { 
+            background-color: black; 
+          }
+          * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+          }
+          input[type="email"] {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+          }
+          ::selection {
+            background: transparent;
+          }
+          ::-moz-selection {
+            background: transparent;
+          }
+        `}</style>
       </Head>
       {/* Outer container now allows scrolling */}
-      <div className="w-full bg-black min-h-screen">
+      <div 
+        className="w-full bg-black min-h-screen select-none"
+        style={{
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          MozUserSelect: 'none',
+          msUserSelect: 'none',
+          WebkitTouchCallout: 'none',
+          WebkitTapHighlightColor: 'transparent'
+        }}
+        onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
+        onDragStart={(e: React.DragEvent) => e.preventDefault()}
+      >
         {/* Hero Section - Adjusted for scrolling */}
         <div className="hero-section-for-flashlight relative flex flex-col items-center z-20 min-h-screen">
           <FlashlightEffect />
@@ -218,7 +279,7 @@ const Welcome = () => {
               Birdinterface aims to solve this problem by creating a unified, AI-integrated and high-capability environment, that would be unwise not to use.
             </p>
             <p className="text-base mt-4" style={{ color: '#555555' }}>
-              Among other things Birdinterface continuously analyzes a user&apos;s data to predict and serve user needs better. Bird can almost instantly surface or teleport the user to a desired data snippet across all their data (docs, files, code, videos, websites, music). Bird can point out gaps or errors in a user&apos;s thinking and visualize real opportunities for value creation, that I call &quot;Potentials&quot;. Bird also enables users to use a lot of compute to figure out the answer for hard problems that humans can&apos;t solve.
+              Among other things Birdinterface continuously analyzes a user&apos;s data to predict and serve user needs better. Bird can almost instantly surface or teleport the user to a desired data snippet across all their data (docs, files, code, videos, websites, music). Bird can point out gaps or errors in a user&apos;s thinking and visualize real opportunities for value creation, that I call &quot;Potentials&quot;. Bird also enables users to use a lot of compute to figure out the answer for hard problems that humans can&apos;t solve. This is only scratching the surface.
             </p>
 
             <h2 className="text-xl font-bold text-black mt-12 mb-6">

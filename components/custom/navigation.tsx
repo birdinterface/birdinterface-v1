@@ -57,7 +57,7 @@ export function Navigation({ user }: { user: any }) {
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="ghost" 
-                      className="size-8 p-0 hover:bg-transparent data-[state=open]:bg-transparent shrink-0 focus-visible:ring-0 hover:opacity-80 transition-opacity"
+                      className="size-8 p-0 data-[state=open]:bg-transparent shrink-0 focus-visible:ring-0 transition-opacity"
                     >
                       <div className="relative size-6">
                         <Image

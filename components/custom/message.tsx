@@ -197,7 +197,7 @@ export const Message = ({
             {showCopyCheck ? (
               <Check className="size-4 text-muted-foreground hover:text-foreground transition-colors" />
             ) : (
-              <Copy className="size-3 text-muted-foreground hover:text-foreground transition-colors" />
+              <Copy className="size-3 text-muted-foreground hover:text-foreground transition-colors rotate-90" />
             )}
           </Button>
         </div>

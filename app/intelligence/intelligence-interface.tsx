@@ -79,7 +79,6 @@ export function IntelligenceInterface({
                     className={`p-1 hover:bg-transparent rounded-md transition-colors ${
                       isIncognito ? 'text-purple-500 hover:text-purple-600' : 'text-muted-foreground hover:text-black dark:hover:text-white'
                     }`}
-                    title={isIncognito ? 'Exit incognito mode' : 'Incognito mode'}
                   >
                     <Ghost className="size-4" />
                   </button>
