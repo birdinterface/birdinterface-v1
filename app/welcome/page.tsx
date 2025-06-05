@@ -149,8 +149,20 @@ const Welcome = () => {
             </div>
           </div>
           
+          {/* Paragraph positioned separately */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full mt-[-80px]">
+            <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
+              <p 
+                className="text-white text-sm text-center px-4 font-medium"
+                style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
+              >
+                Your data – unified in a high-capability environment. Generate, manipulate, and innovate with an interface that acts on your behalf, accesses the web in real-time, and adapts to your every need. The future of computing is here – and it&apos;s limitless.
+              </p>
+            </div>
+          </div>
+
           {/* Form positioned separately */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full mt-[-2px]">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full mt-[20px]">
             <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
               <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto px-4">
                 <div className="flex flex-col gap-2">
@@ -185,12 +197,6 @@ const Welcome = () => {
                   )}
                 </div>
               </form>
-              <p 
-                className="text-white text-sm text-center mt-4 px-4"
-                style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
-              >
-                Your data – unified in a high-capability environment. Generate, manipulate, and innovate with an interface that acts on your behalf, accesses the web in real-time, and adapts to your every need. The future of computing is here – and it's limitless.
-              </p>
             </div>
           </div>
           {/* Arrow pointing down with text */}
