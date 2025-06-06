@@ -1,8 +1,9 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
+
 import { auth } from '@/app/(auth)/auth'
 import { getUserPreferences, saveUserPreferences } from '@/lib/queries'
-import { revalidatePath } from 'next/cache'
 
 export async function saveModel(modelName: string) {
   const session = await auth()

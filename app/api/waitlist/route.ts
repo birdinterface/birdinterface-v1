@@ -1,4 +1,4 @@
-import mailchimp from '@mailchimp/mailchimp_marketing';
+import { setConfig, lists } from '@mailchimp/mailchimp_marketing';
 import { NextResponse } from 'next/server';
 
 // Validate environment variables
@@ -15,7 +15,7 @@ if (!MAILCHIMP_API_KEY || !MAILCHIMP_LIST_ID || !MAILCHIMP_SERVER_PREFIX) {
 }
 
 // Initialize Mailchimp
-mailchimp.setConfig({
+setConfig({
   apiKey: MAILCHIMP_API_KEY!,
   server: MAILCHIMP_SERVER_PREFIX!,
 });
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
 
     try {
       // Add member to list
-      await mailchimp.lists.addListMember(MAILCHIMP_LIST_ID, {
+      await lists.addListMember(MAILCHIMP_LIST_ID, {
         email_address: email,
         status: 'subscribed',
       });
