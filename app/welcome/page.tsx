@@ -5,7 +5,7 @@ import { ArrowDown } from 'lucide-react';
 import { Inter } from 'next/font/google';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 import '../../public/css/normalize.css';
 import '../../public/css/webflow.css';
@@ -28,6 +28,39 @@ const Welcome = () => {
   const fullText = "The intelligent personal interface";
   const emailInputRef = useRef<HTMLInputElement>(null);
 
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to join Alpha');
+      }
+
+      // Show success state
+      setIsSubmitted(true);
+      setEmail(''); // Clear email immediately when showing thank you
+      
+      // Reset thank you message after 2 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 2000);
+    } catch (err) {
+      setError('Failed to join Alpha. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [email]);
+
   // Auto-submit when valid email is entered
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -37,7 +70,7 @@ const Welcome = () => {
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [email, isSubmitting, isSubmitted]);
+  }, [email, isSubmitting, isSubmitted, handleSubmit]);
 
   // Prevent copy/paste keyboard shortcuts
   useEffect(() => {
@@ -76,39 +109,6 @@ const Welcome = () => {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to join Alpha');
-      }
-
-      // Show success state
-      setIsSubmitted(true);
-      setEmail(''); // Clear email immediately when showing thank you
-      
-      // Reset thank you message after 2 seconds
-      setTimeout(() => {
-        setIsSubmitted(false);
-      }, 2000);
-    } catch (err) {
-      setError('Failed to join Alpha. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <>
@@ -160,13 +160,13 @@ const Welcome = () => {
           
           {/* Logo positioned separately */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[-210px]">
-            <div className="relative w-[340px] h-[340px] sm:w-[400px] sm:h-[400px] md:w-[460px] md:h-[460px] lg:w-[520px] lg:h-[520px] xl:w-[560px] xl:h-[560px]">
+            <div className="relative size-[340px] sm:size-[400px] md:size-[460px] lg:size-[520px] xl:size-[560px]">
               <Image
                 src="/images/darkergrey.png"
                 alt="Bird Interface Logo"
                 width={1000} 
                 height={1000}
-                className="object-contain w-full h-full"
+                className="object-contain size-full"
                 priority
                 draggable={false}
                 quality={85}
@@ -338,7 +338,7 @@ const Welcome = () => {
               Empower humans—in their own pursuits and from an early age.
             </p>
             <ul className="list-decimal list-inside text-base mt-4 pl-4" style={{ color: '#555555' }}>
-              <li className="text-base">Unify core data, build core components from the ground up</li>
+              <li className="text-base">Unify core data, add all important AI capabilities</li>
               <li className="text-base">Train LLMs to emulate the interface</li>
               <li className="text-base">Build custom displays and devices</li>
               <li className="text-base">Develop augmentation hardware</li>

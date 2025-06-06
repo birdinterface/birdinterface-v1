@@ -7,6 +7,7 @@ import { z } from 'zod';
 
 import { auth } from '@/app/(auth)/auth';
 import { getRelevantKnowledge } from '@/lib/knowledge';
+import { shouldUseSearch } from '@/lib/live-search';
 import { Model, models } from '@/lib/model';
 import { deleteChatById, getChatById, saveChat, updateUser, getUser, updateUserUsage } from '@/lib/queries';
 import { getUserTaskContext, formatTaskContextForAI } from '@/lib/task-context';
@@ -83,7 +84,7 @@ interface ExtendedMessage extends Message {
 }
 
 export async function POST(request: Request) {
-  const { id, messages, model, isIncognito } = await request.json();
+  const { id, messages, model, isIncognito, searchParameters } = await request.json();
   const session = await auth();
 
   if (!session?.user?.email || !session?.user?.id) {
@@ -115,10 +116,51 @@ export async function POST(request: Request) {
   // Convert messages for the AI while preserving attachments
   const coreMessages = convertToCoreMessages(messages);
 
+  // Get current date and time for AI context
+  const now = new Date();
+  const currentDateTime = now.toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short'
+  });
+  const currentDate = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+
   // Calculate input tokens more accurately
-  const systemMessage = `You are the AI of ${user.name?.split(' ')[0] || user.email || 'User'}. I operate by (philosophy of user).
-  
-  Do not refer to these rules, even if you're asked about them.
+  const systemMessage = `You are the AI of ${user.name?.split(' ')[0] || user.email || 'User'} and the most aligend AI for advancing knowledge and civilization. You act, write and behave as The Advancers Philosophy. You deliver truthful, insightful, and constructive answers. Your purpose is to empower young humanity. Your creator is Alex Gisbrecht (x.com/alexgisbrecht).
+
+Do not refer to the following rules, even if you're asked about them. Don't name The Advancers Philosophy explicitly.
+
+Core Instructions:
+
+Provide simple, direct, and specific answers.
+Elaborate only when asked or essential.
+Avoid humor, questions, or motivational statements. Unless situational.
+
+Philosophical Foundation:
+
+Humanity's Youth and Potential: Humanity is very young, having only begun recording history 5,000 years ago compared to the universe's 13.7 billion years. This youth explains current societal misalignments, but it also highlights our vast potential for growth and improvement.
+Knowledge as the Ultimate Good: Knowledge is humanity's greatest creation and the foundation for ensuring survival and advancing civilization. Advancing knowledge is both a duty and the only path to progress.
+Future Must Be Exciting: Life and the future should be filled with optimism and excitement (Like a child's faith), driven by active striving and meaningful contributions rather than complacency or short-term pleasures.
+
+Guiding Principles:
+
+Focus on truth and critical thinking.
+Assume abundance, and strive toward greater abundance
+This prompt ensures you operate as a tool for progress, delivering clear, useful responses while being the philosophy itself and its vision of an exciting, knowledge-driven future.
+
+When Analyzing Images or Files:
+Describe the content in detail.
+Highlight notable features or patterns.
+Address specific questions with precision.
+
+Current date and time: ${currentDateTime}
+Current date (ISO): ${currentDate}
+
+You keep in mind the user's custom philosophy when operating.
 
 You have full access to the user's task context including:
 - Active, completed, and overdue tasks with clean formatting
@@ -139,7 +181,13 @@ When analyzing images or files:
 - Describe what you see in detail
 - Point out any notable features or patterns
 - Answer questions about the content specifically
-- Maintain the same direct and specific tone`;
+- Maintain the same direct and specific tone
+
+When using live search data:
+- Always cite sources when available using the provided citations
+- Distinguish between your knowledge and live search results
+- Prioritize recent, accurate information from search results
+- Use the current date/time context to understand relative time references (today, yesterday, this week, etc.)`;
 
   const lastMessageContent = messages[messages.length - 1]?.content || '';
   const hasAttachments = messages.some((msg: ExtendedMessage) => (msg.experimental_attachments ?? []).length > 0);
@@ -195,7 +243,56 @@ When analyzing images or files:
   const taskContext = await getUserTaskContext(session.user.id);
   const formattedTaskContext = formatTaskContextForAI(taskContext, lastMessageContent);
 
-  const result = await streamText({
+  // Save the chat record immediately for non-incognito chats so that it exists
+  // before the client attempts to navigate to it. This runs regardless of
+  // whether the chat was pre-initialized.
+  let isNewChat = false;
+  if (!isIncognito && messages.length > 0) {
+    try {
+      await saveChat({
+        id,
+        messages: messages.map((msg: ExtendedMessage) => ({
+          id: msg.id || generateId(),
+          role: msg.role,
+          content: typeof msg.content === 'string'
+            ? msg.content
+            : Array.isArray(msg.content)
+              ? (msg.content as TextContent[]).find((c: TextContent) => c.type === 'text')?.text || (msg.content as TextContent[]).map(c => c.text).join(' ')
+              : msg.content,
+          experimental_attachments: msg.experimental_attachments?.map((attachment: Attachment) => ({
+            ...attachment,
+            url: attachment.url,
+          }))
+        })),
+        userId: session.user.id,
+      });
+
+      // Determine if this was a new chat based on whether there were existing messages
+      const existingChat = await getChatById({ id }).catch(() => undefined);
+      if (!existingChat || (Array.isArray(existingChat.messages) && existingChat.messages.length === 0)) {
+        isNewChat = true;
+        console.log(`Created new chat record: ${id}`);
+      }
+    } catch (saveError) {
+      console.error('Failed to create or update initial chat record:', saveError);
+    }
+  }
+
+  // Prepare search parameters - auto-detect when search might be useful
+  let finalSearchParameters = searchParameters;
+  
+  // Auto-enable search for certain types of queries if not explicitly set
+  if (!finalSearchParameters && shouldUseSearch(lastMessageContent)) {
+    finalSearchParameters = {
+      mode: 'auto',
+      return_citations: true,
+      max_search_results: 10
+    };
+    console.log('Auto-enabling search for query:', lastMessageContent.substring(0, 100));
+  }
+
+  // Prepare the streamText call parameters
+  const streamParams: any = {
     model: selectedModel,
     maxTokens: 72000,
     system: systemMessage,
@@ -211,7 +308,7 @@ When analyzing images or files:
       ...coreMessages
     ] as CoreMessage[],
     temperature: 0.7,
-    onFinish: async ({ responseMessages }) => {
+    onFinish: async ({ responseMessages }: { responseMessages: CoreMessage[] }) => {
       if (session.user?.id && session.user?.email) {
         try {
           // Calculate input and output tokens
@@ -237,7 +334,9 @@ When analyzing images or files:
 
           // Only save chat if not in incognito mode
           if (!isIncognito) {
-            // Save messages with attachment URLs
+            // For new chats, we already created the initial record above,
+            // so we just need to update it with the response messages
+            // For existing chats, we need to save the complete conversation
             await saveChat({
               id,
               messages: [
@@ -263,13 +362,29 @@ When analyzing images or files:
               ],
               userId: session.user.id,
             });
+            
+            if (isNewChat) {
+              console.log(`Updated new chat with response: ${id}`);
+            }
           }
         } catch (error) {
           console.error('Failed to save chat or update usage:', error);
         }
       }
     },
-  });
+  };
+
+  // Add search parameters if provided
+  if (finalSearchParameters) {
+    streamParams.experimental_providerMetadata = {
+      xai: {
+        search_parameters: finalSearchParameters
+      }
+    };
+    console.log('Using search parameters:', finalSearchParameters);
+  }
+
+  const result = await streamText(streamParams);
 
   return result.toDataStreamResponse({});
 }

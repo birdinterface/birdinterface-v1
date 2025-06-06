@@ -140,7 +140,7 @@ export default function TasksPage() {
 
     fetchTasks();
     fetchRecurringTasks();
-  }, [userId]); // Add userId to dependency array to re-fetch/re-cache if it changes
+  }, [userId, TASKS_CACHE_KEY, RECURRING_TASKS_CACHE_KEY]);
 
   // Handler to add a new task (optimistic)
   const handleAddTask = async (task: Omit<UiTask, 'id'>) => {

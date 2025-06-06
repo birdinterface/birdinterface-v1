@@ -23,6 +23,8 @@ import { PreviewAttachment } from './preview-attachment';
 import useWindowSize from './use-window-size';
 
 export function MultimodalInput({
+  id,
+  api,
   input,
   setInput,
   isLoading,
@@ -34,7 +36,10 @@ export function MultimodalInput({
   handleSubmit,
   uploadApi = '/api/files/upload',
   isIncognito = false,
+  validInitialMessages,
 }: {
+  id: string;
+  api: string;
   input: string;
   setInput: (value: string) => void;
   isLoading: boolean;
@@ -54,6 +59,7 @@ export function MultimodalInput({
   ) => void;
   uploadApi?: string;
   isIncognito?: boolean;
+  validInitialMessages: Array<Message>;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -81,7 +87,37 @@ export function MultimodalInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
-  const submitForm = useCallback(() => {
+  const submitForm = useCallback(async () => {
+    const isNewChat =
+      !isIncognito &&
+      validInitialMessages.length === 0 &&
+      messages.length === 0;
+
+    if (isNewChat) {
+      // Initialize chat before submitting the first message
+      const initApi = api.includes('/intelligence/')
+        ? '/intelligence/api/chat/initialize'
+        : '/api/chat/initialize';
+
+      try {
+        const res = await fetch(initApi, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id }),
+        });
+
+        if (!res.ok) {
+          throw new Error('Initialization failed');
+        }
+      } catch (error) {
+        console.error('Failed to initialize chat', error);
+        toast.error('Could not start a new chat. Please try again.');
+        return; // Stop submission if initialization fails
+      }
+    }
+
     handleSubmit(undefined, {
       experimental_attachments: attachments,
     });
@@ -91,7 +127,17 @@ export function MultimodalInput({
     if (width && width > 768) {
       textareaRef.current?.focus();
     }
-  }, [attachments, handleSubmit, setAttachments, width]);
+  }, [
+    attachments,
+    handleSubmit,
+    setAttachments,
+    width,
+    api,
+    id,
+    isIncognito,
+    messages.length,
+    validInitialMessages.length,
+  ]);
 
   const uploadFile = useCallback(async (file: File) => {
     const formData = new FormData();

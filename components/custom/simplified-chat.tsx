@@ -4,6 +4,7 @@ import { Attachment, Message } from 'ai';
 import { useChat } from 'ai/react';
 import { History, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -40,6 +41,8 @@ export function SimplifiedChat({
 }: SimplifiedChatProps) {
   const { theme } = useTheme();
   const { openModal } = useModal();
+  const router = useRouter();
+  const pathname = usePathname();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   // Ensure initialMessages is an array
@@ -116,6 +119,31 @@ export function SimplifiedChat({
       },
     });
 
+  // Navigate to specific chat URL when the first message is sent in a new chat
+  useEffect(() => {
+    // Conditions for immediate navigation:
+    // 1. Not in incognito mode.
+    // 2. It's a brand-new chat (no initial messages).
+    // 3. Currently on the main `/intelligence` page.
+    // 4. The user has just sent their first message (messages array has one item).
+    if (
+      !isIncognito &&
+      validInitialMessages.length === 0 &&
+      pathname === '/intelligence' &&
+      messages.length === 1 &&
+      messages[0].role === 'user'
+    ) {
+      const chatUrl = api.includes('/intelligence/')
+        ? `/intelligence/chat/${id}`
+        : `/chat/${id}`;
+
+      // Use replace to avoid a new history entry, making back-button behavior intuitive
+      router.replace(chatUrl);
+    }
+    // We only want this to re-run when messages change, on the client-side.
+    // Other dependencies are stable.
+  }, [messages, isIncognito, pathname, validInitialMessages.length, id, api, router]);
+
   // Notify parent component about message changes in incognito mode
   useEffect(() => {
     if (isIncognito && onMessagesChange) {
@@ -188,18 +216,32 @@ export function SimplifiedChat({
           ref={messagesContainerRef}
           className="flex-1 overflow-y-auto p-4 space-y-4"
         >
-          {messages.map((message) => (
-            <PreviewMessage
-              key={message.id}
-              id={message.id}
-              role={message.role}
-              content={message.content}
-              attachments={message.experimental_attachments}
-              toolInvocations={message.toolInvocations}
-              onEdit={handleMessageEdit}
-              isIncognito={isIncognito && message.role === 'user'}
-            />
-          ))}
+          {messages.map((message) => {
+            // On a new chat from the main intelligence page, hide the user's first message
+            // before navigation to make the transition seamless. The message will appear
+            // on the new chat page.
+            if (
+              pathname === '/intelligence' &&
+              validInitialMessages.length === 0 &&
+              messages.length === 1 &&
+              message.role === 'user'
+            ) {
+              return null;
+            }
+
+            return (
+              <PreviewMessage
+                key={message.id}
+                id={message.id}
+                role={message.role}
+                content={message.content}
+                attachments={message.experimental_attachments}
+                toolInvocations={message.toolInvocations}
+                onEdit={handleMessageEdit}
+                isIncognito={isIncognito && message.role === 'user'}
+              />
+            );
+          })}
 
           <div
             ref={messagesEndRef}
@@ -210,6 +252,8 @@ export function SimplifiedChat({
         {/* Input Area */}
         <div className="p-4 relative">
           <MultimodalInput
+            id={id}
+            api={api}
             input={input}
             setInput={setInput}
             handleSubmit={handleSubmit}
@@ -221,10 +265,11 @@ export function SimplifiedChat({
             append={append}
             uploadApi={uploadApi}
             isIncognito={isIncognito}
+            validInitialMessages={validInitialMessages}
           />
           {isIncognito && (
             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-normal text-muted-foreground opacity-60 normal-case pointer-events-none">
-              This chat won&apos;t be saved.
+              This chat won&apos;t be saved and used to serve you better.
             </div>
           )}
         </div>
