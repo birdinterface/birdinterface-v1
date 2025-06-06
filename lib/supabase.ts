@@ -93,6 +93,7 @@ export type UserPreferences = {
     later: string
     done: string
   }
+  selectedModel?: string
   createdAt: string
   updatedAt: string
 } 
