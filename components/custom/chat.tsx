@@ -219,6 +219,8 @@ export function Chat({
                   {/* Input Area */}
                   <div className="p-4">
                     <MultimodalInput
+                      id={id}
+                      api={api}
                       input={input}
                       setInput={setInput}
                       handleSubmit={handleSubmit}
@@ -229,6 +231,7 @@ export function Chat({
                       messages={messages}
                       append={append}
                       uploadApi={uploadApi}
+                      validInitialMessages={validInitialMessages}
                     />
                   </div>
                 </div>
