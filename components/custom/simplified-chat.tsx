@@ -192,7 +192,7 @@ export function SimplifiedChat({
 
   return (
     <>
-      <div className="h-[calc(100vh-12rem)] flex flex-col">
+      <div className="h-full flex flex-col">
         {/* Chat Header - conditionally rendered */}
         {!hideHeader && (
           <div className="flex items-center justify-between p-4">
@@ -268,8 +268,8 @@ export function SimplifiedChat({
             validInitialMessages={validInitialMessages}
           />
           {isIncognito && (
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-normal text-muted-foreground opacity-60 normal-case pointer-events-none">
-              This chat won&apos;t be saved and used to serve you better.
+            <div className="absolute bottom-px left-1/2 -translate-x-1/2 text-[9px] font-normal text-muted-foreground opacity-60 normal-case pointer-events-none whitespace-nowrap">
+              This interaction won&apos;t be logged.
             </div>
           )}
         </div>

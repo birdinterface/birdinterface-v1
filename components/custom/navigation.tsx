@@ -112,6 +112,7 @@ export function Navigation({ user }: { user: any }) {
                     )}
                   </DropdownMenuContent>
                 </DropdownMenu>
+
                 <div className="overflow-x-auto scrolling-touch overscroll-x-contain touch-pan-x flex-1 -mx-4 px-4 no-scrollbar">
                   <div className="flex gap-6 min-w-max">
                     {navItems.map((item) => (
@@ -136,7 +137,11 @@ export function Navigation({ user }: { user: any }) {
           </div>
         </div>
       </nav>
-      <div className="h-14" /> {/* Spacer to prevent content from going under navbar */}
+      {/* Spacer to prevent content from going under navbar - adjust height for intelligence route on mobile */}
+      <div className={cn(
+        "h-14", // default height
+        pathname?.startsWith('/intelligence') && "h-10 md:h-14" // smaller height on mobile for intelligence route
+      )} />
     </>
   );
 } 

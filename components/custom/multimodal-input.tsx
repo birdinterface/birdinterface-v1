@@ -230,10 +230,10 @@ export function MultimodalInput({
         value={input}
         onChange={handleInput}
         className={cn(
-          "min-h-[24px] overflow-hidden resize-none rounded-xl p-4 pb-12 focus-visible:ring-0 focus-visible:ring-offset-0 intelligence-input border-none font-chat",
+          "min-h-[24px] overflow-hidden resize-none p-4 pb-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 intelligence-input font-chat border-[2px] border-foreground rounded-none bg-transparent",
           isIncognito
             ? "bg-purple-100 dark:bg-purple-900/40"
-            : "bg-chat-input"
+            : ""
         )}
         rows={1}
         onKeyDown={(event) => {
@@ -255,7 +255,7 @@ export function MultimodalInput({
         onClick={() => fileInputRef.current?.click()}
         aria-label="Add attachment"
       >
-        <Paperclip size={16} className="text-muted-foreground hover:text-black dark:hover:text-white transition-colors -rotate-45" />
+        <Paperclip size={12} className="text-muted-foreground hover:text-black dark:hover:text-white transition-colors -rotate-45" />
       </Button>
 
       {isLoading ? (

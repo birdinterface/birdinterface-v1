@@ -1,9 +1,9 @@
 'use client';
 
 import { Message } from 'ai';
-import { MessageSquare, History, Plus, Ghost } from 'lucide-react';
+import { Ghost, History, MessageSquare, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ChatHistoryModal } from '@/components/custom/chat-history-modal';
 import { SimplifiedChat } from '@/components/custom/simplified-chat';
@@ -50,59 +50,66 @@ export function IntelligenceInterface({
 
   return (
     <>
-      <div className="w-full flex items-start justify-center py-4">
-        <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-none mb-4">
-          <div className="p-4">
+      <div className="flex size-full max-w-2xl mx-auto flex-col pt-4">
+        <div className="px-4">
+          <div className="border-b-2 border-foreground/100"></div>
+          <div className="pt-1 pb-4">
             <div className="flex items-center justify-between w-full text-left">
-              <div className="flex items-center gap-2">
-                <div
+              <div className="flex-1 flex justify-start">
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowHistoryModal(true);
                   }}
-                  className="p-1 hover:bg-transparent rounded-md cursor-pointer transition-colors"
+                  className="px-2 sm:px-3 py-1 w-16 sm:w-24 bg-black dark:bg-white text-white/60 dark:text-black/60 hover:text-white dark:hover:text-black !text-[8px] task-tab rounded-none transition-colors"
                 >
-                  <History className="size-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
-                </div>
+                  LOG
+                </button>
+              </div>
+
+              <div className="flex items-center justify-center gap-1">
                 <Link
                   href="/intelligence"
                   onClick={(e) => e.stopPropagation()}
-                  className="p-1 hover:bg-transparent rounded-md block transition-colors"
+                  className="px-2 sm:px-3 py-1 w-16 sm:w-24 bg-black dark:bg-white text-white/60 dark:text-black/60 hover:text-white dark:hover:text-black !text-[8px] task-tab rounded-none transition-colors block text-center"
                 >
-                  <Plus className="size-4 text-muted-foreground hover:text-black dark:hover:text-white transition-colors" />
+                  NEW
                 </Link>
-              </div>
-              <div className="flex items-center gap-2">
                 {shouldShowIncognitoToggle && (
                   <button
                     onClick={handleIncognitoToggle}
-                    className={`p-1 hover:bg-transparent rounded-md transition-colors ${
-                      isIncognito ? 'text-purple-500 hover:text-purple-600' : 'text-muted-foreground hover:text-black dark:hover:text-white'
+                    className={`px-2 sm:px-3 py-1 w-16 sm:w-24 !text-[8px] task-tab rounded-none transition-colors text-center ${
+                      isIncognito 
+                        ? 'bg-purple-500 text-white hover:text-white' 
+                        : 'bg-black dark:bg-white text-white/60 dark:text-black/60 hover:text-white dark:hover:text-black'
                     }`}
                   >
-                    <Ghost className="size-4" />
+                    PRIVATE
                   </button>
                 )}
-                <span className="text-xs text-muted-foreground task-tab">{selectedModelName}</span>
+              </div>
+
+              <div className="flex-1 flex justify-end">
+                <div className="px-2 sm:px-3 py-1 w-16 sm:w-24 bg-black dark:bg-white text-white/60 dark:text-black/60 !text-[8px] task-tab rounded-none text-center">
+                  {selectedModelName}
+                </div>
               </div>
             </div>
           </div>
-          
-          <div className="pb-4">
-            <div className="bg-task-light dark:bg-task-dark rounded-none overflow-hidden">
-              <SimplifiedChat
-                key={`${id}-${chatKey}`} // Force re-render when toggling incognito
-                id={id}
-                initialMessages={isIncognito && chatKey > 0 ? [] : initialMessages}
-                selectedModelName={selectedModelName}
-                api="/intelligence/api/chat"
-                user={user}
-                hideHeader={true}
-                isIncognito={isIncognito}
-                onMessagesChange={handleMessagesChange}
-              />
-            </div>
-          </div>
+        </div>
+        
+        <div className="grow overflow-hidden">
+          <SimplifiedChat
+            key={`${id}-${chatKey}`} // Force re-render when toggling incognito
+            id={id}
+            initialMessages={isIncognito && chatKey > 0 ? [] : initialMessages}
+            selectedModelName={selectedModelName}
+            api="/intelligence/api/chat"
+            user={user}
+            hideHeader={true}
+            isIncognito={isIncognito}
+            onMessagesChange={handleMessagesChange}
+          />
         </div>
       </div>
 

@@ -2,7 +2,7 @@
 
 import { Attachment, ToolInvocation } from 'ai';
 import { motion } from 'framer-motion';
-import { PencilIcon, Copy, Check } from 'lucide-react';
+import { PencilIcon, Copy, Check, X } from 'lucide-react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { ReactNode, useState, useRef, useEffect } from 'react';
@@ -17,12 +17,9 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 
 const highlightText = (text: string, highlight: string): string => {
-  if (!highlight.trim()) {
-    return text;
-  }
-  const escapedHighlight = highlight.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-  const regex = new RegExp(`(${escapedHighlight})`, 'gi');
-  return text.replace(regex, '<span class="text-blue-500">$1</span>');
+  if (!text || !highlight) return text;
+  const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  return text.replace(regex, '<mark>$1</mark>');
 };
 
 export const Message = ({
@@ -48,35 +45,32 @@ export const Message = ({
 }) => {
   const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(
-    typeof content === 'string' ? content : ''
-  );
+  const [editedContent, setEditedContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showCopyCheck, setShowCopyCheck] = useState(false);
+  const [editedAttachments, setEditedAttachments] = useState<Array<Attachment>>(attachments || []);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setEditedAttachments(attachments || []);
+  }, [attachments]);
 
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.style.height = `${Math.max(24, textareaRef.current.scrollHeight)}px`;
     }
   };
 
   useEffect(() => {
-    if (isEditing && textareaRef.current) {
-      // Adjust height immediately when entering edit mode
-      setTimeout(() => {
-        adjustTextareaHeight();
-        textareaRef.current?.focus();
-        // Position cursor at the end of the text
-        const textLength = textareaRef.current?.value.length || 0;
-        textareaRef.current?.setSelectionRange(textLength, textLength);
-      }, 0);
+    if (isEditing) {
+      adjustTextareaHeight();
     }
   }, [isEditing]);
 
   const handleEdit = () => {
-    setEditedContent(typeof content === 'string' ? content : '');
+    const textToEdit = typeof content === 'string' ? content : getTextContent();
+    setEditedContent(textToEdit);
     setIsEditing(true);
   };
 
@@ -100,18 +94,60 @@ export const Message = ({
   };
 
   const handleCopy = async () => {
-    if (typeof content !== 'string') {
-      toast.error('Cannot copy complex message content');
-      return;
-    }
+    const textToCopy = typeof content === 'string' ? content : getTextContent();
     try {
-      await navigator.clipboard.writeText(content);
+      await navigator.clipboard.writeText(textToCopy);
       setShowCopyCheck(true);
       setTimeout(() => setShowCopyCheck(false), 2000);
     } catch (error) {
       toast.error('Failed to copy message');
     }
   };
+
+  const handleRemoveAttachment = (indexToRemove: number) => {
+    setEditedAttachments(prev => prev.filter((_, index) => index !== indexToRemove));
+  };
+
+  // Separate text content from images
+  const getTextContent = () => {
+    if (typeof content === 'string') {
+      return content;
+    }
+    if (Array.isArray(content)) {
+      return content
+        .filter((part: any) => part.type === 'text')
+        .map((part: any) => part.text)
+        .join('');
+    }
+    // Handle ReactNode content by converting to string if possible
+    if (content && typeof content === 'object' && 'props' in content) {
+      // Try to extract text from React elements
+      const extractTextFromReactNode = (node: any): string => {
+        if (typeof node === 'string') return node;
+        if (typeof node === 'number') return node.toString();
+        if (Array.isArray(node)) return node.map(extractTextFromReactNode).join('');
+        if (node && typeof node === 'object' && node.props) {
+          if (node.props.children) {
+            return extractTextFromReactNode(node.props.children);
+          }
+        }
+        return '';
+      };
+      return extractTextFromReactNode(content);
+    }
+    return String(content || '');
+  };
+
+  const getImageContent = () => {
+    if (Array.isArray(content)) {
+      return content.filter((part: any) => part.type === 'image_url');
+    }
+    return [];
+  };
+
+  const textContent = getTextContent();
+  const imageContent = getImageContent();
+  const hasImages = (attachments && attachments.length > 0) || imageContent.length > 0;
 
   return (
     <motion.div
@@ -123,23 +159,24 @@ export const Message = ({
         isEditing 
           ? "group-data-[role=user]/message:w-full group-data-[role=user]/message:max-w-3xl" 
           : "group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl",
-        "group-data-[role=user]/message:py-3.5 group-data-[role=user]/message:px-5 rounded-xl",
+        "group-data-[role=user]/message:py-3.5 group-data-[role=user]/message:px-5",
         role === 'user' 
           ? isIncognito
             ? 'group-data-[role=user]/message:bg-purple-100 dark:group-data-[role=user]/message:bg-purple-900/40'
-            : 'group-data-[role=user]/message:bg-chat-input'
+            : 'group-data-[role=user]/message:bg-task-light dark:group-data-[role=user]/message:bg-task-dark'
           : ''
       )}>
         <div className="flex flex-col gap-2 w-full min-w-0">
-          {content && (
-            <div className="flex flex-col gap-4 w-full min-w-0">
+          {/* Text Content */}
+          {textContent && (
+            <div className="flex flex-col gap-2 w-full min-w-0">
               {isEditing ? (
                 <div className="flex flex-col gap-2">
                   <Textarea
                     ref={textareaRef}
                     value={editedContent}
                     onChange={(e) => setEditedContent(e.target.value)}
-                    className="min-h-[24px] w-full bg-chat-input border-none resize-none focus-visible:ring-0 focus-visible:ring-offset-0 text-xs leading-relaxed overflow-hidden"
+                    className="min-h-[24px] w-full bg-task-light dark:bg-task-dark border-none resize-none focus-visible:ring-0 focus-visible:ring-offset-0 text-xs leading-relaxed overflow-hidden"
                     disabled={isLoading}
                     onInput={adjustTextareaHeight}
                   />
@@ -149,54 +186,27 @@ export const Message = ({
                       size="sm"
                       onClick={() => setIsEditing(false)}
                       disabled={isLoading}
-                      className="intelligence-text h-7 px-3"
+                      className="text-xs task-tab h-6 px-2 hover:bg-transparent text-muted-foreground hover:text-foreground transition-colors"
+                      style={{ fontFamily: 'var(--font-orbitron)', textTransform: 'uppercase' }}
                     >
-                      Cancel
+                      CANCEL
                     </Button>
                     <Button 
                       size="sm"
                       onClick={handleSave}
                       disabled={isLoading}
-                      className="intelligence-text h-7 px-3"
+                      className="text-xs task-tab h-6 px-2 hover:bg-transparent text-foreground hover:text-foreground transition-colors bg-transparent"
+                      style={{ fontFamily: 'var(--font-orbitron)', textTransform: 'uppercase' }}
                     >
-                      {isLoading ? 'Saving...' : 'Save'}
+                      {isLoading ? 'SAVING...' : 'SAVE'}
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div className="w-full min-w-0">
-                  {typeof content === 'string' ? (
-                    <Markdown className="font-chat">
-                      {highlight ? highlightText(content, highlight) : content}
-                    </Markdown>
-                  ) : Array.isArray(content) ? (
-                    content.map((part: any, index: number) => {
-                      if (part.type === 'text') {
-                        return (
-                          <Markdown key={index} className="font-chat">
-                            {highlight
-                              ? highlightText(part.text, highlight)
-                              : part.text}
-                          </Markdown>
-                        );
-                      }
-                      if (part.type === 'image_url') {
-                        // Assuming image_url is a string path, adjust if it's an object
-                        const url = typeof part.image_url === 'string' ? part.image_url : part.image_url.url;
-                        return (
-                          <Image
-                            key={index}
-                            src={url}
-                            alt="Image content"
-                            width={200}
-                            height={200}
-                            className="rounded-lg"
-                          />
-                        );
-                      }
-                      return null;
-                    })
-                  ) : null}
+                  <Markdown className="font-chat">
+                    {highlight ? highlightText(textContent, highlight) : textContent}
+                  </Markdown>
                 </div>
               )}
             </div>
@@ -227,45 +237,93 @@ export const Message = ({
               })}
             </div>
           ) : null}
-
-          {attachments && (
-            <div className="flex flex-row gap-2">
-              {attachments.map((attachment) => (
-                <PreviewAttachment
-                  key={attachment.url}
-                  attachment={attachment}
-                />
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Action buttons outside and underneath the message */}
-      {!isEditing && content && role === 'user' && typeof content === 'string' && (
-        <div className="flex gap-1 mt-1 opacity-0 group-hover/message:opacity-100 transition-opacity justify-end max-w-3xl">
+      {/* Images Section - Separate from text */}
+      {hasImages && (
+        <div className="mt-3 max-w-3xl flex justify-end">
+          <div className="flex flex-wrap gap-3">
+            {/* Content images */}
+            {imageContent.map((part: any, index: number) => {
+              const url = typeof part.image_url === 'string' ? part.image_url : part.image_url.url;
+              return (
+                <div key={index} className="relative group">
+                  <div className="size-16 bg-muted rounded-lg relative flex items-center justify-center cursor-pointer">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt="Image content"
+                      className="rounded-lg size-full object-cover"
+                    />
+                  </div>
+                  {isEditing && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute -top-1 -right-1 size-4 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 bg-white dark:bg-gray-800 rounded-full p-0"
+                      onClick={() => {
+                        // Handle removal of content images if needed
+                        toast.info('Content image removal not implemented');
+                      }}
+                    >
+                      <X className="size-3" />
+                    </Button>
+                  )}
+                </div>
+              );
+            })}
+            
+            {/* Attachment images */}
+            {(isEditing ? editedAttachments : attachments)?.map((attachment, index) => (
+              <div key={attachment.url} className="relative group">
+                <PreviewAttachment
+                  attachment={attachment}
+                  onRemove={isEditing ? () => handleRemoveAttachment(index) : undefined}
+                />
+                {isEditing && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute -top-1 -right-1 size-4 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 bg-white dark:bg-gray-800 rounded-full p-0"
+                    onClick={() => handleRemoveAttachment(index)}
+                  >
+                    <X className="size-3" />
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Action buttons below images */}
+      {!isEditing && (textContent || hasImages) && role === 'user' && (
+        <div className="flex gap-1 mt-px opacity-0 group-hover/message:opacity-100 transition-opacity justify-end max-w-3xl">
           {onEdit && id && (
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsEditing(true)}
+              onClick={handleEdit}
               className="size-8 hover:bg-transparent"
             >
               <PencilIcon className="size-3 text-muted-foreground hover:text-foreground transition-colors" />
             </Button>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleCopy}
-            className="size-8 hover:bg-transparent"
-          >
-            {showCopyCheck ? (
-              <Check className="size-4 text-muted-foreground hover:text-foreground transition-colors" />
-            ) : (
-              <Copy className="size-3 text-muted-foreground hover:text-foreground transition-colors rotate-90" />
-            )}
-          </Button>
+          {textContent && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleCopy}
+              className="size-8 hover:bg-transparent"
+            >
+              {showCopyCheck ? (
+                <Check className="size-4 text-muted-foreground hover:text-foreground transition-colors" />
+              ) : (
+                <Copy className="size-3 text-muted-foreground hover:text-foreground transition-colors rotate-90" />
+              )}
+            </Button>
+          )}
         </div>
       )}
     </motion.div>

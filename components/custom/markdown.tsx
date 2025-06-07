@@ -99,6 +99,13 @@ const NonMemoizedMarkdown = ({ children, className }: { children: string; classN
         </Link>
       );
     },
+    mark: ({ node, children, ...props }: any) => {
+      return (
+        <mark className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 px-1 py-0.5 rounded intelligence-content" {...props}>
+          {children}
+        </mark>
+      );
+    },
     p: ({ node, children, ...props }: any) => {
       if (Children.toArray(children).every(child => 
         typeof child === 'string' && child.trim() === ''

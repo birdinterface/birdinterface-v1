@@ -3,5 +3,5 @@ export default async function IntelligenceLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <div className="h-[calc(100vh-2.5rem)] md:h-[calc(100vh-3.5rem)]">{children}</div>;
 } 

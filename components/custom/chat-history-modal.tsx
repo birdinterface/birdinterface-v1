@@ -236,6 +236,19 @@ export function ChatHistoryModal({
     return searchResults;
   }, [deferredSearchQuery, groupedHistoryData]);
 
+  // Reset hover state when search results change
+  useEffect(() => {
+    if (deferredSearchQuery && Object.keys(filteredHistory).length > 0) {
+      // Reset hover state so we show the first search result
+      setHoveredChatId(null);
+      setHoveredChatMessages([]);
+    } else if (!deferredSearchQuery) {
+      // Also reset when clearing search to prevent showing stale preview
+      setHoveredChatId(null);
+      setHoveredChatMessages([]);
+    }
+  }, [deferredSearchQuery, filteredHistory]);
+
   // Handle search input with optimistic updates
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
@@ -379,6 +392,7 @@ export function ChatHistoryModal({
                 id={message.id}
                 role={message.role}
                 content={message.content}
+                attachments={message.experimental_attachments || message.attachments}
                 toolInvocations={undefined}
                 isPreview={true}
                 highlight={deferredSearchQuery}
@@ -398,14 +412,14 @@ export function ChatHistoryModal({
         className="fixed inset-0 bg-background/80 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
       />
-      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-2 gap-6 p-6 mx-auto bg-background rounded-xl shadow-2xl">
+      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-2 gap-6 p-6 mx-auto bg-background shadow-2xl dark:shadow-white/25">
         <div className="flex flex-col h-[500px]">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               type="text" 
-              placeholder="Search in chats"
-              className="pl-10 w-full border-0 text-xs"
+              placeholder="Search log"
+              className="pl-10 w-full border-0 text-xs rounded-none"
               value={searchQuery}
               onChange={e => handleSearchChange(e.target.value)}
             />
@@ -438,7 +452,7 @@ export function ChatHistoryModal({
           </div>
         </div>
 
-        <div className="hidden md:block h-[500px] bg-task-light dark:bg-task-dark rounded-lg p-4">
+        <div className="hidden md:block h-[500px] p-4">
           {renderChatPreview()}
         </div>
       </div>
