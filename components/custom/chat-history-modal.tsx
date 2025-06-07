@@ -8,10 +8,10 @@ import { useEffect, useMemo, useState, useCallback, useDeferredValue, useOptimis
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
+import { Message as PreviewMessage } from '@/components/custom/message';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn, fetcher } from '@/lib/utils';
-import { Message as PreviewMessage } from '@/components/custom/message';
 
 // Define the expected shape of a processed chat object from the API
 interface ProcessedChat {
@@ -320,12 +320,12 @@ export function ChatHistoryModal({
         href={`/intelligence/chat/${chat.id}`}
         onClick={() => onOpenChange(false)}
         className={cn(
-          'flex-1 min-w-0 text-muted-foreground group-hover:text-foreground font-chat text-[9px] font-[500] tracking-[0.05em] uppercase',
+          'flex-1 min-w-0 text-muted-foreground group-hover:text-foreground font-chat text-[9px] tracking-wider uppercase',
           chat.id === currentChatId && 'text-foreground'
         )}
       >
-        <div className="font-chat text-[9px] font-[500] tracking-[0.05em] uppercase truncate">{chat.title}</div>
-        <div className="font-chat text-[9px] font-[500] tracking-[0.05em] uppercase">
+        <div className="font-chat text-[9px] tracking-wider uppercase truncate">{chat.title}</div>
+        <div className="font-chat text-[9px] tracking-wider uppercase">
           {new Date(chat.updatedat).toLocaleDateString()}
         </div>
       </Link>
@@ -401,7 +401,7 @@ export function ChatHistoryModal({
       <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-2 gap-6 p-6 mx-auto bg-background rounded-xl shadow-2xl">
         <div className="flex flex-col h-[500px]">
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               type="text" 
               placeholder="Search in chats"
@@ -420,7 +420,7 @@ export function ChatHistoryModal({
               Object.entries(displayResults).map(([period, chats]) => (
                 <div key={period} className="mb-4">
                   <h3
-                    className="text-[9px] font-[700] tracking-[0.1em] uppercase text-foreground mb-2 px-2"
+                    className="text-[9px] font-[700] tracking-widest uppercase text-foreground mb-2 px-2"
                     style={{ fontFamily: 'var(--font-orbitron)' }}
                   >
                     {period} {period === 'Search Results' && `(${(chats as ProcessedChat[]).length})`}
