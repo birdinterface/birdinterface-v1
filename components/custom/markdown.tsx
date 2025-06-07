@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React, { memo, useState, Children } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
 import { cn } from "@/lib/utils";
@@ -118,7 +119,7 @@ const NonMemoizedMarkdown = ({ children, className }: { children: string; classN
 
   return (
     <div className={cn("intelligence-content", className)}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={components}>
         {children}
       </ReactMarkdown>
     </div>

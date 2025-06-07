@@ -57,7 +57,7 @@ export function Navigation({ user }: { user: any }) {
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="ghost" 
-                      className="size-8 p-0 data-[state=open]:bg-transparent shrink-0 focus-visible:ring-0 transition-opacity"
+                      className="size-8 p-0 data-[state=open]:bg-transparent shrink-0 focus-visible:ring-0 transition-opacity hover:bg-transparent"
                     >
                       <div className="relative size-6">
                         <Image
@@ -85,19 +85,19 @@ export function Navigation({ user }: { user: any }) {
                     {user && (
                       <>
                         <DropdownMenuItem asChild>
-                          <button className="w-full text-left text-xs nav-text" onClick={openModal}>
+                          <button className="w-full text-left text-xs nav-text text-muted-foreground hover:text-primary focus:bg-transparent" onClick={openModal}>
                             YOUR PLAN
                           </button>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="text-xs nav-text"
+                          className="text-xs nav-text text-muted-foreground hover:text-primary focus:bg-transparent"
                           onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                         >
                           {theme === 'light' ? 'DARK MODE' : 'LIGHT MODE'}
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <button
-                            className="w-full text-left text-xs nav-text"
+                            className="w-full text-left text-xs nav-text text-muted-foreground hover:text-primary focus:bg-transparent"
                             onClick={() => {
                               signOut({
                                 redirect: true,

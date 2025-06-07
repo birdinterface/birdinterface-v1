@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { PencilIcon, Copy, Check } from 'lucide-react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
@@ -16,6 +16,15 @@ import { Weather } from './weather';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 
+const highlightText = (text: string, highlight: string): string => {
+  if (!highlight.trim()) {
+    return text;
+  }
+  const escapedHighlight = highlight.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const regex = new RegExp(`(${escapedHighlight})`, 'gi');
+  return text.replace(regex, '<span class="text-blue-500">$1</span>');
+};
+
 export const Message = ({
   role,
   content,
@@ -24,6 +33,8 @@ export const Message = ({
   onEdit,
   id,
   isIncognito = false,
+  isPreview = false,
+  highlight,
 }: {
   role: string;
   content: ReactNode;
@@ -32,12 +43,37 @@ export const Message = ({
   onEdit?: (messageId: string, newContent: string) => Promise<boolean>;
   id?: string;
   isIncognito?: boolean;
+  isPreview?: boolean;
+  highlight?: string;
 }) => {
   const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(content as string);
+  const [editedContent, setEditedContent] = useState(
+    typeof content === 'string' ? content : ''
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [showCopyCheck, setShowCopyCheck] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      // Adjust height immediately when entering edit mode
+      setTimeout(() => {
+        adjustTextareaHeight();
+        textareaRef.current?.focus();
+        // Position cursor at the end of the text
+        const textLength = textareaRef.current?.value.length || 0;
+        textareaRef.current?.setSelectionRange(textLength, textLength);
+      }, 0);
+    }
+  }, [isEditing]);
 
   const handleEdit = () => {
     setEditedContent(typeof content === 'string' ? content : '');
@@ -64,8 +100,12 @@ export const Message = ({
   };
 
   const handleCopy = async () => {
+    if (typeof content !== 'string') {
+      toast.error('Cannot copy complex message content');
+      return;
+    }
     try {
-      await navigator.clipboard.writeText(content as string);
+      await navigator.clipboard.writeText(content);
       setShowCopyCheck(true);
       setTimeout(() => setShowCopyCheck(false), 2000);
     } catch (error) {
@@ -76,8 +116,6 @@ export const Message = ({
   return (
     <motion.div
       className="w-full mx-auto max-w-3xl px-4 group/message mb-2"
-      initial={{ y: 5, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
       data-role={role}
     >
       <div className={cn(
@@ -98,15 +136,12 @@ export const Message = ({
               {isEditing ? (
                 <div className="flex flex-col gap-2">
                   <Textarea
+                    ref={textareaRef}
                     value={editedContent}
                     onChange={(e) => setEditedContent(e.target.value)}
                     className="min-h-[24px] w-full bg-chat-input border-none resize-none focus-visible:ring-0 focus-visible:ring-offset-0 text-xs leading-relaxed overflow-hidden"
                     disabled={isLoading}
-                    onInput={(e) => {
-                      const target = e.target as HTMLTextAreaElement;
-                      target.style.height = 'auto';
-                      target.style.height = `${target.scrollHeight}px`;
-                    }}
+                    onInput={adjustTextareaHeight}
                   />
                   <div className="flex gap-2 justify-end">
                     <Button 
@@ -130,7 +165,38 @@ export const Message = ({
                 </div>
               ) : (
                 <div className="w-full min-w-0">
-                  <Markdown className="font-chat">{content as string}</Markdown>
+                  {typeof content === 'string' ? (
+                    <Markdown className="font-chat">
+                      {highlight ? highlightText(content, highlight) : content}
+                    </Markdown>
+                  ) : Array.isArray(content) ? (
+                    content.map((part: any, index: number) => {
+                      if (part.type === 'text') {
+                        return (
+                          <Markdown key={index} className="font-chat">
+                            {highlight
+                              ? highlightText(part.text, highlight)
+                              : part.text}
+                          </Markdown>
+                        );
+                      }
+                      if (part.type === 'image_url') {
+                        // Assuming image_url is a string path, adjust if it's an object
+                        const url = typeof part.image_url === 'string' ? part.image_url : part.image_url.url;
+                        return (
+                          <Image
+                            key={index}
+                            src={url}
+                            alt="Image content"
+                            width={200}
+                            height={200}
+                            className="rounded-lg"
+                          />
+                        );
+                      }
+                      return null;
+                    })
+                  ) : null}
                 </div>
               )}
             </div>
@@ -176,7 +242,7 @@ export const Message = ({
       </div>
 
       {/* Action buttons outside and underneath the message */}
-      {!isEditing && content && role === 'user' && (
+      {!isEditing && content && role === 'user' && typeof content === 'string' && (
         <div className="flex gap-1 mt-1 opacity-0 group-hover/message:opacity-100 transition-opacity justify-end max-w-3xl">
           {onEdit && id && (
             <Button

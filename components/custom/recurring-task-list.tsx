@@ -1316,7 +1316,7 @@ export function RecurringTaskList({
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-8">
-                      <div className="flex items-center gap-8 min-w-0">
+                      <div className="flex items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12 min-w-0 flex-1">
                         <input
                           type="text"
                           value={typeof task.name === 'string' ? task.name : ''}
@@ -1324,7 +1324,7 @@ export function RecurringTaskList({
                           onKeyDown={(e) => { e.stopPropagation(); handleKeyDown(e, task.id); }}
                           onMouseDown={(e) => { e.stopPropagation(); }}
                           onDragStart={(e) => { e.preventDefault(); }}
-                          className="flex-1 bg-transparent text-xs font-medium focus:outline-none task-input tracking-widest"
+                          className="w-full sm:w-32 md:w-40 lg:w-48 xl:w-56 bg-transparent text-xs font-medium focus:outline-none task-input tracking-widest"
                           data-task-id={task.id}
                           placeholder={task.id === 'empty' ? "Task Name" : "Task name"}
                         />

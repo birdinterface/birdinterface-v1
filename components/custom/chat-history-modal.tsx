@@ -1,46 +1,178 @@
 'use client';
 
-import { Search, X } from 'lucide-react';
+import { InfoIcon, Search, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { type User } from 'next-auth';
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback, useDeferredValue, useOptimistic, useTransition } from 'react';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
-import {
-  InfoIcon,
-  MoreHorizontalIcon,
-  TrashIcon,
-} from '@/components/custom/icons';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Modal } from '@/components/ui/Modal';
 import { cn, fetcher } from '@/lib/utils';
+import { Message as PreviewMessage } from '@/components/custom/message';
 
 // Define the expected shape of a processed chat object from the API
 interface ProcessedChat {
   id: string;
-  title: string; 
+  title: string;
   updatedat: string;
   messages?: any[];
+  messages_json?: string;
+}
+
+// Helper function to parse messages from a chat object
+function getMessagesFromChat(chat: ProcessedChat): any[] {
+  if (chat.messages_json) {
+    try {
+      const messages = JSON.parse(chat.messages_json);
+      return Array.isArray(messages) ? messages : [];
+    } catch (e) {
+      console.error('Failed to parse messages_json for chat:', chat.id);
+      return [];
+    }
+  }
+  if (Array.isArray(chat.messages)) {
+    return chat.messages;
+  }
+  if (typeof chat.messages === 'string') {
+    try {
+      const messages = JSON.parse(chat.messages);
+      return Array.isArray(messages) ? messages : [];
+    } catch (e) {
+      console.error('Failed to parse messages for chat:', chat.id);
+      return [];
+    }
+  }
+  return [];
+}
+
+// Cache for search results to avoid recomputing
+const searchCache = new Map<string, { result: any; timestamp: number }>();
+const CACHE_DURATION = 30000; // 30 seconds
+
+// Helper function to extract text content from various message content formats
+function extractTextFromMessageContent(content: any): string {
+  if (!content) return '';
+  
+  if (typeof content === 'string') {
+    return content.trim();
+  }
+  
+  if (Array.isArray(content)) {
+    return content
+      .map(part => {
+        if (typeof part === 'string') {
+          return part.trim();
+        }
+        if (part && typeof part === 'object') {
+          // Handle text content parts
+          if (part.type === 'text' && part.text) {
+            return part.text.trim();
+          }
+          // Handle other text fields
+          if (part.text) {
+            return part.text.trim();
+          }
+          // Handle content field
+          if (part.content) {
+            return extractTextFromMessageContent(part.content);
+          }
+        }
+        return '';
+      })
+      .filter(text => text.length > 0)
+      .join(' ');
+  }
+  
+  if (content && typeof content === 'object') {
+    // Handle object with text field
+    if (content.text) {
+      return content.text.trim();
+    }
+    // Handle nested content
+    if (content.content) {
+      return extractTextFromMessageContent(content.content);
+    }
+  }
+  
+  return '';
+}
+
+// Optimized search function with caching
+function performSearch(query: string, allChats: ProcessedChat[]): { 'Search Results': ProcessedChat[] } | {} {
+  if (!query) return {};
+  
+  const cacheKey = query;
+  const cached = searchCache.get(cacheKey);
+  const now = Date.now();
+  
+  // Return cached result if still valid
+  if (cached && (now - cached.timestamp) < CACHE_DURATION) {
+    return cached.result;
+  }
+  
+  try {
+    // Escape special regex characters
+    const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    
+    // Create regex patterns for different types of matches
+    const exactRegex = new RegExp(`\\b${escapedQuery}\\b`, 'gi');
+    const partialRegex = new RegExp(escapedQuery, 'gi');
+
+    const chatsWithScore = allChats
+      .map(chat => {
+        const messages = getMessagesFromChat(chat);
+        let score = 0;
+        
+        // Search in title with higher weight
+        const titleText = chat.title.toLowerCase();
+        const titleExactMatches = titleText.match(exactRegex);
+        const titlePartialMatches = titleText.match(partialRegex);
+        
+        if (titleExactMatches) {
+          score += titleExactMatches.length * 3; // Highest priority for exact title matches
+        } else if (titlePartialMatches) {
+          score += titlePartialMatches.length * 2; // Medium priority for partial title matches
+        }
+
+        // Search in message content
+        if (messages && Array.isArray(messages)) {
+          messages.forEach((message) => {
+            const messageText = extractTextFromMessageContent(message.content);
+            
+            if (messageText) {
+              const messageTextLower = messageText.toLowerCase();
+              const exactMatches = messageTextLower.match(exactRegex);
+              const partialMatches = messageTextLower.match(partialRegex);
+              
+              if (exactMatches) {
+                score += exactMatches.length * 2; // Higher score for exact word matches
+              } else if (partialMatches) {
+                score += partialMatches.length; // Lower score for partial matches
+              }
+            }
+          });
+        }
+        
+        return { ...chat, messages, score };
+      })
+      .filter(chat => chat.score > 0)
+      .sort((a, b) => b.score - a.score);
+
+    const result = chatsWithScore.length > 0 
+      ? { 'Search Results': chatsWithScore }
+      : {};
+    
+    // Cache the result
+    searchCache.set(cacheKey, { result, timestamp: now });
+    
+    return result;
+  } catch (error) {
+    console.error('Error during search:', error);
+    return {};
+  }
 }
 
 // Define the expected shape of the grouped history from the API
@@ -52,18 +184,31 @@ interface ChatHistoryModalProps {
   user?: User;
 }
 
-export function ChatHistoryModal({ open, onOpenChange, user }: ChatHistoryModalProps) {
+export function ChatHistoryModal({
+  open,
+  onOpenChange,
+  user,
+}: ChatHistoryModalProps) {
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();
-  const { theme } = useTheme();
   const currentChatId = params?.id as string | undefined;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredChatId, setHoveredChatId] = useState<string | null>(null);
   const [hoveredChatMessages, setHoveredChatMessages] = useState<any[]>([]);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  
+  // Use React's useDeferredValue for better performance during rapid typing
+  const deferredSearchQuery = useDeferredValue(searchQuery.toLowerCase().trim());
+  
+  // Use useOptimistic for instant UI feedback
+  const [optimisticSearchResults, setOptimisticSearchResults] = useOptimistic(
+    {} as GroupedHistory,
+    (_, newResults: GroupedHistory) => newResults
+  );
+  
+  const [isPending, startTransition] = useTransition();
 
   const {
     data: groupedHistoryData,
@@ -74,84 +219,92 @@ export function ChatHistoryModal({ open, onOpenChange, user }: ChatHistoryModalP
   });
 
   useEffect(() => {
-    mutate(); 
-  }, [pathname, mutate]);
-
-  // Filter chats based on search query
-  const filteredHistory = Object.entries(groupedHistoryData || {}).reduce((acc, [period, chats]) => {
-    const filteredChats = chats.filter(chat =>
-      chat.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    if (filteredChats.length > 0) {
-      acc[period] = filteredChats;
+    if (open) {
+      mutate();
     }
-    return acc;
-  }, {} as GroupedHistory);
+  }, [open, pathname, mutate]);
 
-  // Fetch chat details when hovering
-  const fetchChatDetails = async (chatId: string) => {
-    try {
-      const response = await fetch(`/intelligence/api/chat?id=${chatId}`);
-      if (response.ok) {
-        const chatData = await response.json();
-        let messages = [];
-        
-        if (Array.isArray(chatData.messages)) {
-          messages = chatData.messages;
-        } else if (typeof chatData.messages === 'string') {
-          messages = JSON.parse(chatData.messages);
-        }
-        
-        setHoveredChatMessages(messages.slice(0, 5)); // Show first 5 messages
-      }
-    } catch (error) {
-      console.error('Error fetching chat details:', error);
-      setHoveredChatMessages([]);
+  // Optimized search with immediate optimistic updates
+  const filteredHistory = useMemo(() => {
+    if (!deferredSearchQuery) {
+      return groupedHistoryData || {};
     }
-  };
 
-  const handleChatHover = (chatId: string) => {
-    setHoveredChatId(chatId);
-    fetchChatDetails(chatId);
-  };
+    const allChats = Object.values(groupedHistoryData || {}).flat();
+    const searchResults = performSearch(deferredSearchQuery, allChats);
+    
+    return searchResults;
+  }, [deferredSearchQuery, groupedHistoryData]);
 
-  const handleDelete = async () => {
-    try {
-      await fetch(`/intelligence/api/chat?id=${deleteId}`, {
-        method: 'DELETE',
-      }).then(res => {
-        if (!res.ok) throw new Error('Failed to delete');
+  // Handle search input with optimistic updates
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value);
+    
+    if (value.trim()) {
+      // Start transition for both optimistic and deferred updates
+      startTransition(() => {
+        // Immediately show optimistic results
+        const allChats = Object.values(groupedHistoryData || {}).flat();
+        const optimisticResults = performSearch(value.toLowerCase().trim(), allChats);
+        setOptimisticSearchResults(optimisticResults as GroupedHistory);
       });
-
-      mutate((currentData) => {
-        if (!currentData) return {};
-        const newData: GroupedHistory = {};
-        for (const period in currentData) {
-          const filteredChats = currentData[period].filter((h) => h.id !== deleteId);
-          if (filteredChats.length > 0) {
-            newData[period] = filteredChats;
-          }
-        }
-        return newData;
-      }, false);
-
-      toast.success('Chat deleted successfully', {
-        style: {
-          background: theme === 'dark' ? 'black' : 'white',
-          border: theme === 'dark' ? '1px solid rgb(31,41,55)' : '1px solid rgb(229,231,235)',
-          color: theme === 'dark' ? 'white' : 'black',
-        }
+    } else {
+      startTransition(() => {
+        setOptimisticSearchResults({} as GroupedHistory);
       });
+    }
+  }, [groupedHistoryData, setOptimisticSearchResults]);
 
-      if (deleteId === currentChatId) {
-        router.push('/intelligence');
-        onOpenChange(false);
+  // Use optimistic results when pending, otherwise use computed results
+  const displayResults = isPending && searchQuery.trim() ? optimisticSearchResults : filteredHistory;
+
+  // Set chat details for preview when hovering
+  const handleChatHover = useCallback((chat: ProcessedChat) => {
+    if (hoveredChatId === chat.id) return;
+    setHoveredChatId(chat.id);
+    const messages = getMessagesFromChat(chat);
+    setHoveredChatMessages(messages);
+  }, [hoveredChatId]);
+
+  const handleDelete = async (chatId: string) => {
+    if (deletingId === chatId) {
+      // This is the confirmation click
+      try {
+        await fetch(`/intelligence/api/chat?id=${chatId}`, {
+          method: 'DELETE',
+        }).then(res => {
+          if (!res.ok) throw new Error('Failed to delete');
+        });
+
+        mutate(
+          currentData => {
+            if (!currentData) return {};
+            const newData: GroupedHistory = {};
+            for (const period in currentData) {
+              const filteredChats = currentData[period].filter(
+                h => h.id !== chatId
+              );
+              if (filteredChats.length > 0) {
+                newData[period] = filteredChats;
+              }
+            }
+            return newData;
+          },
+          false
+        );
+
+        if (chatId === currentChatId) {
+          router.push('/intelligence');
+          onOpenChange(false);
+        }
+      } catch (error) {
+        toast.error('Failed to delete chat');
+      } finally {
+        setDeletingId(null);
       }
-    } catch (error) {
-      toast.error('Failed to delete chat');
-    } finally {
-      setShowDeleteDialog(false);
-      setDeleteId(null);
+    } else {
+      // First click, set for confirmation
+      setDeletingId(chatId);
     }
   };
 
@@ -159,88 +312,77 @@ export function ChatHistoryModal({ open, onOpenChange, user }: ChatHistoryModalP
     <div
       key={chat.id}
       className={cn(
-        "group flex items-center justify-between p-3 rounded-lg border transition-all duration-200 cursor-pointer",
-        "hover:bg-accent hover:shadow-sm",
-        chat.id === currentChatId ? "bg-accent border-primary" : "border-border",
-        hoveredChatId === chat.id ? "bg-accent/50" : ""
+        'group flex items-center justify-between p-2 rounded-md transition-all duration-200 cursor-pointer'
       )}
-      onMouseEnter={() => handleChatHover(chat.id)}
-      onMouseLeave={() => {
-        if (hoveredChatId === chat.id) {
-          setHoveredChatId(null);
-          setHoveredChatMessages([]);
-        }
-      }}
+      onMouseEnter={() => handleChatHover(chat)}
     >
       <Link
         href={`/intelligence/chat/${chat.id}`}
         onClick={() => onOpenChange(false)}
-        className="flex-1 min-w-0"
+        className={cn(
+          'flex-1 min-w-0 text-muted-foreground group-hover:text-foreground font-chat text-[9px] font-[500] tracking-[0.05em] uppercase',
+          chat.id === currentChatId && 'text-foreground'
+        )}
       >
-        <div className="font-medium text-sm truncate">{chat.title}</div>
-        <div className="text-xs text-muted-foreground mt-1">
+        <div className="font-chat text-[9px] font-[500] tracking-[0.05em] uppercase truncate">{chat.title}</div>
+        <div className="font-chat text-[9px] font-[500] tracking-[0.05em] uppercase">
           {new Date(chat.updatedat).toLocaleDateString()}
         </div>
       </Link>
-      
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-transparent hover:text-black dark:hover:text-white">
-            <MoreHorizontalIcon size={16} />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" align="start">
-          <DropdownMenuItem
-            className="text-destructive focus:bg-destructive/15 focus:text-destructive"
-            onSelect={() => {
-              setDeleteId(chat.id);
-              setShowDeleteDialog(true);
-            }}
-          >
-            <TrashIcon size={16} />
-            <span className="ml-2">Delete</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        className={cn(
+          'opacity-0 group-hover:opacity-100 transition-opacity hover:bg-transparent',
+          deletingId !== chat.id && 'text-muted-foreground hover:text-foreground'
+        )}
+        onClick={() => handleDelete(chat.id)}
+        onMouseLeave={() => {
+          setDeletingId(null); // Reset confirmation on mouse leave
+        }}
+      >
+        {deletingId === chat.id ? (
+          <TrashIcon size={14} className="text-destructive" />
+        ) : (
+          <TrashIcon size={14} />
+        )}
+      </Button>
     </div>
   );
 
   const renderChatPreview = () => {
-    if (!hoveredChatId || hoveredChatMessages.length === 0) {
-      return (
-        <div className="flex items-center justify-center h-full text-muted-foreground">
-          <div className="text-center">
-            <InfoIcon size={32} />
-            <p className="mt-2">Hover over a chat to see preview</p>
-          </div>
-        </div>
-      );
+    let previewChatId = hoveredChatId;
+    let previewMessages = hoveredChatMessages;
+    
+    // If no chat is hovered but we have search results, show the first result
+    if (!hoveredChatId && deferredSearchQuery && Object.keys(displayResults).length > 0) {
+      const firstGroup = Object.values(displayResults)[0] as ProcessedChat[];
+      if (firstGroup && firstGroup.length > 0) {
+        const firstChat = firstGroup[0];
+        previewChatId = firstChat.id;
+        previewMessages = getMessagesFromChat(firstChat);
+      }
+    }
+    
+    if (!previewChatId || previewMessages.length === 0) {
+      return null;
     }
 
     return (
-      <div className="space-y-4">
-        <h3 className="font-semibold text-lg">Chat Preview</h3>
-        <div className="h-[400px] overflow-y-auto">
-          <div className="space-y-3">
-            {hoveredChatMessages.map((message, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "p-3 rounded-lg max-w-[80%]",
-                  message.role === 'user' 
-                    ? "bg-primary text-primary-foreground ml-auto" 
-                    : "bg-muted"
-                )}
-              >
-                <div className="text-xs font-medium mb-1 opacity-70">
-                  {message.role === 'user' ? 'You' : 'Assistant'}
-                </div>
-                <div className="text-sm">
-                  {typeof message.content === 'string' 
-                    ? message.content.slice(0, 150) + (message.content.length > 150 ? '...' : '')
-                    : 'Message content'}
-                </div>
-              </div>
+      <div className="space-y-3">
+        <div className="h-[450px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-neutral-300 dark:scrollbar-thumb-neutral-700/50 scrollbar-track-transparent hover:scrollbar-thumb-neutral-400 dark:hover:scrollbar-thumb-neutral-600">
+          <div className="space-y-2">
+            {previewMessages.map((message) => (
+              <PreviewMessage
+                key={message.id}
+                id={message.id}
+                role={message.role}
+                content={message.content}
+                toolInvocations={undefined}
+                isPreview={true}
+                highlight={deferredSearchQuery}
+              />
             ))}
           </div>
         </div>
@@ -248,92 +390,58 @@ export function ChatHistoryModal({ open, onOpenChange, user }: ChatHistoryModalP
     );
   };
 
-  if (!user) {
-    return null;
-  }
+  if (!open) return null;
 
   return (
-    <>
-      <Modal 
-        isOpen={open} 
-        onClose={() => onOpenChange(false)}
-        title="Chat History"
-        className="max-w-6xl"
-      >
-        <div className="flex h-[60vh]">
-          {/* Left side - Chat History List */}
-          <div className="w-1/2 border-r pr-4">
-            {/* Search Bar */}
-            <div className="mb-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search chats..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            {/* Chat List */}
-            <div className="h-[calc(100%-4rem)] overflow-y-auto">
-              <div className="space-y-2">
-                {isLoading ? (
-                  <div className="space-y-3">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div key={i} className="animate-pulse">
-                        <div className="h-16 bg-muted rounded-lg"></div>
-                      </div>
-                    ))}
-                  </div>
-                ) : Object.keys(filteredHistory).length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <InfoIcon size={32} />
-                    <p className="mt-2">{searchQuery ? 'No chats found matching your search' : 'No chats found'}</p>
-                  </div>
-                ) : (
-                  Object.entries(filteredHistory).map(([period, chats]) => (
-                    <div key={period} className="space-y-2">
-                      <div className="text-sm font-medium text-muted-foreground px-2 py-1">
-                        {period}
-                      </div>
-                      {chats.map(renderChatItem)}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div
+        className="fixed inset-0 bg-background/80 backdrop-blur-sm"
+        onClick={() => onOpenChange(false)}
+      />
+      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-2 gap-6 p-6 mx-auto bg-background rounded-xl shadow-2xl">
+        <div className="flex flex-col h-[500px]">
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text" 
+              placeholder="Search in chats"
+              className="pl-10 w-full border-0 text-xs"
+              value={searchQuery}
+              onChange={e => handleSearchChange(e.target.value)}
+            />
           </div>
 
-          {/* Right side - Chat Preview */}
-          <div className="w-1/2 pl-4">
-            {renderChatPreview()}
+          <div className="flex-1 overflow-y-auto pr-2 -mr-2 scrollbar-thin scrollbar-thumb-neutral-300 dark:scrollbar-thumb-neutral-700/50 scrollbar-track-transparent hover:scrollbar-thumb-neutral-400 dark:hover:scrollbar-thumb-neutral-600">
+            {isLoading ? (
+              <div className="text-center text-muted-foreground">
+                Loading...
+              </div>
+            ) : Object.keys(displayResults).length > 0 ? (
+              Object.entries(displayResults).map(([period, chats]) => (
+                <div key={period} className="mb-4">
+                  <h3
+                    className="text-[9px] font-[700] tracking-[0.1em] uppercase text-foreground mb-2 px-2"
+                    style={{ fontFamily: 'var(--font-orbitron)' }}
+                  >
+                    {period} {period === 'Search Results' && `(${(chats as ProcessedChat[]).length})`}
+                  </h3>
+                  <div className="">{(chats as ProcessedChat[]).map(renderChatItem)}</div>
+                </div>
+              ))
+            ) : deferredSearchQuery ? (
+              null
+            ) : (
+              <div className="text-center text-muted-foreground py-8">
+                <div className="text-sm"></div>
+              </div>
+            )}
           </div>
         </div>
-      </Modal>
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your chat and remove it from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              type="button"
-              autoFocus
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={handleDelete}
-            >
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+        <div className="hidden md:block h-[500px] bg-task-light dark:bg-task-dark rounded-lg p-4">
+          {renderChatPreview()}
+        </div>
+      </div>
+    </div>
   );
 } 

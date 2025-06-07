@@ -8,6 +8,7 @@ import { Chat } from "@/lib/supabase";
 // Define a type for the processed chat including the title
 interface ProcessedChatForGrouping extends Chat {
   title: string;
+  messages_json: string;
 }
 
 export async function GET() {
@@ -39,7 +40,8 @@ export async function GET() {
       
       return {
         ...chatWithTypedMessages,
-        title: getTitleFromChat(chatWithTypedMessages)
+        title: getTitleFromChat(chatWithTypedMessages),
+        messages_json: JSON.stringify(chatWithTypedMessages.messages)
       };
     });
 

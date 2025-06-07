@@ -59,5 +59,12 @@ export function groupChatsByDate(chats: Chat[]) {
     groups[month] = chats;
   });
 
+  // Remove empty groups
+  Object.keys(groups).forEach(key => {
+    if (Array.isArray(groups[key]) && groups[key].length === 0) {
+      delete groups[key];
+    }
+  });
+
   return groups;
 } 

@@ -83,6 +83,32 @@ interface ExtendedMessage extends Message {
   experimental_attachments?: Attachment[];
 }
 
+export async function GET(request: Request) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const chatId = searchParams.get('id');
+
+  if (!chatId) {
+    return Response.json({ error: 'Missing chat ID' }, { status: 400 });
+  }
+
+  try {
+    const chat = await getChatById({ id: chatId });
+    if (!chat || chat.userid !== session.user.id) {
+      return Response.json({ error: 'Chat not found' }, { status: 404 });
+    }
+    return Response.json(chat);
+  } catch (error) {
+    console.error('Failed to fetch chat:', error);
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   const { id, messages, model, isIncognito, searchParameters } = await request.json();
   const session = await auth();
