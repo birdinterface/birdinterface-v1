@@ -1,11 +1,14 @@
 'use client';
 
 import { ChevronUp } from 'lucide-react';
+import { Montserrat } from 'next/font/google';
 import Image from 'next/image';
 import { User } from "next-auth";
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
+
+const montserrat = Montserrat({ subsets: ['latin'] });
 
 import {
   DropdownMenu,
@@ -86,7 +89,7 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
+    <div className={`flex flex-col items-center justify-center p-4 ${montserrat.className}`}>
       <h2 className="text-3xl font-semibold mb-6">
         {currentMembership === 'ultimate' ? 'Your Plan' : 'Upgrade your plan'}
       </h2>
@@ -96,7 +99,7 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
           onClick={togglePlan}
         >
           <div className={`size-full bg-gray-100 border border-gray-300 rounded-full dark:bg-[#282b2e] dark:border-gray-700`}>
-            <div className={`absolute top-1/2 left-[4px] -translate-y-1/2 bg-[#d3dee8] rounded-full h-6 w-[76px] transition-all${
+            <div className={`absolute top-1/2 left-[4px] -translate-y-1/2 bg-[#d3dee8] rounded-full h-6 w-[76px] transition-all ${
               selectedPlan === (currentMembership === 'free' ? 'pro' : 'ultimate') ? 'translate-x-[76px]' : ''
             } dark:bg-[#3a3f43]`}></div>
           </div>
@@ -119,17 +122,17 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
       }`}>
         <div className="flex justify-left mb-2">
           <Image
-            src="/images/logodark.png"
+            src="/images/Birdinterface final-3.png"
             alt="Logo"
-            width={150}
+            width={122}
             height={30}
             className="dark:hidden"
             draggable={false}
           />
           <Image
-            src="/images/logowhite.png"
+            src="/images/Birdinterface final-4.png"
             alt="Logo"
-            width={150}
+            width={122}
             height={30}
             className="hidden dark:block"
             draggable={false}
@@ -140,7 +143,7 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
             {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}
           </h3>
           <p className="text-xl text-gray-900 dark:text-white">
-            ${selectedPlan === 'free' ? '0 ' : selectedPlan === 'pro' ? '15 ' : '25 '}
+            ${selectedPlan === 'free' ? '0 ' : selectedPlan === 'pro' ? '100 ' : '200 '}
             <span className="text-sm text-[#000000] dark:text-white">/ month</span>
           </p>
         </div>
@@ -158,13 +161,13 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
           }}
         >
           {selectedPlan === currentMembership 
-            ? 'Your current plan' 
+            ? 'Current plan' 
             : selectedPlan === 'pro' && currentMembership === 'ultimate'
               ? `Downgrade to Pro`
               : `Upgrade to ${selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}`
           }
         </button>
-        <ul className="text-base mb-6 text-left w-full text-gray-700 dark:text-white">
+        <ul className="text-base mb-6 text-left w-full text-gray-700 dark:text-white font-medium">
           {selectedPlan === 'free' ? (
             <>
               <li className="flex items-center mb-2">
@@ -173,11 +176,11 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
               </li>
               <li className="flex items-center mb-2">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Runs on Grok from xAI
+                Limited usage
               </li>
               <li className="flex items-center mb-2">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Prompt engineered
+                Limited storage
               </li>
             </>
           ) : selectedPlan === 'pro' ? (
@@ -188,11 +191,15 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
               </li>
               <li className="flex items-center mb-2">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Much more usage
+                Unlimited usage
+              </li>
+              <li className="flex items-center mb-2">
+                <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                Unlimited storage
               </li>
               <li className="flex items-center">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Early access to newest AI features
+                Early access to new features
               </li>
             </>
           ) : (
@@ -203,7 +210,7 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
               </li>
               <li className="flex items-center">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Unlimited usage
+                No limits
               </li>
             </>
           )}
@@ -247,11 +254,12 @@ export function SidebarUserNav({ user }: { user: ExtendedUser }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             side="top"
-            className="w-[--radix-popper-anchor-width]"
+            align="center"
+            className="w-[--radix-popper-anchor-width] border border-border rounded-lg"
           >
             <DropdownMenuItem asChild>
               <button
-                className="w-full text-left"
+                className="w-full text-left text-[10px]"
                 onClick={openModal}
               >
                 Your Plan
@@ -259,6 +267,7 @@ export function SidebarUserNav({ user }: { user: ExtendedUser }) {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
+              className="text-[10px]"
               onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
               {`Toggle ${theme === 'light' ? 'dark' : 'light'} mode`}
@@ -266,7 +275,7 @@ export function SidebarUserNav({ user }: { user: ExtendedUser }) {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <button
-                className="w-full text-left"
+                className="w-full text-left text-[10px]"
                 onClick={() => {
                   signOut({
                     redirect: true,

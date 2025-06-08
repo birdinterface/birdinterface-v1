@@ -1269,17 +1269,17 @@ export function RecurringTaskList({
 
   return (
     <div className="w-full flex items-start justify-center recurring-task-container">
-      <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-none mb-4">
+      <div className="w-full max-w-2xl border border-task-border rounded-t-md rounded-b-2xl mb-4">
         <div className="p-4">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="flex items-center justify-between w-full text-left"
           >
-            <span className="text-xs text-foreground task-tab">Recurring Tasks</span>
+            <span className="text-xs text-foreground task-tab ml-2">Recurring Tasks</span>
             {isCollapsed ? (
-              <ChevronDown className="size-4 text-muted-foreground" />
+              <ChevronDown className="size-4 text-muted-foreground mr-2" />
             ) : (
-              <ChevronUp className="size-4 text-muted-foreground" />
+              <ChevronUp className="size-4 text-muted-foreground mr-2" />
             )}
           </button>
         </div>
@@ -1302,7 +1302,7 @@ export function RecurringTaskList({
                 )}
                 <div
                   className={cn(
-                    "bg-task-light dark:bg-task-dark rounded-none p-2 transition-transform flex items-start gap-2",
+                    "rounded-md p-2 transition-transform flex items-start gap-2",
                     { "transform -translate-x-full": taskToDelete === task.id && swipeDistance >= 100 }
                   )}
                   style={{ transform: taskToDelete === task.id ? `translateX(-${swipeDistance}px)` : 'none' }}
@@ -1326,7 +1326,7 @@ export function RecurringTaskList({
                           onDragStart={(e) => { e.preventDefault(); }}
                           className="w-full sm:w-32 md:w-40 lg:w-48 xl:w-56 bg-transparent text-xs font-medium focus:outline-none task-input tracking-widest"
                           data-task-id={task.id}
-                          placeholder={task.id === 'empty' ? "Task Name" : "Task name"}
+                          placeholder={task.id === 'empty' ? "Task Name" : "Task Name"}
                         />
                         <input
                           type="text"
@@ -1348,7 +1348,7 @@ export function RecurringTaskList({
                                   {formatDate(task.dueDate)}
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
+                              <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
                                 <CustomCalendar
                                   selectedDate={parseTaskDate(task.dueDate)}
                                   onDateSelect={(date) => {
@@ -1383,7 +1383,7 @@ export function RecurringTaskList({
                                   <Calendar className="size-3" />
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
+                              <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
                                 <CustomCalendar
                                   selectedDate={parseTaskDate(task.dueDate)}
                                   onDateSelect={(date) => {

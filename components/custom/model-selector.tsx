@@ -43,7 +43,7 @@ export function ModelSelector({
           <ChevronDown className="text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-[300px]">
+      <DropdownMenuContent align="center" className="min-w-[300px] border border-border rounded-lg">
         {models.map((model) => (
           <DropdownMenuItem
             key={model.name}
@@ -55,13 +55,13 @@ export function ModelSelector({
                 saveModel(model.name);
               });
             }}
-            className="gap-4 group/item intelligence-text"
+            className="gap-4 group/item intelligence-text text-[10px]"
             data-active={model.name === optimisticModelName}
           >
             <div className="flex flex-col gap-1 items-start">
               {model.label}
               {model.description && (
-                <div className="intelligence-content text-muted-foreground">
+                <div className="intelligence-content text-muted-foreground text-[9px]">
                   {model.description}
                 </div>
               )}

@@ -334,7 +334,7 @@ When using live search data:
       ...coreMessages
     ] as CoreMessage[],
     temperature: 0.7,
-    onFinish: async ({ responseMessages }: { responseMessages: CoreMessage[] }) => {
+    onFinish: async ({ text }: { text: string }) => {
       if (session.user?.id && session.user?.email) {
         try {
           // Calculate input and output tokens
@@ -345,9 +345,7 @@ When using live search data:
             (formattedTaskContext ? formattedTaskContext : '')
           );
 
-          const outputTokens = estimateTokens(
-            JSON.stringify(responseMessages)
-          );
+          const outputTokens = estimateTokens(text);
 
           const cost = calculateCost(inputTokens, outputTokens, selectedModelName);
           const currentUsage = Number(user.usage) || 0;
@@ -379,12 +377,11 @@ When using live search data:
                     url: attachment.url // Ensure URL is saved
                   }))
                 })),
-                ...responseMessages.map((msg: CoreMessage) => ({
+                {
                   id: generateId(),
-                  role: msg.role,
-                  content: msg.content,
-                  experimental_attachments: undefined
-                }))
+                  role: 'assistant',
+                  content: text
+                }
               ],
               userId: session.user.id,
             });

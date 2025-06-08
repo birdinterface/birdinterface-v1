@@ -4,7 +4,7 @@ import { InfoIcon, Search, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { type User } from 'next-auth';
-import { useEffect, useMemo, useState, useCallback, useDeferredValue, useOptimistic, useTransition } from 'react';
+import { useEffect, useMemo, useState, useCallback, useDeferredValue, useOptimistic, useTransition, useRef } from 'react';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
@@ -12,6 +12,8 @@ import { Message as PreviewMessage } from '@/components/custom/message';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn, fetcher } from '@/lib/utils';
+
+const EMPTY_MESSAGES: any[] = [];
 
 // Define the expected shape of a processed chat object from the API
 interface ProcessedChat {
@@ -49,7 +51,7 @@ function getMessagesFromChat(chat: ProcessedChat): any[] {
 }
 
 // Cache for search results to avoid recomputing
-const searchCache = new Map<string, { result: any; timestamp: number }>();
+const searchCache = new Map<string, { result: any; timestamp: number, sourceData: GroupedHistory }>();
 const CACHE_DURATION = 30000; // 30 seconds
 
 // Helper function to extract text content from various message content formats
@@ -101,19 +103,20 @@ function extractTextFromMessageContent(content: any): string {
 }
 
 // Optimized search function with caching
-function performSearch(query: string, allChats: ProcessedChat[]): { 'Search Results': ProcessedChat[] } | {} {
+function performSearch(query: string, historyData: GroupedHistory): { 'Search Results': ProcessedChat[] } | {} {
   if (!query) return {};
   
   const cacheKey = query;
   const cached = searchCache.get(cacheKey);
   const now = Date.now();
   
-  // Return cached result if still valid
-  if (cached && (now - cached.timestamp) < CACHE_DURATION) {
+  // Return cached result if still valid and data source is the same
+  if (cached && (now - cached.timestamp) < CACHE_DURATION && cached.sourceData === historyData) {
     return cached.result;
   }
   
   try {
+    const allChats = Object.values(historyData).flat();
     // Escape special regex characters
     const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     
@@ -166,7 +169,7 @@ function performSearch(query: string, allChats: ProcessedChat[]): { 'Search Resu
       : {};
     
     // Cache the result
-    searchCache.set(cacheKey, { result, timestamp: now });
+    searchCache.set(cacheKey, { result, timestamp: now, sourceData: historyData });
     
     return result;
   } catch (error) {
@@ -193,20 +196,16 @@ export function ChatHistoryModal({
   const params = useParams();
   const pathname = usePathname();
   const currentChatId = params?.id as string | undefined;
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredChatId, setHoveredChatId] = useState<string | null>(null);
-  const [hoveredChatMessages, setHoveredChatMessages] = useState<any[]>([]);
+  const [hoveredChatMessages, setHoveredChatMessages] =
+    useState<any[]>(EMPTY_MESSAGES);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   
   // Use React's useDeferredValue for better performance during rapid typing
   const deferredSearchQuery = useDeferredValue(searchQuery.toLowerCase().trim());
-  
-  // Use useOptimistic for instant UI feedback
-  const [optimisticSearchResults, setOptimisticSearchResults] = useOptimistic(
-    {} as GroupedHistory,
-    (_, newResults: GroupedHistory) => newResults
-  );
   
   const [isPending, startTransition] = useTransition();
 
@@ -218,58 +217,50 @@ export function ChatHistoryModal({
     fallbackData: {},
   });
 
+  const [searchResults, setSearchResults] = useState<GroupedHistory | null>(null);
+
   useEffect(() => {
     if (open) {
       mutate();
+      // Focus the search input when modal opens
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
     }
   }, [open, pathname, mutate]);
 
   // Optimized search with immediate optimistic updates
-  const filteredHistory = useMemo(() => {
-    if (!deferredSearchQuery) {
-      return groupedHistoryData || {};
+  useEffect(() => {
+    if (deferredSearchQuery) {
+      startTransition(() => {
+        const results = performSearch(deferredSearchQuery, groupedHistoryData || {});
+        setSearchResults(results as GroupedHistory);
+      });
+    } else {
+      setSearchResults(null);
     }
-
-    const allChats = Object.values(groupedHistoryData || {}).flat();
-    const searchResults = performSearch(deferredSearchQuery, allChats);
-    
-    return searchResults;
   }, [deferredSearchQuery, groupedHistoryData]);
 
   // Reset hover state when search results change
   useEffect(() => {
-    if (deferredSearchQuery && Object.keys(filteredHistory).length > 0) {
+    if (deferredSearchQuery && searchResults && Object.keys(searchResults).length > 0) {
       // Reset hover state so we show the first search result
       setHoveredChatId(null);
-      setHoveredChatMessages([]);
+      setHoveredChatMessages(EMPTY_MESSAGES);
     } else if (!deferredSearchQuery) {
       // Also reset when clearing search to prevent showing stale preview
       setHoveredChatId(null);
-      setHoveredChatMessages([]);
+      setHoveredChatMessages(EMPTY_MESSAGES);
     }
-  }, [deferredSearchQuery, filteredHistory]);
+  }, [deferredSearchQuery, searchResults]);
 
   // Handle search input with optimistic updates
-  const handleSearchChange = useCallback((value: string) => {
+  const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    
-    if (value.trim()) {
-      // Start transition for both optimistic and deferred updates
-      startTransition(() => {
-        // Immediately show optimistic results
-        const allChats = Object.values(groupedHistoryData || {}).flat();
-        const optimisticResults = performSearch(value.toLowerCase().trim(), allChats);
-        setOptimisticSearchResults(optimisticResults as GroupedHistory);
-      });
-    } else {
-      startTransition(() => {
-        setOptimisticSearchResults({} as GroupedHistory);
-      });
-    }
-  }, [groupedHistoryData, setOptimisticSearchResults]);
+  }
 
   // Use optimistic results when pending, otherwise use computed results
-  const displayResults = isPending && searchQuery.trim() ? optimisticSearchResults : filteredHistory;
+  const displayResults = searchResults || groupedHistoryData || {};
 
   // Set chat details for preview when hovering
   const handleChatHover = useCallback((chat: ProcessedChat) => {
@@ -289,7 +280,7 @@ export function ChatHistoryModal({
           if (!res.ok) throw new Error('Failed to delete');
         });
 
-        mutate(
+        const newGroupedHistory = await mutate(
           currentData => {
             if (!currentData) return {};
             const newData: GroupedHistory = {};
@@ -305,6 +296,11 @@ export function ChatHistoryModal({
           },
           false
         );
+
+        if (searchQuery.trim()) {
+          const results = performSearch(searchQuery.toLowerCase().trim(), newGroupedHistory || {});
+          setSearchResults(results as GroupedHistory);
+        }
 
         if (chatId === currentChatId) {
           router.push('/intelligence');
@@ -325,7 +321,7 @@ export function ChatHistoryModal({
     <div
       key={chat.id}
       className={cn(
-        'group flex items-center justify-between p-2 rounded-md transition-all duration-200 cursor-pointer'
+        'group flex items-center justify-between p-2 rounded-md transition-all duration-200 cursor-pointer hover:bg-task-hover'
       )}
       onMouseEnter={() => handleChatHover(chat)}
     >
@@ -333,12 +329,12 @@ export function ChatHistoryModal({
         href={`/intelligence/chat/${chat.id}`}
         onClick={() => onOpenChange(false)}
         className={cn(
-          'flex-1 min-w-0 text-muted-foreground group-hover:text-foreground font-chat text-[9px] tracking-wider uppercase',
-          chat.id === currentChatId && 'text-foreground'
+          'flex-1 min-w-0 text-muted-foreground group-hover:text-muted-foreground font-chat text-[9px] tracking-wider',
+          chat.id === currentChatId && 'text-foreground group-hover:text-foreground'
         )}
       >
-        <div className="font-chat text-[9px] tracking-wider uppercase truncate">{chat.title}</div>
-        <div className="font-chat text-[9px] tracking-wider uppercase">
+        <div className="font-chat text-[11px] tracking-wider truncate">{chat.title}</div>
+        <div className="font-chat text-[9px] tracking-wider">
           {new Date(chat.updatedat).toLocaleDateString()}
         </div>
       </Link>
@@ -412,14 +408,15 @@ export function ChatHistoryModal({
         className="fixed inset-0 bg-background/80 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
       />
-      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-2 gap-6 p-6 mx-auto bg-background shadow-2xl dark:shadow-white/25">
+      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-[1fr_1px_1fr] gap-6 p-6 mx-4 md:mx-auto bg-background rounded-lg border border-border">
         <div className="flex flex-col h-[500px]">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
+              ref={searchInputRef}
               type="text" 
               placeholder="Search log"
-              className="pl-10 w-full border-0 text-xs rounded-none"
+              className="pl-10 w-full text-xs rounded-md focus-visible:ring-0 focus-visible:ring-offset-0"
               value={searchQuery}
               onChange={e => handleSearchChange(e.target.value)}
             />
@@ -434,8 +431,8 @@ export function ChatHistoryModal({
               Object.entries(displayResults).map(([period, chats]) => (
                 <div key={period} className="mb-4">
                   <h3
-                    className="text-[9px] font-[700] tracking-widest uppercase text-foreground mb-2 px-2"
-                    style={{ fontFamily: 'var(--font-orbitron)' }}
+                    className="text-[9px] font-[700] tracking-widest text-foreground mb-2 px-2"
+                    style={{ fontFamily: 'Montserrat, sans-serif' }}
                   >
                     {period} {period === 'Search Results' && `(${(chats as ProcessedChat[]).length})`}
                   </h3>
@@ -451,7 +448,7 @@ export function ChatHistoryModal({
             )}
           </div>
         </div>
-
+        <div className="hidden md:block bg-border h-[500px]" style={{ zIndex: -1 }}></div>
         <div className="hidden md:block h-[500px] p-4">
           {renderChatPreview()}
         </div>

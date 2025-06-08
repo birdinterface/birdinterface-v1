@@ -25,7 +25,10 @@ const config: Config = {
         foreground: 'hsl(var(--foreground))',
         task: {
           light: 'hsl(var(--task-background-light))',
-          dark: 'hsl(var(--task-background-dark))'
+          dark: 'hsl(var(--task-background-dark))',
+          border: 'hsl(var(--task-border))',
+          hover: 'hsl(var(--task-hover))',
+          active: 'hsl(var(--task-active))'
         },
         card: {
           DEFAULT: 'hsl(var(--card))',

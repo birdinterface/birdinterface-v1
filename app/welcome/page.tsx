@@ -162,7 +162,7 @@ const Welcome = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[-210px]">
             <div className="relative size-[340px] sm:size-[400px] md:size-[460px] lg:size-[520px] xl:size-[560px]">
               <Image
-                src="/images/darkergrey.png"
+                src="/images/Birdinterface final-4.png"
                 alt="Bird Interface Logo"
                 width={1000} 
                 height={1000}
@@ -200,7 +200,7 @@ const Welcome = () => {
                     autoComplete="email"
                     required
                     disabled={isSubmitting}
-                    className="w-full px-4 py-2 bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 text-center"
+                    className="w-full px-4 py-2 bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 text-center border border-task-border rounded-md"
                   />
                   {error && (
                     <p className="text-red-400 text-sm mt-2">{error}</p>
@@ -212,7 +212,7 @@ const Welcome = () => {
           {/* Arrow pointing down with text */}
           <div className="absolute bottom-10 w-full flex items-end justify-between px-4 md:justify-center md:gap-2 md:px-0 cursor-pointer group">
             <p 
-              className="text-neutral-400 text-sm cursor-pointer group-hover:text-white transition-colors"
+              className="text-neutral-400 text-sm cursor-pointer"
               style={{ fontFamily: interFont.style.fontFamily, textTransform: 'none' }}
               onClick={() => {
                 const missionSection = document.getElementById('mission-section');
@@ -224,7 +224,7 @@ const Welcome = () => {
               Coming at the end of summer 2025
             </p>
             <ArrowDown 
-              className="size-5 text-neutral-400 group-hover:text-white transition-colors relative bottom-[10px]"
+              className="size-5 text-neutral-400 group-hover:text-white transition-colors relative bottom-[10px] cursor-pointer"
               onClick={() => {
                 const missionSection = document.getElementById('mission-section');
                 if (missionSection) {

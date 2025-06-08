@@ -2,10 +2,11 @@
 
 import { Message } from 'ai';
 import { Ghost, History, MessageSquare, Plus } from 'lucide-react';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useCallback } from 'react';
 
 import { ChatHistoryModal } from '@/components/custom/chat-history-modal';
+import { IntelligenceModelSelector } from '@/components/custom/intelligence-model-selector';
 import { SimplifiedChat } from '@/components/custom/simplified-chat';
 import { Button } from '@/components/ui/button';
 import { Model } from '@/lib/model';
@@ -21,95 +22,121 @@ export function IntelligenceInterface({
   user?: any;
   initialMessages?: Array<Message>;
 }) {
+  const router = useRouter();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [isIncognito, setIsIncognito] = useState(false);
   const [chatKey, setChatKey] = useState(0); // Key to force re-render of chat
-
-  // Hide incognito toggle once messages exist and we're in incognito mode
+  const [preservedInput, setPreservedInput] = useState(''); // Store input when switching modes
   const [hasMessages, setHasMessages] = useState(initialMessages.length > 0);
+  const [messagesForChat, setMessagesForChat] = useState(initialMessages);
 
-  const handleIncognitoToggle = () => {
-    const newIncognitoState = !isIncognito;
-    setIsIncognito(newIncognitoState);
-    
-    // If switching to incognito, clear the chat by forcing a re-render
-    if (newIncognitoState) {
+  // On mount, check for preserved input and mode from a "New" chat navigation
+  useEffect(() => {
+    const savedInput = sessionStorage.getItem('preservedChatInput');
+    if (savedInput) {
+      setPreservedInput(savedInput);
+      sessionStorage.removeItem('preservedChatInput');
+    }
+
+    const chatMode = sessionStorage.getItem('chatMode');
+    if (chatMode === 'normal') {
+      setIsIncognito(false);
+    } else if (chatMode === 'private') {
+      setIsIncognito(true);
       setChatKey(prev => prev + 1);
-      setHasMessages(false);
     }
-  };
 
-  // Update hasMessages when we receive new messages in incognito mode
-  const handleMessagesChange = (messages: Message[]) => {
+    if (chatMode) {
+      sessionStorage.removeItem('chatMode');
+    }
+  }, []);
+
+  const handleIncognitoToggle = useCallback(() => {
+    setIsIncognito(prev => {
+      const newIncognitoState = !prev;
+      setHasMessages(newIncognitoState ? false : initialMessages.length > 0);
+      return newIncognitoState;
+    });
+    setChatKey(prev => prev + 1);
+  }, [initialMessages.length]);
+
+  // When user clicks "New", save the input and mode, then navigate.
+  const handleNewClick = () => {
+    if (preservedInput) {
+      sessionStorage.setItem('preservedChatInput', preservedInput);
+    }
+  
     if (isIncognito) {
-      setHasMessages(messages.length > 0);
+      sessionStorage.setItem('chatMode', 'normal');
+      setIsIncognito(false);
+      setMessagesForChat([]);
     }
+  
+    router.push('/intelligence');
   };
 
-  const shouldShowIncognitoToggle = initialMessages.length === 0 && (!isIncognito || !hasMessages);
+  const shouldShowIncognitoToggle = !hasMessages;
 
   return (
     <>
-      <div className="flex size-full max-w-2xl mx-auto flex-col pt-4">
-        <div className="px-4">
-          <div className="border-b-2 border-foreground/100"></div>
-          <div className="pt-1 pb-4">
-            <div className="flex items-center justify-between w-full text-left">
-              <div className="flex-1 flex justify-start">
+      <div className="size-full flex flex-col items-center justify-start space-y-4 py-4 px-2 sm:px-4">
+        <div className="w-full max-w-2xl rounded-2xl border border-task-border flex flex-col flex-1 min-h-0">
+          <div className="pt-4 px-4">
+            <div className="grid grid-cols-3 items-center w-full text-left">
+              <div className="flex justify-start gap-2">
+                <IntelligenceModelSelector selectedModelName={selectedModelName} />
+              </div>
+
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  onClick={handleNewClick}
+                  className="px-2 py-1 text-muted-foreground hover:bg-task-hover hover:text-muted-foreground text-xs font-medium normal-case transition-colors rounded-md"
+                >
+                  New
+                </button>
+                {shouldShowIncognitoToggle && (
+                  <button
+                    onClick={handleIncognitoToggle}
+                    className={`px-2 py-1 text-xs font-medium normal-case transition-colors rounded-md ${
+                      isIncognito
+                        ? 'bg-task-hover text-purple-500'
+                        : 'text-muted-foreground hover:bg-task-hover hover:text-muted-foreground'
+                    }`}
+                  >
+                    Private
+                  </button>
+                )}
+              </div>
+
+              <div className="flex justify-end">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowHistoryModal(true);
                   }}
-                  className="px-2 sm:px-3 py-1 w-16 sm:w-24 bg-black dark:bg-white text-white/60 dark:text-black/60 hover:text-white dark:hover:text-black !text-[8px] task-tab rounded-none transition-colors"
+                  className="px-2 py-1 text-muted-foreground hover:bg-task-hover hover:text-muted-foreground text-xs font-medium normal-case transition-colors rounded-md"
                 >
-                  LOG
+                  Log
                 </button>
-              </div>
-
-              <div className="flex items-center justify-center gap-1">
-                <Link
-                  href="/intelligence"
-                  onClick={(e) => e.stopPropagation()}
-                  className="px-2 sm:px-3 py-1 w-16 sm:w-24 bg-black dark:bg-white text-white/60 dark:text-black/60 hover:text-white dark:hover:text-black !text-[8px] task-tab rounded-none transition-colors block text-center"
-                >
-                  NEW
-                </Link>
-                {shouldShowIncognitoToggle && (
-                  <button
-                    onClick={handleIncognitoToggle}
-                    className={`px-2 sm:px-3 py-1 w-16 sm:w-24 !text-[8px] task-tab rounded-none transition-colors text-center ${
-                      isIncognito 
-                        ? 'bg-purple-500 text-white hover:text-white' 
-                        : 'bg-black dark:bg-white text-white/60 dark:text-black/60 hover:text-white dark:hover:text-black'
-                    }`}
-                  >
-                    PRIVATE
-                  </button>
-                )}
-              </div>
-
-              <div className="flex-1 flex justify-end">
-                <div className="px-2 sm:px-3 py-1 w-16 sm:w-24 bg-black dark:bg-white text-white/60 dark:text-black/60 !text-[8px] task-tab rounded-none text-center">
-                  {selectedModelName}
-                </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="grow overflow-hidden">
-          <SimplifiedChat
-            key={`${id}-${chatKey}`} // Force re-render when toggling incognito
-            id={id}
-            initialMessages={isIncognito && chatKey > 0 ? [] : initialMessages}
-            selectedModelName={selectedModelName}
-            api="/intelligence/api/chat"
-            user={user}
-            hideHeader={true}
-            isIncognito={isIncognito}
-            onMessagesChange={handleMessagesChange}
-          />
+          
+          <div className="flex-1 overflow-hidden min-h-0">
+            <SimplifiedChat
+              key={`${id}-${chatKey}`}
+              id={id}
+              initialMessages={isIncognito ? [] : messagesForChat}
+              selectedModelName={selectedModelName}
+              api="/intelligence/api/chat"
+              user={user}
+              hideHeader={true}
+              isIncognito={isIncognito}
+              onMessagesChange={setHasMessages}
+              initialInput={preservedInput}
+              onInputChange={setPreservedInput}
+            />
+          </div>
         </div>
       </div>
 

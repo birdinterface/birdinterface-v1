@@ -73,11 +73,7 @@ export function MultimodalInput({
 
   useEffect(() => {
     adjustHeight();
-  }, [adjustHeight]);
-
-  useEffect(() => {
-    adjustHeight();
-  }, [input, adjustHeight]);
+  }, [adjustHeight, input]);
 
   const handleInput = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
@@ -226,11 +222,11 @@ export function MultimodalInput({
 
       <Textarea
         ref={textareaRef}
-        placeholder="What's on your mind?"
+        placeholder="Insert message"
         value={input}
         onChange={handleInput}
         className={cn(
-          "min-h-[24px] overflow-hidden resize-none p-4 pb-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 intelligence-input font-chat border-[2px] border-foreground rounded-none bg-transparent",
+          "min-h-[24px] overflow-hidden resize-none p-4 pb-12 focus-visible:outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 intelligence-input font-chat border border-task-border rounded-lg bg-transparent",
           isIncognito
             ? "bg-purple-100 dark:bg-purple-900/40"
             : ""

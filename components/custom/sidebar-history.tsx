@@ -172,9 +172,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
               <span className="sr-only">More</span>
             </SidebarMenuAction>
           </DropdownMenuTrigger>
-          <DropdownMenuContent side="bottom" align="end">
+          <DropdownMenuContent side="bottom" align="center" className="border border-border rounded-lg">
             <DropdownMenuItem
-              className="text-destructive focus:bg-destructive/15 focus:text-destructive intelligence-text"
+              className="text-destructive focus:bg-destructive/15 focus:text-destructive intelligence-text text-[10px]"
               onSelect={() => {
                 setDeleteId(chat.id);
                 setShowDeleteDialog(true);

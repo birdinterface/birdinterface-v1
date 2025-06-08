@@ -19,11 +19,11 @@ import { cn } from '@/lib/utils';
 import { useModal } from '../context/modal-context';
 
 const navItems = [
-  { href: '/tasks', label: 'TASKS' },
-  { href: '/calendar', label: 'CALENDAR' },
-  { href: '/database', label: 'DATABASE' }, 
-  { href: '/curator', label: 'CURATOR' },
-  { href: '/intelligence', label: 'INTELLIGENCE' },
+  { href: '/tasks', label: 'Tasks' },
+  { href: '/calendar', label: 'Calendar' },
+  { href: '/database', label: 'Database' }, 
+  { href: '/curator', label: 'Curator' },
+  { href: '/intelligence', label: 'Intelligence' },
 ];
 
 export function Navigation({ user }: { user: any }) {
@@ -48,7 +48,7 @@ export function Navigation({ user }: { user: any }) {
   return (
     <>
       <nav className="fixed top-0 inset-x-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[9999] overscroll-none">
-        <div className="relative w-full nav-dots">
+        <div className="relative w-full">
           <div className="flex h-10 items-center justify-center relative z-10 px-4">
             <div className="flex items-center gap-3 w-full max-w-screen-2xl mx-auto md:justify-center">
               <div className="hidden md:flex md:flex-1 md:basis-8 md:justify-end" /> {/* Left spacer */}
@@ -57,9 +57,9 @@ export function Navigation({ user }: { user: any }) {
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="ghost" 
-                      className="size-8 p-0 data-[state=open]:bg-transparent shrink-0 focus-visible:ring-0 transition-opacity hover:bg-transparent"
+                      className="size-10 p-0 data-[state=open]:bg-transparent shrink-0 focus-visible:ring-0 transition-opacity hover:bg-transparent"
                     >
-                      <div className="relative size-6">
+                      <div className="relative size-8 -ml-5">
                         <Image
                           src={'/images/Birdblack.png'}
                           alt="Bird Interface Logo Light"
@@ -81,23 +81,23 @@ export function Navigation({ user }: { user: any }) {
                       </div>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" sideOffset={0} className="w-48 custom-dropdown">
+                  <DropdownMenuContent align="center" sideOffset={0} className="w-48 custom-dropdown">
                     {user && (
                       <>
                         <DropdownMenuItem asChild>
-                          <button className="w-full text-left text-xs nav-text text-muted-foreground hover:text-primary focus:bg-transparent" onClick={openModal}>
-                            YOUR PLAN
+                          <button className="w-full text-left text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent" onClick={openModal}>
+                            Your Plan
                           </button>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="text-xs nav-text text-muted-foreground hover:text-primary focus:bg-transparent"
+                          className="text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent"
                           onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                         >
-                          {theme === 'light' ? 'DARK MODE' : 'LIGHT MODE'}
+                          {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <button
-                            className="w-full text-left text-xs nav-text text-muted-foreground hover:text-primary focus:bg-transparent"
+                            className="w-full text-left text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent"
                             onClick={() => {
                               signOut({
                                 redirect: true,
@@ -105,7 +105,7 @@ export function Navigation({ user }: { user: any }) {
                               });
                             }}
                           >
-                            SIGN OUT
+                            Sign Out
                           </button>
                         </DropdownMenuItem>
                       </>
@@ -114,16 +114,16 @@ export function Navigation({ user }: { user: any }) {
                 </DropdownMenu>
 
                 <div className="overflow-x-auto scrolling-touch overscroll-x-contain touch-pan-x flex-1 -mx-4 px-4 no-scrollbar">
-                  <div className="flex gap-6 min-w-max">
+                  <div className="flex gap-8 min-w-max">
                     {navItems.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
                         className={cn(
-                          "text-xs font-medium transition-colors hover:text-primary whitespace-nowrap nav-text",
+                          "text-xs font-medium transition-colors whitespace-nowrap nav-text",
                           (pathname === item.href || (item.href === '/intelligence' && pathname?.startsWith('/intelligence')))
                             ? 'text-foreground'
-                            : 'text-muted-foreground'
+                            : 'text-[#858a8f] hover:text-[#858a8f]'
                         )}
                       >
                         {item.label}

@@ -24,24 +24,37 @@ export type Task = {
   link?: string;
 };
 
-type Tab = 'todo' | 'watch' | 'later' | 'done';
+export type Tab = 'todo' | 'watch' | 'later' | 'done';
 
 export function TaskList({
   tasks: externalTasks,
   userId,
   onAddTask,
   onUpdateTask,
-  onDeleteTask
+  onDeleteTask,
+  activeTab,
+  onTabChange,
 }: {
   tasks?: Task[];
   userId: string;
   onAddTask?: (task: Omit<Task, 'id'>) => void;
   onUpdateTask?: (id: string, updates: Partial<Task>) => void;
   onDeleteTask?: (id: string) => void;
+  activeTab: Tab;
+  onTabChange: (tab: Tab) => void;
 }) {
+  const normalizeTabName = (key: string, name: string): string => {
+    if (typeof name !== 'string' || !name) return '';
+    if (key === 'todo' && name.toLowerCase() === 'todo') {
+        return 'ToDo';
+    }
+    return name
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+  };
   // Use useMemo for tasks to prevent unnecessary re-renders if externalTasks is stable
   const tasks = useMemo(() => externalTasks || [], [externalTasks]);
-  const [activeTab, setActiveTab] = useState<Tab>('todo');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [showCompletedAnimation, setShowCompletedAnimation] = useState(false);
   const [deletedTasks, setDeletedTasks] = useState<Task[]>([]);
@@ -496,9 +509,9 @@ export function TaskList({
       try {
         const response = await fetch('/api/user-preferences');
         if (response.ok) {
-          const data = await response.json();
-          if (data.tabNames) {
-            setTabNames(data.tabNames);
+          const prefs = await response.json();
+          if (prefs.tabNames) {
+            setTabNames(prefs.tabNames);
           }
         }
       } catch (error) {
@@ -506,11 +519,13 @@ export function TaskList({
       }
     }
     loadUserPreferences();
-  }, []);
+  }, [userId]);
 
   // Save tab names when they change
   const updateTabName = async (tab: Tab, newName: string) => {
-    const updatedTabNames = { ...tabNames, [tab]: newName };
+    const oldNames = { ...tabNames };
+    const normalizedName = normalizeTabName(tab, newName);
+    const updatedTabNames = { ...tabNames, [tab]: normalizedName };
     setTabNames(updatedTabNames);
     setEditingTab(null);
     
@@ -531,7 +546,7 @@ export function TaskList({
 
   return (
     <div className="w-full flex items-start justify-center task-list-container">
-      <div className="w-full max-w-2xl px-4 bg-task-light dark:bg-task-dark rounded-none mb-4">
+      <div className="w-full max-w-2xl border border-task-border rounded-t-2xl rounded-b-md mb-1">
         <div className="pt-4 px-4">
           <div className="flex justify-between items-center">
             <div className="flex gap-2">
@@ -539,7 +554,7 @@ export function TaskList({
                 <TabButton
                   key={tab}
                   active={activeTab === tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => onTabChange(tab)}
                   onDoubleClick={() => setEditingTab(tab)}
                   isEditing={editingTab === tab}
                   value={tabNames[tab]}
@@ -559,7 +574,7 @@ export function TaskList({
             </div>
             <TabButton 
               active={activeTab === 'done'} 
-              onClick={() => setActiveTab('done')}
+              onClick={() => onTabChange('done')}
             >
               <span className="task-tab">
                 {tabNames.done}
@@ -591,7 +606,7 @@ export function TaskList({
               )}
               <div
                 className={cn(
-                  "bg-task-light dark:bg-task-dark rounded-none p-2 transition-transform flex items-start gap-2",
+                  "rounded-md p-2 transition-transform flex items-start gap-2",
                   { "transform -translate-x-full": taskToDelete === task.id && swipeDistance >= 100 }
                 )}
                 style={{ transform: taskToDelete === task.id ? `translateX(-${swipeDistance}px)` : 'none' }}
@@ -625,7 +640,7 @@ export function TaskList({
                         onDragStart={(e) => e.preventDefault()}
                         className="w-full sm:w-32 md:w-40 lg:w-48 xl:w-56 bg-transparent text-xs font-medium focus:outline-none task-input tracking-widest"
                         data-task-id={task.id}
-                        placeholder={task.id === 'empty' ? "Task Name" : "Task name"}
+                        placeholder={task.id === 'empty' ? "Task Name" : "Task Name"}
                       />
                       <input
                         type="text"
@@ -673,7 +688,7 @@ export function TaskList({
                                   {formatDate(task.completedAt)}
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
+                              <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
                                 <CustomCalendar
                                   selectedDate={parseTaskDate(task.completedAt)}
                                   onDateSelect={(date) => {
@@ -691,7 +706,7 @@ export function TaskList({
                                   <Calendar className="size-3" />
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
+                              <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
                                 <CustomCalendar
                                   selectedDate={undefined}
                                   onDateSelect={(date) => {
@@ -710,7 +725,7 @@ export function TaskList({
                                 {formatDate(task.dueDate)}
                               </button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
+                            <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
                               <CustomCalendar
                                 selectedDate={parseTaskDate(task.dueDate)}
                                 onDateSelect={(date) => {
@@ -726,7 +741,7 @@ export function TaskList({
                                 <Calendar className="size-3" />
                               </button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 border-0 rounded-none task-calendar" align="end">
+                            <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
                               <CustomCalendar
                                 selectedDate={parseTaskDate(task.dueDate)}
                                 onDateSelect={(date) => {
@@ -842,10 +857,10 @@ function TabButton(props: {
           }
         }}
         className={cn(
-          "px-2 py-1 text-xs outline-none task-tab",
+          "px-2 py-1 text-xs outline-none task-tab rounded-md",
           active 
-            ? "text-foreground" 
-            : "text-muted-foreground hover:text-foreground"
+            ? "text-muted-foreground bg-task-active" 
+            : "text-muted-foreground hover:bg-task-hover"
         )}
       >
         {value}
@@ -858,10 +873,10 @@ function TabButton(props: {
       onClick={onClick}
       onDoubleClick={onDoubleClick}
       className={cn(
-        "px-2 py-1 text-xs transition-colors task-tab rounded-none",
+        "px-2 py-1 text-xs transition-colors task-tab rounded-md",
         active 
-          ? "text-foreground" 
-          : "text-muted-foreground hover:text-foreground",
+          ? "text-muted-foreground bg-task-active" 
+          : "text-muted-foreground hover:bg-task-hover",
         className
       )}
       onDragOver={onDragOver}

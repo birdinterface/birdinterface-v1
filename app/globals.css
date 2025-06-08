@@ -118,28 +118,28 @@ html, body {
 @layer base {
   :root {
     /* Light theme variables (default) */
-    --background: 0 0% 100%; /* White background */
+    --background: 0 0% 96.9%; /* #f7f7f7 */
     --foreground: 0 0% 3.9%; /* Dark text */
-    --card: 0 0% 100%;
+    --card: 0 0% 96.9%;
     --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
+    --popover: 0 0% 96.9%;
     --popover-foreground: 0 0% 3.9%;
     --primary: 0 0% 9%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
+    --secondary: 0 0% 98.5%;
     --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
+    --muted: 0 0% 98.5%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
+    --accent: 0 0% 98.5%;
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
+    --border: 0 0% 92.2%;
+    --input: 0 0% 92.2%;
     --ring: 0 0% 3.9%;
     --radius: 0.5rem;
     /* Chat input background - slightly lighter than muted */
-    --chat-input: 0 0% 98%;
+    --chat-input: 0 0% 100%;
     /* Chart colors (adjust if needed for light theme) */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -147,54 +147,62 @@ html, body {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
     /* Sidebar variables (light theme) */
-    --sidebar-background: 0 0% 98%; /* Light grey */
+    --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 0 0% 9%; /* Dark text */
     --sidebar-primary: 224.3 76.3% 48%; /* Keep blue? */
     --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 0 0% 96.1%; /* Slightly darker grey */
+    --sidebar-accent: 0 0% 98.5%;
     --sidebar-accent-foreground: 0 0% 9%; /* Dark text */
-    --sidebar-border: 0 0% 89.8%; /* Lighter border */
+    --sidebar-border: 0 0% 92.2%;
     --sidebar-ring: 217.2 91.2% 59.8%; /* Keep blue? */
     /* Task background */
-    --task-background-light: 0 0% 93%; /* Darker grey in light mode - was 96.1% */
-    --task-background-dark: 0 0% 7%; /* Lighter in dark mode - was 3.9% */
+    --task-background-light: 0 0% 90%;
+    --task-background-dark: 0 0% 6.2%;
+    /* Task borders and hover - darker than default border in light mode */
+    --task-border: 0 0% 88%;
+    --task-hover: 0 0% 90%;
+    --task-active: 0 0% 85%;
   }
 
   .dark {
     /* Dark theme overrides */
-    --background: 0 0% 0%; /* Pure Black background */
+    --background: 0 0% 3.1%; /* #080808 */
     --foreground: 0 0% 98%; /* Light text */
-    --card: 0 0% 3.9%;
+    --card: 0 0% 3.1%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
+    --popover: 0 0% 3.1%;
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
+    --secondary: 0 0% 14.1%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
+    --muted: 0 0% 14.1%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+    --accent: 0 0% 14.1%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
+    --border: 0 0% 14.1%;
+    --input: 0 0% 14.1%;
     --ring: 0 0% 83.1%;
     /* Chat input background - darker than card */
-    --chat-input: 0 0% 2%;
+    --chat-input: 0 0% 1.2%;
     /* Chart colors are often kept the same or adjusted slightly */
     /* Sidebar variables (dark theme) */
-    --sidebar-background: 0 0% 3.9%; /* Dark */
+    --sidebar-background: 0 0% 3.1%;
     --sidebar-foreground: 0 0% 98%; /* Light text */
     /* --sidebar-primary: ...; /* Adjust if needed */
     /* --sidebar-primary-foreground: ...; /* Adjust if needed */
-    --sidebar-accent: 0 0% 14.9%; /* Darker grey */
+    --sidebar-accent: 0 0% 14.1%;
     --sidebar-accent-foreground: 0 0% 98%; /* Light text */
-    --sidebar-border: 0 0% 14.9%; /* Darker border */
+    --sidebar-border: 0 0% 14.1%;
     /* --sidebar-ring: ...; /* Adjust if needed */
     /* Task background */
-    --task-background-dark: 0 0% 7%; /* Lighter in dark mode - was 3.9% */
+    --task-background-dark: 0 0% 6.2%;
+    /* Task borders and hover - same as default border in dark mode */
+    --task-border: 0 0% 14.1%;
+    --task-hover: 0 0% 16%;
+    --task-active: 0 0% 18%;
   }
 
   .theme {
@@ -208,9 +216,9 @@ html, body {
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-orbitron);
-    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
+    letter-spacing: 0.00em;
   }
 
   /* Remove dot pattern from body */
@@ -293,11 +301,10 @@ html, body {
 
 /* Add styles moved from navigation.tsx */
 .nav-text {
-  font-family: var(--font-orbitron);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  font-size: 10px;
-  text-transform: uppercase;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.00em;
+  font-size: 14px;
 }
 
 nav {
@@ -306,7 +313,8 @@ nav {
 }
 
 .custom-dropdown {
-  border: none !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 0.5rem !important;
   padding: 0.5rem !important;
   /* Use CSS variables for background */
   background-color: var(--background) !important;
@@ -317,18 +325,18 @@ nav {
 
 /* Add styles for tasks */
 .task-tab {
-  font-family: var(--font-orbitron);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  font-size: 9px;
-  text-transform: uppercase;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+  text-transform: none;
 }
 
 .task-input {
   font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.05em;
-  font-size: 9px;
-  text-transform: uppercase;
+  font-size: 11px;
+  text-transform: none;
   font-weight: 600;
   user-select: text;
   overflow-x: auto;
@@ -354,9 +362,9 @@ nav {
 
 /* Add styles for task calendar */
 .task-calendar-date {
-  font-family: var(--font-orbitron);
+  font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.05em;
-  font-size: 8px;
+  font-size: 11px;
   min-width: 40px;
   min-height: 18px;
   line-height: 18px;
@@ -364,24 +372,24 @@ nav {
   align-items: center;
   justify-content: center;
   text-align: center;
-  text-transform: uppercase;
-  font-weight: 700;
+  text-transform: none;
+  font-weight: 600;
 }
 
 .task-calendar button {
-  font-family: var(--font-orbitron);
+  font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.05em;
-  font-size: 9px;
-  text-transform: uppercase;
+  font-size: 11px;
+  text-transform: none;
   font-weight: 600;
 }
 
 .task-calendar-header {
-  font-family: var(--font-orbitron);
+  font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.05em;
-  font-size: 10px;
-  text-transform: uppercase;
-  font-weight: 700;
+  font-size: 11px;
+  text-transform: none;
+  font-weight: 600;
 }
 
 /* Add styles for intelligence section */
@@ -390,24 +398,34 @@ nav {
   font-weight: 600;
   letter-spacing: 0.02em;
   font-size: 11px;
-  opacity: 0.95;
-  line-height: 1.4;
-  text-transform: lowercase;
 }
 
 .intelligence-input {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   font-size: 11px;
-  opacity: 1;
-  line-height: 1.4;
-  text-transform: none;
+  /* Remove any potential corner artifacts */
+  resize: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.intelligence-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: hsl(var(--task-border)) !important;
+}
+
+/* Remove webkit resize handles completely */
+.intelligence-input::-webkit-resizer {
+  display: none !important;
 }
 
 .intelligence-content {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.01em;
   font-size: 11px;
   line-height: 1.7;

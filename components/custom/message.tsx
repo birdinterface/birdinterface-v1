@@ -159,7 +159,7 @@ export const Message = ({
         isEditing 
           ? "group-data-[role=user]/message:w-full group-data-[role=user]/message:max-w-3xl" 
           : "group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl",
-        "group-data-[role=user]/message:py-3.5 group-data-[role=user]/message:px-5",
+        "group-data-[role=user]/message:py-3.5 group-data-[role=user]/message:px-5 group-data-[role=user]/message:rounded-lg",
         role === 'user' 
           ? isIncognito
             ? 'group-data-[role=user]/message:bg-purple-100 dark:group-data-[role=user]/message:bg-purple-900/40'
@@ -176,7 +176,12 @@ export const Message = ({
                     ref={textareaRef}
                     value={editedContent}
                     onChange={(e) => setEditedContent(e.target.value)}
-                    className="min-h-[24px] w-full bg-task-light dark:bg-task-dark border-none resize-none focus-visible:ring-0 focus-visible:ring-offset-0 text-xs leading-relaxed overflow-hidden"
+                    className={cn(
+                      "min-h-[24px] w-full border-none resize-none focus-visible:ring-0 focus-visible:ring-offset-0 text-xs leading-relaxed overflow-hidden",
+                      isIncognito 
+                        ? 'bg-purple-100 dark:bg-purple-900/40' 
+                        : 'bg-task-light dark:bg-task-dark'
+                    )}
                     disabled={isLoading}
                     onInput={adjustTextareaHeight}
                   />
@@ -186,19 +191,19 @@ export const Message = ({
                       size="sm"
                       onClick={() => setIsEditing(false)}
                       disabled={isLoading}
-                      className="text-xs task-tab h-6 px-2 hover:bg-transparent text-muted-foreground hover:text-foreground transition-colors"
-                      style={{ fontFamily: 'var(--font-orbitron)', textTransform: 'uppercase' }}
+                      className="h-6 px-2 text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground font-montserrat"
+                      style={{ fontSize: '11px' }}
                     >
-                      CANCEL
+                      Cancel
                     </Button>
                     <Button 
                       size="sm"
                       onClick={handleSave}
                       disabled={isLoading}
-                      className="text-xs task-tab h-6 px-2 hover:bg-transparent text-foreground hover:text-foreground transition-colors bg-transparent"
-                      style={{ fontFamily: 'var(--font-orbitron)', textTransform: 'uppercase' }}
+                      className="h-6 px-2 text-foreground transition-colors bg-transparent hover:bg-transparent hover:text-foreground font-montserrat"
+                      style={{ fontSize: '11px' }}
                     >
-                      {isLoading ? 'SAVING...' : 'SAVE'}
+                      {isLoading ? 'Saving...' : 'Save'}
                     </Button>
                   </div>
                 </div>

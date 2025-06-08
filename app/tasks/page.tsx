@@ -17,7 +17,7 @@ import { Task } from '@/lib/supabase';
 import { clearTaskContextCache } from '@/lib/task-context';
 
 import type { RecurringTask } from '@/components/custom/recurring-task-list';
-import type { Task as UiTask } from '@/components/custom/task-list';
+import type { Task as UiTask, Tab as TaskTab } from '@/components/custom/task-list';
 
 // Helper functions for localStorage
 const getFromLocalStorage = <T,>(key: string): T | null => {
@@ -77,6 +77,7 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<UiTask[]>([]);
   const [recurringTasks, setRecurringTasks] = useState<RecurringTask[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<TaskTab>('todo');
   // TODO: Replace with real session userId
   const userId = tasks[0]?.userId || recurringTasks[0]?.userId || '26d545cb-63c5-461d-9fe9-8dc5256fe504'; // Use valid UUID for testing
 
@@ -384,21 +385,25 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center space-y-4 py-4">
+    <div className="w-full flex flex-col items-center justify-center space-y-4 py-4 px-2 sm:px-4">
       <TaskList
         tasks={tasks}
         userId={userId}
         onAddTask={handleAddTask}
         onUpdateTask={handleUpdateTask}
         onDeleteTask={handleDeleteTask}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
-      <RecurringTaskList
-        tasks={recurringTasks}
-        userId={userId}
-        onAddTask={handleAddRecurringTask}
-        onUpdateTask={handleUpdateRecurringTask}
-        onDeleteTask={handleDeleteRecurringTask}
-      />
+      {activeTab !== 'done' && (
+        <RecurringTaskList
+          tasks={recurringTasks}
+          userId={userId}
+          onAddTask={handleAddRecurringTask}
+          onUpdateTask={handleUpdateRecurringTask}
+          onDeleteTask={handleDeleteRecurringTask}
+        />
+      )}
     </div>
   );
 } 

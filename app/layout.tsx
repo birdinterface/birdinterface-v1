@@ -45,10 +45,10 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} min-h-screen flex flex-col`}>
         <Providers session={session}>
           <Navigation user={session?.user} />
-          {children}
+          <main className="grow">{children}</main>
           <SubscriptionModal user={session?.user as ExtendedUser} />
           <Toaster />
         </Providers>

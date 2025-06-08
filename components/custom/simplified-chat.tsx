@@ -26,7 +26,9 @@ interface SimplifiedChatProps {
   user?: any;
   hideHeader?: boolean;
   isIncognito?: boolean;
-  onMessagesChange?: (messages: Message[]) => void;
+  onMessagesChange?: (hasMessages: boolean) => void;
+  initialInput?: string;
+  onInputChange?: (input: string) => void;
 }
 
 export function SimplifiedChat({
@@ -38,6 +40,8 @@ export function SimplifiedChat({
   hideHeader = false,
   isIncognito = false,
   onMessagesChange,
+  initialInput,
+  onInputChange,
 }: SimplifiedChatProps) {
   const { theme } = useTheme();
   const { openModal } = useModal();
@@ -58,6 +62,7 @@ export function SimplifiedChat({
       api,
       id,
       initialMessages: validInitialMessages,
+      initialInput: initialInput || '',
       body: {
         id,
         model: selectedModelName,
@@ -119,6 +124,13 @@ export function SimplifiedChat({
       },
     });
 
+  // Save input when it changes
+  useEffect(() => {
+    if (onInputChange) {
+      onInputChange(input);
+    }
+  }, [input, onInputChange]);
+
   // Navigate to specific chat URL when the first message is sent in a new chat
   useEffect(() => {
     // Conditions for immediate navigation:
@@ -144,12 +156,12 @@ export function SimplifiedChat({
     // Other dependencies are stable.
   }, [messages, isIncognito, pathname, validInitialMessages.length, id, api, router]);
 
-  // Notify parent component about message changes in incognito mode
+  // Notify parent component about message changes
   useEffect(() => {
-    if (isIncognito && onMessagesChange) {
-      onMessagesChange(messages);
+    if (onMessagesChange) {
+      onMessagesChange(messages.length > 0);
     }
-  }, [messages, isIncognito, onMessagesChange]);
+  }, [messages, onMessagesChange]);
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
