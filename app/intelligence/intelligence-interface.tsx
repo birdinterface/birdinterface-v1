@@ -78,7 +78,7 @@ export function IntelligenceInterface({
   return (
     <>
       <div className="size-full flex flex-col items-center justify-start space-y-4 py-4 px-2 sm:px-4">
-        <div className="w-full max-w-2xl rounded-2xl border border-task-border flex flex-col flex-1 min-h-0">
+        <div className="w-full max-w-2xl rounded-2xl border border-task-border flex flex-col flex-1 min-h-0 bg-normal-task">
           <div className="pt-4 px-4">
             <div className="grid grid-cols-3 items-center w-full text-left">
               <div className="flex justify-start gap-2">

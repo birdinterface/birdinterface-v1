@@ -264,12 +264,12 @@ const Welcome = () => {
                         ? "Joining..."
                         : isSubmitted
                           ? "Thank You"
-                          : "Sign Up for Alpha ↵"
+                          : "Sign Up for Alpha"
                     }
                     autoComplete="email"
                     required
                     disabled={isSubmitting}
-                    className="w-full px-4 py-2 bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 text-center border border-task-border rounded-md"
+                    className="w-full px-4 py-2 bg-black text-white placeholder:text-white/50 focus:outline-none disabled:opacity-50 text-center border border-task-border rounded-md"
                   />
                   {error && (
                     <p className="text-red-400 text-sm mt-2">{error}</p>
@@ -296,7 +296,7 @@ const Welcome = () => {
                     autoCapitalize="off"
                     spellCheck="false"
                     disabled={isDemoSubmitting}
-                    className="w-full px-4 py-2 bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 text-center border border-task-border rounded-md"
+                    className="w-full px-4 py-2 bg-black text-white placeholder:text-white/50 focus:outline-none disabled:opacity-50 text-center border border-task-border rounded-md"
                   />
                   {demoError && (
                     <p className="text-red-400 text-sm mt-2">{demoError}</p>

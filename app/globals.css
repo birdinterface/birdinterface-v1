@@ -52,58 +52,74 @@ html, body {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+}
 
-  .animate-shine-text {
-    position: relative;
-    background: none;
-  }
+.bg-normal-task {
+  background-color: hsl(var(--normal-task-bg));
+}
 
-  .animate-shine-text::before {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    right: 0;
-    background: linear-gradient(
-      90deg,
-      var(--foreground) 0%,
-      var(--foreground) 35%,
-      rgb(255, 255, 255) 50%,
-      var(--foreground) 65%,
-      var(--foreground) 100%
-    );
-    background-size: 200% auto;
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    animation: shine-text 1s linear;
-  }
+.dark .bg-normal-task {
+  background-color: hsl(var(--normal-task-bg-dark));
+}
 
-  .animate-shine-text::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    right: 0;
-    color: currentColor;
-    z-index: -1;
-  }
+.bg-recurring-task {
+  background-color: hsl(var(--recurring-task-bg));
+}
 
-  .dot-pattern {
-    position: relative;
-    background-image: radial-gradient(
-      circle at center,
-      rgb(0 0 0 / 0.15) var(--dot-size),
-      transparent var(--dot-size)
-    );
-    background-size: var(--dot-space) var(--dot-space);
-  }
+.dark .bg-recurring-task {
+  background-color: hsl(var(--recurring-task-bg-dark));
+}
 
-  .dark .dot-pattern {
-    background-image: radial-gradient(
-      circle at center,
-      rgb(255 255 255 / 0.15) var(--dot-size),
-      transparent var(--dot-size)
-    );
-  }
+.animate-shine-text {
+  position: relative;
+  background: none;
+}
+
+.animate-shine-text::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    var(--foreground) 0%,
+    var(--foreground) 35%,
+    rgb(255, 255, 255) 50%,
+    var(--foreground) 65%,
+    var(--foreground) 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: shine-text 1s linear;
+}
+
+.animate-shine-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  right: 0;
+  color: currentColor;
+  z-index: -1;
+}
+
+.dot-pattern {
+  position: relative;
+  background-image: radial-gradient(
+    circle at center,
+    rgb(0 0 0 / 0.15) var(--dot-size),
+    transparent var(--dot-size)
+  );
+  background-size: var(--dot-space) var(--dot-space);
+}
+
+.dark .dot-pattern {
+  background-image: radial-gradient(
+    circle at center,
+    rgb(255 255 255 / 0.15) var(--dot-size),
+    transparent var(--dot-size)
+  );
 }
 
 @keyframes shine-text {
@@ -158,6 +174,12 @@ html, body {
     /* Task background */
     --task-background-light: 0 0% 90%;
     --task-background-dark: 0 0% 6.2%;
+    /* Normal tasks - subtle blue tone */
+    --normal-task-bg: 220 13% 95%;
+    --normal-task-bg-dark: 220 13% 7%;
+    /* Recurring tasks - subtle green tone */
+    --recurring-task-bg: 120 15% 95%;
+    --recurring-task-bg-dark: 120 15% 7%;
     /* Task borders and hover - darker than default border in light mode */
     --task-border: 0 0% 88%;
     --task-hover: 0 0% 90%;
@@ -199,6 +221,12 @@ html, body {
     /* --sidebar-ring: ...; /* Adjust if needed */
     /* Task background */
     --task-background-dark: 0 0% 6.2%;
+    /* Normal tasks - subtle blue tone */
+    --normal-task-bg: 220 13% 7%;
+    --normal-task-bg-dark: 220 13% 7%;
+    /* Recurring tasks - subtle green tone */
+    --recurring-task-bg: 120 15% 7%;
+    --recurring-task-bg-dark: 120 15% 7%;
     /* Task borders and hover - same as default border in dark mode */
     --task-border: 0 0% 14.1%;
     --task-hover: 0 0% 16%;

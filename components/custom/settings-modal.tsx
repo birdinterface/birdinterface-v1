@@ -344,7 +344,7 @@ export function SettingsModal({
         className="fixed inset-0 bg-background/80 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
       />
-      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-[1fr_1px_1fr] gap-6 p-6 mx-4 md:mx-auto bg-background rounded-lg border border-border">
+      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-[1fr_1px_1fr] gap-6 p-6 mx-4 md:mx-auto bg-background rounded-lg border border-border shadow-[0_0_30px_rgba(255,255,255,0.15)]">
         <div className="flex flex-col h-[500px]">
           <div className="mb-4">
             <h2 className="text-sm font-medium text-foreground">Settings</h2>

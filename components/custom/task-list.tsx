@@ -574,7 +574,7 @@ export function TaskList({
 
   return (
     <div className="w-full flex items-start justify-center task-list-container">
-      <div className="w-full max-w-2xl border border-task-border rounded-t-2xl rounded-b-md mb-1">
+      <div className="w-full max-w-2xl border border-task-border rounded-t-2xl rounded-b-md mb-1 bg-normal-task">
         <div className="pt-4 px-4">
           <div className="flex justify-between items-center">
             <div className="flex gap-2">

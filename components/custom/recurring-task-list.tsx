@@ -1669,7 +1669,7 @@ export function RecurringTaskList({
 
   return (
     <div className="w-full flex items-start justify-center recurring-task-container">
-      <div className="w-full max-w-2xl border border-task-border rounded-t-md rounded-b-2xl mb-4">
+      <div className="w-full max-w-2xl border border-task-border rounded-t-md rounded-b-2xl mb-4 bg-normal-task">
         <div className="p-4">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
