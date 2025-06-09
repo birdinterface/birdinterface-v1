@@ -8,8 +8,8 @@ import {
   Shield,
   User as UserIcon,
 } from "lucide-react"
-import { type User } from "next-auth"
 import Image from "next/image"
+import { type User } from "next-auth"
 import { useCallback, useEffect, useState } from "react"
 import useSWR from "swr"
 
