@@ -1,15 +1,13 @@
-'use client';
+"use client"
 
-import { Message } from 'ai';
-import { Ghost, History, MessageSquare, Plus } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { Message } from "ai"
+import { useRouter } from "next/navigation"
+import { useCallback, useEffect, useState } from "react"
 
-import { ChatHistoryModal } from '@/components/custom/chat-history-modal';
-import { IntelligenceModelSelector } from '@/components/custom/intelligence-model-selector';
-import { SimplifiedChat } from '@/components/custom/simplified-chat';
-import { Button } from '@/components/ui/button';
-import { Model } from '@/lib/model';
+import { ChatHistoryModal } from "@/components/custom/chat-history-modal"
+import { IntelligenceModelSelector } from "@/components/custom/intelligence-model-selector"
+import { SimplifiedChat } from "@/components/custom/simplified-chat"
+import { Model } from "@/lib/model"
 
 export function IntelligenceInterface({
   id,
@@ -17,65 +15,65 @@ export function IntelligenceInterface({
   user,
   initialMessages = [],
 }: {
-  id: string;
-  selectedModelName: Model['name'];
-  user?: any;
-  initialMessages?: Array<Message>;
+  id: string
+  selectedModelName: Model["name"]
+  user?: any
+  initialMessages?: Array<Message>
 }) {
-  const router = useRouter();
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
-  const [isIncognito, setIsIncognito] = useState(false);
-  const [chatKey, setChatKey] = useState(0); // Key to force re-render of chat
-  const [preservedInput, setPreservedInput] = useState(''); // Store input when switching modes
-  const [hasMessages, setHasMessages] = useState(initialMessages.length > 0);
-  const [messagesForChat, setMessagesForChat] = useState(initialMessages);
+  const router = useRouter()
+  const [showHistoryModal, setShowHistoryModal] = useState(false)
+  const [isIncognito, setIsIncognito] = useState(false)
+  const [chatKey, setChatKey] = useState(0) // Key to force re-render of chat
+  const [preservedInput, setPreservedInput] = useState("") // Store input when switching modes
+  const [hasMessages, setHasMessages] = useState(initialMessages.length > 0)
+  const [messagesForChat, setMessagesForChat] = useState(initialMessages)
 
   // On mount, check for preserved input and mode from a "New" chat navigation
   useEffect(() => {
-    const savedInput = sessionStorage.getItem('preservedChatInput');
+    const savedInput = sessionStorage.getItem("preservedChatInput")
     if (savedInput) {
-      setPreservedInput(savedInput);
-      sessionStorage.removeItem('preservedChatInput');
+      setPreservedInput(savedInput)
+      sessionStorage.removeItem("preservedChatInput")
     }
 
-    const chatMode = sessionStorage.getItem('chatMode');
-    if (chatMode === 'normal') {
-      setIsIncognito(false);
-    } else if (chatMode === 'private') {
-      setIsIncognito(true);
-      setChatKey(prev => prev + 1);
+    const chatMode = sessionStorage.getItem("chatMode")
+    if (chatMode === "normal") {
+      setIsIncognito(false)
+    } else if (chatMode === "private") {
+      setIsIncognito(true)
+      setChatKey((prev) => prev + 1)
     }
 
     if (chatMode) {
-      sessionStorage.removeItem('chatMode');
+      sessionStorage.removeItem("chatMode")
     }
-  }, []);
+  }, [])
 
   const handleIncognitoToggle = useCallback(() => {
-    setIsIncognito(prev => {
-      const newIncognitoState = !prev;
-      setHasMessages(newIncognitoState ? false : initialMessages.length > 0);
-      return newIncognitoState;
-    });
-    setChatKey(prev => prev + 1);
-  }, [initialMessages.length]);
+    setIsIncognito((prev) => {
+      const newIncognitoState = !prev
+      setHasMessages(newIncognitoState ? false : initialMessages.length > 0)
+      return newIncognitoState
+    })
+    setChatKey((prev) => prev + 1)
+  }, [initialMessages.length])
 
   // When user clicks "New", save the input and mode, then navigate.
   const handleNewClick = () => {
     if (preservedInput) {
-      sessionStorage.setItem('preservedChatInput', preservedInput);
+      sessionStorage.setItem("preservedChatInput", preservedInput)
     }
-  
-    if (isIncognito) {
-      sessionStorage.setItem('chatMode', 'normal');
-      setIsIncognito(false);
-      setMessagesForChat([]);
-    }
-  
-    router.push('/intelligence');
-  };
 
-  const shouldShowIncognitoToggle = !hasMessages;
+    if (isIncognito) {
+      sessionStorage.setItem("chatMode", "normal")
+      setIsIncognito(false)
+      setMessagesForChat([])
+    }
+
+    router.push("/intelligence")
+  }
+
+  const shouldShowIncognitoToggle = !hasMessages
 
   return (
     <>
@@ -84,7 +82,9 @@ export function IntelligenceInterface({
           <div className="pt-4 px-4">
             <div className="grid grid-cols-3 items-center w-full text-left">
               <div className="flex justify-start gap-2">
-                <IntelligenceModelSelector selectedModelName={selectedModelName} />
+                <IntelligenceModelSelector
+                  selectedModelName={selectedModelName}
+                />
               </div>
 
               <div className="flex items-center justify-center gap-2">
@@ -99,8 +99,8 @@ export function IntelligenceInterface({
                     onClick={handleIncognitoToggle}
                     className={`px-2 py-1 text-xs font-medium normal-case transition-colors rounded-md ${
                       isIncognito
-                        ? 'bg-task-hover text-purple-500'
-                        : 'text-muted-foreground hover:bg-task-hover hover:text-muted-foreground'
+                        ? "bg-task-hover text-purple-500"
+                        : "text-muted-foreground hover:bg-task-hover hover:text-muted-foreground"
                     }`}
                   >
                     Private
@@ -111,8 +111,8 @@ export function IntelligenceInterface({
               <div className="flex justify-end">
                 <button
                   onClick={(e) => {
-                    e.stopPropagation();
-                    setShowHistoryModal(true);
+                    e.stopPropagation()
+                    setShowHistoryModal(true)
                   }}
                   className="px-2 py-1 text-muted-foreground hover:bg-task-hover hover:text-muted-foreground text-xs font-medium normal-case transition-colors rounded-md"
                 >
@@ -121,7 +121,7 @@ export function IntelligenceInterface({
               </div>
             </div>
           </div>
-          
+
           <div className="flex-1 overflow-hidden min-h-0">
             <SimplifiedChat
               key={`${id}-${chatKey}`}
@@ -147,5 +147,5 @@ export function IntelligenceInterface({
         user={user}
       />
     </>
-  );
-} 
+  )
+}

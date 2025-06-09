@@ -1,63 +1,63 @@
-'use client';
+"use client"
 
-import { Attachment } from 'ai';
-import { X } from 'lucide-react';
-import { useState } from 'react';
+import { Attachment } from "ai"
+import { X } from "lucide-react"
+import { useState } from "react"
 
-import { LoaderIcon } from './icons';
-import { Button } from '../ui/button';
+import { LoaderIcon } from "./icons"
+import { Button } from "../ui/button"
 
 export const PreviewAttachment = ({
   attachment,
   isUploading = false,
   onRemove,
 }: {
-  attachment: Attachment;
-  isUploading?: boolean;
-  onRemove?: () => void;
+  attachment: Attachment
+  isUploading?: boolean
+  onRemove?: () => void
 }) => {
-  const { name, url, contentType } = attachment;
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const { name, url, contentType } = attachment
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
 
-  const isImage = contentType?.startsWith('image');
+  const isImage = contentType?.startsWith("image")
 
   const handleImageClick = () => {
     if (isImage && !isUploading) {
-      setIsModalOpen(true);
+      setIsModalOpen(true)
     }
-  };
+  }
 
   const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
 
   const handleBackdropClick = (e: React.MouseEvent | React.TouchEvent) => {
     if (e.target === e.currentTarget) {
-      handleModalClose();
+      handleModalClose()
     }
-  };
+  }
 
   return (
     <div className="relative group/attachment">
       <div className="flex flex-col gap-2 max-w-16">
-        <div 
+        <div
           className={`size-12 bg-muted rounded-lg relative flex flex-col items-center justify-center ${
-            isImage && !isUploading ? 'cursor-pointer' : ''
+            isImage && !isUploading ? "cursor-pointer" : ""
           }`}
           onClick={handleImageClick}
           onMouseEnter={() => isImage && setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
         >
           {contentType ? (
-            contentType.startsWith('image') ? (
+            contentType.startsWith("image") ? (
               // NOTE: it is recommended to use next/image for images
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 key={url}
                 src={url}
-                alt={name ?? 'An image attachment'}
+                alt={name ?? "An image attachment"}
                 className="rounded-lg size-full object-cover"
               />
             ) : (
@@ -80,16 +80,18 @@ export const PreviewAttachment = ({
             </div>
           )}
         </div>
-        
+
         {/* Only show filename for non-image files */}
         {!isImage && (
-          <div className="intelligence-content text-zinc-500 max-w-16 truncate">{name}</div>
+          <div className="intelligence-content text-zinc-500 max-w-16 truncate">
+            {name}
+          </div>
         )}
       </div>
 
       {/* Larger Image Modal with better mobile support */}
       {isImage && isModalOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center"
           onClick={handleBackdropClick}
           onTouchEnd={handleBackdropClick}
@@ -99,7 +101,7 @@ export const PreviewAttachment = ({
             onClick={handleBackdropClick}
             onTouchEnd={handleBackdropClick}
           />
-          
+
           {/* Close button for mobile */}
           <Button
             variant="ghost"
@@ -109,13 +111,13 @@ export const PreviewAttachment = ({
           >
             <X className="size-5" />
           </Button>
-          
+
           <div className="relative z-10 w-full max-w-6xl h-[700px] mx-auto p-6">
             <div className="size-full flex items-center justify-center overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={url}
-                alt={name ?? 'Full size image'}
+                alt={name ?? "Full size image"}
                 className="max-w-full max-h-full object-contain rounded-xl"
               />
             </div>
@@ -134,5 +136,5 @@ export const PreviewAttachment = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}

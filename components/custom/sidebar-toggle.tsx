@@ -1,10 +1,10 @@
-'use client';
+"use client"
 
-import { ComponentProps } from 'react';
+import { ComponentProps } from "react"
 
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { BetterTooltip } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import { BetterTooltip } from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
 
 export function SidebarToggle({
   className,
@@ -13,10 +13,10 @@ export function SidebarToggle({
     <BetterTooltip content="Toggle Sidebar" align="start">
       <SidebarTrigger
         className={cn(
-          'size-10 md:size-8 [&>svg]:!size-5 md:[&>svg]:!size-4',
+          "size-10 md:size-8 [&>svg]:!size-5 md:[&>svg]:!size-4",
           className
         )}
       />
     </BetterTooltip>
-  );
+  )
 }

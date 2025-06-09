@@ -1,40 +1,40 @@
-'use client';
+"use client"
 
-import { Check, ChevronDown } from 'lucide-react';
-import { startTransition, useMemo, useOptimistic, useState } from 'react';
+import { Check, ChevronDown } from "lucide-react"
+import { startTransition, useMemo, useOptimistic, useState } from "react"
 
-import { saveModel } from '@/app/chat/actions';
-import { Button } from '@/components/ui/button';
+import { saveModel } from "@/app/chat/actions"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { type Model, models } from '@/lib/model';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dropdown-menu"
+import { type Model, models } from "@/lib/model"
+import { cn } from "@/lib/utils"
 
 export function ModelSelector({
   selectedModelName,
   className,
 }: {
-  selectedModelName: Model['name'];
+  selectedModelName: Model["name"]
 } & React.ComponentProps<typeof Button>) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const [optimisticModelName, setOptimisticModelName] =
-    useOptimistic(selectedModelName);
+    useOptimistic(selectedModelName)
 
   const selectModel = useMemo(
     () => models.find((model) => model.name === optimisticModelName),
     [optimisticModelName]
-  );
+  )
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         asChild
         className={cn(
-          'w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground md:h-8 [&>svg]:!size-5 md:[&>svg]:!size-4',
+          "w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground md:h-8 [&>svg]:!size-5 md:[&>svg]:!size-4",
           className
         )}
       >
@@ -43,17 +43,20 @@ export function ModelSelector({
           <ChevronDown className="text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="min-w-[300px] border border-border rounded-lg">
+      <DropdownMenuContent
+        align="center"
+        className="min-w-[300px] border border-border rounded-lg"
+      >
         {models.map((model) => (
           <DropdownMenuItem
             key={model.name}
             onSelect={() => {
-              setOpen(false);
+              setOpen(false)
 
               startTransition(() => {
-                setOptimisticModelName(model.name);
-                saveModel(model.name);
-              });
+                setOptimisticModelName(model.name)
+                saveModel(model.name)
+              })
             }}
             className="gap-4 group/item intelligence-text text-[10px]"
             data-active={model.name === optimisticModelName}
@@ -71,5 +74,5 @@ export function ModelSelector({
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

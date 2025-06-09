@@ -1,46 +1,53 @@
-'use client';
+"use client"
 
-import { ChevronDown } from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
+import Image from "next/image"
+import { useState } from "react"
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { models } from '@/lib/model';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dropdown-menu"
+import { models } from "@/lib/model"
+import { cn } from "@/lib/utils"
 
 const modelDisplayConfig: { [key: string]: { color: string } } = {
-  'grok-3': {
-    color: 'hue-rotate-[40deg] saturate-60 brightness-150', // Was Dark Purple
+  "grok-3": {
+    color: "hue-rotate-[40deg] saturate-60 brightness-150", // Was Dark Purple
   },
-  'gemini-2.5-pro': {
-    color: 'saturate-60 brightness-150', // Was blue
+  "gemini-2.5-pro": {
+    color: "saturate-60 brightness-150", // Was blue
   },
-  'claude-opus-4': {
-    color: 'hue-rotate-[-210deg] saturate-60 brightness-150', // Was Dark Orange
+  "claude-opus-4": {
+    color: "hue-rotate-[-210deg] saturate-60 brightness-150", // Was Dark Orange
   },
-  'chatgpt-4o': {
-    color: 'hue-rotate-[-120deg] saturate-60 brightness-150', // Was Dark Green
+  "chatgpt-4o": {
+    color: "hue-rotate-[-120deg] saturate-60 brightness-150", // Was Dark Green
   },
-};
+}
+
+const getModelColorClass = (modelName?: string): string => {
+  if (!modelName) return ""
+  const key = Object.keys(modelDisplayConfig).find((k) =>
+    modelName.startsWith(k)
+  )
+  return key ? modelDisplayConfig[key]?.color || "" : ""
+}
 
 export function IntelligenceModelSelector({
   selectedModelName,
 }: {
-  selectedModelName: string;
+  selectedModelName: string
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const [internalSelectedModelName, setInternalSelectedModelName] =
-    useState(selectedModelName);
+    useState(selectedModelName)
 
   const selectedModel = models.find(
     (model) => model.name === internalSelectedModelName
-  );
-  const displayName = selectedModel?.label || internalSelectedModelName;
+  )
+  const displayName = selectedModel?.label || internalSelectedModelName
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -51,9 +58,11 @@ export function IntelligenceModelSelector({
               src="/images/AI-Star-2.png"
               alt="AI Model"
               fill
-              className={`object-contain blur-[2px] ${
-                modelDisplayConfig[selectedModel?.name || '']?.color || ''
-              }`}
+              sizes="16px"
+              className={cn(
+                "object-contain blur-[2px]",
+                getModelColorClass(selectedModel?.name)
+              )}
               draggable={false}
             />
           </div>
@@ -69,9 +78,9 @@ export function IntelligenceModelSelector({
             key={model.name}
             className="flex items-center gap-3 text-[10px] cursor-pointer hover:bg-task-hover focus:bg-task-hover data-[highlighted]:bg-task-hover"
             onSelect={(e) => {
-              e.preventDefault();
-              setInternalSelectedModelName(model.name);
-              setOpen(false);
+              e.preventDefault()
+              setInternalSelectedModelName(model.name)
+              setOpen(false)
             }}
           >
             <div className="relative size-4">
@@ -79,16 +88,16 @@ export function IntelligenceModelSelector({
                 src="/images/AI-Star-2.png"
                 alt={model.label}
                 fill
-                className={`object-contain blur-[2px] ${
-                  modelDisplayConfig[model.name]?.color || ''
-                }`}
+                sizes="16px"
+                className={cn(
+                  "object-contain blur-[2px]",
+                  getModelColorClass(model.name)
+                )}
                 draggable={false}
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-foreground font-medium">
-                {model.label}
-              </span>
+              <span className="text-foreground font-medium">{model.label}</span>
               <span className="text-muted-foreground text-[9px]">
                 {model.name}
               </span>
@@ -97,5 +106,5 @@ export function IntelligenceModelSelector({
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-} 
+  )
+}

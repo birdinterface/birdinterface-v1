@@ -1,8 +1,8 @@
-"use client";
-import React, { useState, useEffect } from 'react';
+"use client"
+import React, { useEffect, useState } from "react"
 
 const FlashlightEffect: React.FC = () => {
-  const [position, setPosition] = useState({ x: -200, y: -200 }); // Initial position off-screen
+  const [position, setPosition] = useState({ x: -200, y: -200 }) // Initial position off-screen
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -10,22 +10,22 @@ const FlashlightEffect: React.FC = () => {
       setPosition({
         x: e.clientX,
         y: e.clientY,
-      });
-    };
+      })
+    }
 
     const handleMouseLeave = () => {
-      setPosition({ x: -200, y: -200 }); // Move off-screen when mouse leaves
-    };
+      setPosition({ x: -200, y: -200 }) // Move off-screen when mouse leaves
+    }
 
     // Add event listeners to the window for global mouse tracking
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
-    
+    window.addEventListener("mousemove", handleMouseMove)
+    window.addEventListener("mouseleave", handleMouseLeave)
+
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
+      window.removeEventListener("mousemove", handleMouseMove)
+      window.removeEventListener("mouseleave", handleMouseLeave)
+    }
+  }, [])
 
   return (
     <div
@@ -42,7 +42,7 @@ const FlashlightEffect: React.FC = () => {
         )`,
       }}
     />
-  );
-};
+  )
+}
 
-export default FlashlightEffect; 
+export default FlashlightEffect

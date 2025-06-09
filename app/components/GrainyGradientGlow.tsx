@@ -1,24 +1,27 @@
-'use client';
+"use client"
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from "react"
 
-import styles from './GrainyGradientGlow.module.css';
+import styles from "./GrainyGradientGlow.module.css"
 
 interface Flare {
-  id: number;
-  x: number;
-  y: number;
-  color: string;
-  size: number;
+  id: number
+  x: number
+  y: number
+  color: string
+  size: number
 }
 
 const GrainyGradientGlow: React.FC = () => {
-  const [flares, setFlares] = useState<Flare[]>([]);
+  const [flares, setFlares] = useState<Flare[]>([])
 
-  const baseColors = useMemo(() => ['#333333', '#666666', '#999999', '#cccccc', '#ffffff'], []); // Grayscale colors
-  const defaultFlareSize = 450;
-  const whiteFlareSize = 330;
-  const updateInterval = 1000; // Faster update interval (1 second)
+  const baseColors = useMemo(
+    () => ["#333333", "#666666", "#999999", "#cccccc", "#ffffff"],
+    []
+  ) // Grayscale colors
+  const defaultFlareSize = 450
+  const whiteFlareSize = 330
+  const updateInterval = 1000 // Faster update interval (1 second)
 
   useEffect(() => {
     const initialFlares: Flare[] = baseColors.map((color, index) => ({
@@ -27,27 +30,27 @@ const GrainyGradientGlow: React.FC = () => {
       y: 50 + (Math.random() - 0.5) * 20,
       color: color,
       // Set size based on color
-      size: color === '#f0f0f0' ? whiteFlareSize : defaultFlareSize,
-    }));
-    setFlares(initialFlares);
+      size: color === "#f0f0f0" ? whiteFlareSize : defaultFlareSize,
+    }))
+    setFlares(initialFlares)
 
     const intervalId = setInterval(() => {
       setFlares((prevFlares) =>
         prevFlares.map((flare) => {
           // Reduce the magnitude of random movement for smoother paths
-          const horizontalMove = 8; 
-          const verticalMove = 15;   
+          const horizontalMove = 8
+          const verticalMove = 15
           // Keep the strong center pull
-          const centerPull = 0.1; 
+          const centerPull = 0.1
 
-          const randomX = (Math.random() - 0.5) * horizontalMove;
-          const randomY = (Math.random() - 0.5) * verticalMove;
+          const randomX = (Math.random() - 0.5) * horizontalMove
+          const randomY = (Math.random() - 0.5) * verticalMove
 
-          const pullX = (50 - flare.x) * centerPull;
-          const pullY = (50 - flare.y) * centerPull;
+          const pullX = (50 - flare.x) * centerPull
+          const pullY = (50 - flare.y) * centerPull
 
-          const nextX = flare.x + randomX + pullX;
-          const nextY = flare.y + randomY + pullY;
+          const nextX = flare.x + randomX + pullX
+          const nextY = flare.y + randomY + pullY
 
           return {
             ...flare,
@@ -56,11 +59,11 @@ const GrainyGradientGlow: React.FC = () => {
             y: Math.max(30, Math.min(70, nextY)),
           }
         })
-      );
-    }, updateInterval);
+      )
+    }, updateInterval)
 
-    return () => clearInterval(intervalId);
-  }, [baseColors, whiteFlareSize, defaultFlareSize, updateInterval]);
+    return () => clearInterval(intervalId)
+  }, [baseColors, whiteFlareSize, defaultFlareSize, updateInterval])
 
   return (
     <div className={styles.grainyGradientContainer}>
@@ -81,7 +84,7 @@ const GrainyGradientGlow: React.FC = () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default GrainyGradientGlow; 
+export default GrainyGradientGlow

@@ -1,15 +1,15 @@
-'use client';
+"use client"
 
-import { SessionProvider, SessionProviderProps } from 'next-auth/react';
-import { ThemeProvider } from 'next-themes';
-import { type ThemeProviderProps } from 'next-themes/dist/types';
+import { SessionProvider, SessionProviderProps } from "next-auth/react"
+import { ThemeProvider } from "next-themes"
+import { type ThemeProviderProps } from "next-themes/dist/types"
 
-import { ModalProvider } from '@/components/context/modal-context';
+import { ModalProvider } from "@/components/context/modal-context"
 
 // Combine props
 interface ProvidersProps extends ThemeProviderProps {
-  children: React.ReactNode;
-  session: SessionProviderProps['session']; // Add session prop
+  children: React.ReactNode
+  session: SessionProviderProps["session"] // Add session prop
 }
 
 export function Providers({ children, session, ...props }: ProvidersProps) {
@@ -24,10 +24,8 @@ export function Providers({ children, session, ...props }: ProvidersProps) {
     >
       {/* Pass session to SessionProvider */}
       <SessionProvider session={session}>
-        <ModalProvider>
-          {children}
-        </ModalProvider>
+        <ModalProvider>{children}</ModalProvider>
       </SessionProvider>
     </ThemeProvider>
-  );
-} 
+  )
+}

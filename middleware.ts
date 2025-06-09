@@ -2,34 +2,33 @@
 
 // Import the consolidated auth object
 // import { auth } from "@/app/(auth)/auth";
-import NextAuth from "next-auth";
-import { authConfig } from "./auth.config"; // Import the Edge-safe config
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import NextAuth from "next-auth"
+import { NextResponse } from "next/server"
+import { authConfig } from "./auth.config" // Import the Edge-safe config
 
 // Initialize NextAuth with only the Edge-safe config for the middleware
-const auth = NextAuth(authConfig).auth;
+const auth = NextAuth(authConfig).auth
 
 export default auth((req) => {
   // Don't redirect if already on /welcome
-  if (req.nextUrl.pathname === '/welcome') {
+  if (req.nextUrl.pathname === "/welcome") {
     return NextResponse.next()
   }
 
   // Don't redirect API routes
-  if (req.nextUrl.pathname.startsWith('/api')) {
+  if (req.nextUrl.pathname.startsWith("/api")) {
     return NextResponse.next()
   }
 
   // Don't redirect _next internal routes
-  if (req.nextUrl.pathname.startsWith('/_next')) {
+  if (req.nextUrl.pathname.startsWith("/_next")) {
     return NextResponse.next()
   }
 
   // Don't redirect static files and images
   if (
-    req.nextUrl.pathname.startsWith('/images') ||
-    req.nextUrl.pathname === '/favicon.ico'
+    req.nextUrl.pathname.startsWith("/images") ||
+    req.nextUrl.pathname === "/favicon.ico"
   ) {
     return NextResponse.next()
   }
@@ -41,7 +40,7 @@ export default auth((req) => {
   }
 
   // Redirect unauthenticated users to /welcome
-  return NextResponse.redirect(new URL('/welcome', req.url))
+  return NextResponse.redirect(new URL("/welcome", req.url))
 })
 
 // Configure which paths the middleware will run on
@@ -55,6 +54,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - images/ (public images)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|images/).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|images/).*)",
   ],
 }

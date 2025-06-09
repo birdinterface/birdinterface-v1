@@ -1,23 +1,36 @@
-'use client';
+"use client"
 
-import { Calendar, Globe, Search, Users, AlertCircle, Rss } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { AlertCircle, Calendar, Globe, Search, Users } from "lucide-react"
+import { useEffect, useState } from "react"
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { useLiveSearch } from '@/hooks/use-live-search';
-import { SearchParameters } from '@/lib/live-search';
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import { useLiveSearch } from "@/hooks/use-live-search"
+import { SearchParameters } from "@/lib/live-search"
 
 interface LiveSearchControlsProps {
-  onSearchChange?: (searchParameters: SearchParameters | null) => void;
-  disabled?: boolean;
+  onSearchChange?: (searchParameters: SearchParameters | null) => void
+  disabled?: boolean
 }
 
-export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSearchControlsProps) {
+export function LiveSearchControls({
+  onSearchChange,
+  disabled = false,
+}: LiveSearchControlsProps) {
   const {
     isSearchEnabled,
     searchParameters,
@@ -28,56 +41,62 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
     xHandles,
     byCountry,
     updateSearchParameters,
-    hasErrors
-  } = useLiveSearch();
+    hasErrors,
+  } = useLiveSearch()
 
-  const [quickSearchType, setQuickSearchType] = useState<string>('auto');
-  const [customInput, setCustomInput] = useState<string>('');
+  const [quickSearchType, setQuickSearchType] = useState<string>("auto")
+  const [customInput, setCustomInput] = useState<string>("")
 
   // Notify parent component when search parameters change
   useEffect(() => {
-    onSearchChange?.(isSearchEnabled ? searchParameters : null);
-  }, [isSearchEnabled, searchParameters, onSearchChange]);
+    onSearchChange?.(isSearchEnabled ? searchParameters : null)
+  }, [isSearchEnabled, searchParameters, onSearchChange])
 
   const handleQuickSearch = (type: string) => {
-    setQuickSearchType(type);
-    
+    setQuickSearchType(type)
+
     switch (type) {
-      case 'news-7':
-        recentNews(7);
-        break;
-      case 'news-1':
-        recentNews(1);
-        break;
-      case 'sites':
+      case "news-7":
+        recentNews(7)
+        break
+      case "news-1":
+        recentNews(1)
+        break
+      case "sites":
         if (customInput) {
-          const sites = customInput.split(',').map(s => s.trim()).filter(Boolean);
-          specificSites(sites);
+          const sites = customInput
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+          specificSites(sites)
         }
-        break;
-      case 'x-handles':
+        break
+      case "x-handles":
         if (customInput) {
-          const handles = customInput.split(',').map(s => s.trim()).filter(Boolean);
-          xHandles(handles);
+          const handles = customInput
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+          xHandles(handles)
         }
-        break;
-      case 'country':
+        break
+      case "country":
         if (customInput && customInput.length === 2) {
-          byCountry(customInput.toUpperCase());
+          byCountry(customInput.toUpperCase())
         }
-        break;
+        break
       default:
-        updateSearchParameters({ mode: 'auto' });
+        updateSearchParameters({ mode: "auto" })
     }
-  };
+  }
 
   return (
     <div className="flex items-center gap-2">
       <Popover>
         <PopoverTrigger asChild>
-          <Button 
-            variant={isSearchEnabled ? "default" : "outline"} 
-            size="sm" 
+          <Button
+            variant={isSearchEnabled ? "default" : "outline"}
+            size="sm"
             disabled={disabled}
             className="h-8"
           >
@@ -90,7 +109,7 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
             )}
           </Button>
         </PopoverTrigger>
-        
+
         <PopoverContent className="w-80" align="end">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -106,13 +125,13 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
                 disabled={disabled}
                 className={`
                   relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-                  ${isSearchEnabled ? 'bg-primary' : 'bg-gray-200'}
+                  ${isSearchEnabled ? "bg-primary" : "bg-gray-200"}
                 `}
               >
                 <span
                   className={`
                     inline-block size-4 rounded-full bg-white transition-transform
-                    ${isSearchEnabled ? 'translate-x-6' : 'translate-x-1'}
+                    ${isSearchEnabled ? "translate-x-6" : "translate-x-1"}
                   `}
                 />
               </button>
@@ -122,7 +141,7 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
               <div className="flex items-center gap-2 p-2 bg-red-50 border border-red-200 rounded-md">
                 <AlertCircle className="size-4 text-red-500" />
                 <div className="text-sm text-red-700">
-                  {searchErrors.join(', ')}
+                  {searchErrors.join(", ")}
                 </div>
               </div>
             )}
@@ -130,11 +149,14 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
             {isSearchEnabled && (
               <>
                 <Separator />
-                
+
                 <div className="space-y-3">
                   <Label className="text-sm font-medium">Quick Setup</Label>
-                  
-                  <Select value={quickSearchType} onValueChange={setQuickSearchType}>
+
+                  <Select
+                    value={quickSearchType}
+                    onValueChange={setQuickSearchType}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Choose search type" />
                     </SelectTrigger>
@@ -165,8 +187,7 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
                       </SelectItem>
                       <SelectItem value="x-handles">
                         <div className="flex items-center gap-2">
-                          <Users className="size-4" />
-                          X Handles
+                          <Users className="size-4" />X Handles
                         </div>
                       </SelectItem>
                       <SelectItem value="country">
@@ -178,33 +199,43 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
                     </SelectContent>
                   </Select>
 
-                  {(quickSearchType === 'sites' || quickSearchType === 'x-handles' || quickSearchType === 'country') && (
+                  {(quickSearchType === "sites" ||
+                    quickSearchType === "x-handles" ||
+                    quickSearchType === "country") && (
                     <div className="space-y-2">
                       <Input
                         placeholder={
-                          quickSearchType === 'sites' ? 'example.com, news.site.com'
-                          : quickSearchType === 'x-handles' ? 'handle1, handle2'
-                          : 'US, GB, DE'
+                          quickSearchType === "sites"
+                            ? "example.com, news.site.com"
+                            : quickSearchType === "x-handles"
+                              ? "handle1, handle2"
+                              : "US, GB, DE"
                         }
                         value={customInput}
                         onChange={(e) => setCustomInput(e.target.value)}
                         className="text-sm"
                       />
                       <p className="text-xs text-muted-foreground">
-                        {quickSearchType === 'sites' && 'Enter website domains separated by commas (max 5)'}
-                        {quickSearchType === 'x-handles' && 'Enter X handles separated by commas'}
-                        {quickSearchType === 'country' && 'Enter 2-letter country code (e.g., US, GB, DE)'}
+                        {quickSearchType === "sites" &&
+                          "Enter website domains separated by commas (max 5)"}
+                        {quickSearchType === "x-handles" &&
+                          "Enter X handles separated by commas"}
+                        {quickSearchType === "country" &&
+                          "Enter 2-letter country code (e.g., US, GB, DE)"}
                       </p>
                     </div>
                   )}
 
-                  <Button 
+                  <Button
                     onClick={() => handleQuickSearch(quickSearchType)}
-                    size="sm" 
+                    size="sm"
                     className="w-full"
                     disabled={
-                      (quickSearchType === 'sites' || quickSearchType === 'x-handles') && !customInput ||
-                      quickSearchType === 'country' && (!customInput || customInput.length !== 2)
+                      ((quickSearchType === "sites" ||
+                        quickSearchType === "x-handles") &&
+                        !customInput) ||
+                      (quickSearchType === "country" &&
+                        (!customInput || customInput.length !== 2))
                     }
                   >
                     Apply Search Settings
@@ -215,7 +246,9 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
                   <>
                     <Separator />
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium">Current Settings</Label>
+                      <Label className="text-sm font-medium">
+                        Current Settings
+                      </Label>
                       <div className="flex flex-wrap gap-1">
                         <span className="inline-block px-2 py-1 text-xs bg-gray-100 border rounded text-gray-700">
                           Mode: {searchParameters.mode}
@@ -230,11 +263,15 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
                             Max: {searchParameters.max_search_results}
                           </span>
                         )}
-                        {searchParameters.sources && searchParameters.sources.length > 0 && (
-                          <span className="inline-block px-2 py-1 text-xs bg-gray-100 border rounded text-gray-700">
-                            Sources: {searchParameters.sources.map(s => s.type).join(', ')}
-                          </span>
-                        )}
+                        {searchParameters.sources &&
+                          searchParameters.sources.length > 0 && (
+                            <span className="inline-block px-2 py-1 text-xs bg-gray-100 border rounded text-gray-700">
+                              Sources:{" "}
+                              {searchParameters.sources
+                                .map((s) => s.type)
+                                .join(", ")}
+                            </span>
+                          )}
                       </div>
                     </div>
                   </>
@@ -245,5 +282,5 @@ export function LiveSearchControls({ onSearchChange, disabled = false }: LiveSea
         </PopoverContent>
       </Popover>
     </div>
-  );
-} 
+  )
+}

@@ -1,5 +1,5 @@
-import type { NextAuthConfig } from "next-auth";
-import { NextResponse } from 'next/server';
+import type { NextAuthConfig } from "next-auth"
+import { NextResponse } from "next/server"
 
 export const authConfig: NextAuthConfig = {
   // Explicitly trust the host in the Edge environment
@@ -14,22 +14,24 @@ export const authConfig: NextAuthConfig = {
   },
   callbacks: {
     authorized(params) {
-      const { auth, request } = params;
-      const isLoggedIn = !!auth?.user;
-      const isAuthRoute = ["/login", "/register"].includes(request.nextUrl.pathname);
+      const { auth, request } = params
+      const isLoggedIn = !!auth?.user
+      const isAuthRoute = ["/login", "/register"].includes(
+        request.nextUrl.pathname
+      )
 
       if (isAuthRoute) {
         if (isLoggedIn) {
           // Redirect logged-in users trying to access login/register
-          return NextResponse.redirect(new URL("/", request.nextUrl));
+          return NextResponse.redirect(new URL("/", request.nextUrl))
         }
         // Allow unauthenticated users to access login/register
-        return true;
+        return true
       } else {
         // For any other route covered by the matcher ("/", "/:id")
         // Allow access if logged in
-        return isLoggedIn;
+        return isLoggedIn
       }
     },
   },
-}; 
+}

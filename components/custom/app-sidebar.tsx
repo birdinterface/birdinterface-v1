@@ -1,10 +1,10 @@
-'use client';
+"use client"
 
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
-import { type User } from 'next-auth';
+import { Plus } from "lucide-react"
+import Link from "next/link"
+import { type User } from "next-auth"
 
-import { SidebarHistory } from '@/components/custom/sidebar-history';
+import { SidebarHistory } from "@/components/custom/sidebar-history"
 import {
   Sidebar,
   SidebarContent,
@@ -14,11 +14,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
-import { BetterTooltip } from '@/components/ui/tooltip';
+} from "@/components/ui/sidebar"
+import { BetterTooltip } from "@/components/ui/tooltip"
 
 export function AppSidebar({ user }: { user: User | undefined }) {
-  const { setOpenMobile } = useSidebar();
+  const { setOpenMobile } = useSidebar()
 
   return (
     <Sidebar className="mt-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-black border-t border-r border-border">
@@ -32,7 +32,11 @@ export function AppSidebar({ user }: { user: User | undefined }) {
             </SidebarMenuButton>
             <BetterTooltip content="New Chat">
               <SidebarMenuAction asChild>
-                <Link href="/intelligence" onClick={() => setOpenMobile(false)} className="hover:bg-transparent hover:opacity-80 transition-opacity text-black dark:text-white">
+                <Link
+                  href="/intelligence"
+                  onClick={() => setOpenMobile(false)}
+                  className="hover:bg-transparent hover:opacity-80 transition-opacity text-black dark:text-white"
+                >
                   <Plus />
                 </Link>
               </SidebarMenuAction>
@@ -44,5 +48,5 @@ export function AppSidebar({ user }: { user: User | undefined }) {
         <SidebarHistory user={user} />
       </SidebarContent>
     </Sidebar>
-  );
+  )
 }

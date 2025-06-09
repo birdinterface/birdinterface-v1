@@ -1,18 +1,18 @@
-'use client';
+"use client"
 
-import Link from 'next/link';
-import { useParams, usePathname, useRouter } from 'next/navigation';
-import { type User } from 'next-auth';
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import useSWR from 'swr';
+import Link from "next/link"
+import { useParams, usePathname, useRouter } from "next/navigation"
+import { type User } from "next-auth"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
+import useSWR from "swr"
 
 import {
   InfoIcon,
   MoreHorizontalIcon,
   TrashIcon,
-} from '@/components/custom/icons';
+} from "@/components/custom/icons"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,123 +22,133 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu"
 import {
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
-import { cn, fetcher } from '@/lib/utils';
+} from "@/components/ui/sidebar"
+import { cn, fetcher } from "@/lib/utils"
 
 // Define the expected shape of a processed chat object from the API
 interface ProcessedChat {
-  id: string;
-  title: string; 
-  updatedat: string; // Updated to match database schema
+  id: string
+  title: string
+  updatedat: string // Updated to match database schema
   // Add any other properties your UI needs that the API provides
 }
 
 // Define the expected shape of the grouped history from the API
-type GroupedHistory = Record<string, ProcessedChat[]>;
+type GroupedHistory = Record<string, ProcessedChat[]>
 
 export function SidebarHistory({ user }: { user: User | undefined }) {
-  const { setOpenMobile } = useSidebar();
-  const params = useParams();
-  const id = params?.id as string | undefined;
-  const pathname = usePathname();
+  const { setOpenMobile } = useSidebar()
+  const params = useParams()
+  const id = params?.id as string | undefined
+  const pathname = usePathname()
   const {
     data: groupedHistoryData, // Renamed for clarity, now expects GroupedHistory type
     isLoading,
     mutate,
-  } = useSWR<GroupedHistory>(user ? '/intelligence/api/history' : null, fetcher, {
-    fallbackData: {}, // Default to empty object for grouped data
-  });
+  } = useSWR<GroupedHistory>(
+    user ? "/intelligence/api/history" : null,
+    fetcher,
+    {
+      fallbackData: {}, // Default to empty object for grouped data
+    }
+  )
 
   useEffect(() => {
     // Mutate might need adjustment depending on how you want to handle cache updates
-    mutate(); 
-  }, [pathname, mutate]);
+    mutate()
+  }, [pathname, mutate])
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const router = useRouter();
-  const { theme } = useTheme();
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const router = useRouter()
+  const { theme } = useTheme()
   const handleDelete = async () => {
     try {
       await fetch(`/intelligence/api/chat?id=${deleteId}`, {
-        method: 'DELETE',
-      }).then(res => {
-        if (!res.ok) throw new Error('Failed to delete');
-      });
+        method: "DELETE",
+      }).then((res) => {
+        if (!res.ok) throw new Error("Failed to delete")
+      })
 
       // Adjust mutation logic for the grouped structure
       mutate((currentData) => {
-        if (!currentData) return {};
-        const newData: GroupedHistory = {};
+        if (!currentData) return {}
+        const newData: GroupedHistory = {}
         for (const period in currentData) {
-          const filteredChats = currentData[period].filter((h) => h.id !== deleteId);
+          const filteredChats = currentData[period].filter(
+            (h) => h.id !== deleteId
+          )
           if (filteredChats.length > 0) {
-            newData[period] = filteredChats;
+            newData[period] = filteredChats
           }
         }
-        return newData;
-      }, false);
+        return newData
+      }, false)
 
-      toast.success('Chat deleted successfully', {
+      toast.success("Chat deleted successfully", {
         style: {
-          background: theme === 'dark' ? 'black' : 'white',
-          border: theme === 'dark' ? '1px solid rgb(31,41,55)' : '1px solid rgb(229,231,235)',
-          color: theme === 'dark' ? 'white' : 'black',
-        }
-      });
+          background: theme === "dark" ? "black" : "white",
+          border:
+            theme === "dark"
+              ? "1px solid rgb(31,41,55)"
+              : "1px solid rgb(229,231,235)",
+          color: theme === "dark" ? "white" : "black",
+        },
+      })
 
       if (deleteId === id) {
-        router.push('/intelligence');
+        router.push("/intelligence")
       }
     } catch (error) {
-      toast.error('Failed to delete chat');
+      toast.error("Failed to delete chat")
     } finally {
-      setShowDeleteDialog(false);
-      setDeleteId(null);
+      setShowDeleteDialog(false)
+      setDeleteId(null)
     }
-  };
+  }
 
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768); // or whatever breakpoint you use
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+      setIsMobile(window.innerWidth < 768) // or whatever breakpoint you use
+    }
 
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 
   // Render function for chat items - updated parameter type
   const renderChatItem = (chat: ProcessedChat) => (
     <SidebarMenuItem key={chat.id} className="group/menu-item">
-      <div className={cn(
-        "flex w-full rounded-md",
-        "md:group-hover/menu-item:bg-sidebar-accent",
-        openMenuId === chat.id && "bg-sidebar-accent"
-      )}>
-        <SidebarMenuButton 
-          asChild 
+      <div
+        className={cn(
+          "flex w-full rounded-md",
+          "md:group-hover/menu-item:bg-sidebar-accent",
+          openMenuId === chat.id && "bg-sidebar-accent"
+        )}
+      >
+        <SidebarMenuButton
+          asChild
           isActive={chat.id === id}
           className={cn(
             "min-h-[38px] py-0 flex-grow intelligence-text",
@@ -152,11 +162,11 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
             className="py-2 w-full"
           >
             {/* Use chat.title directly */}
-            <span>{chat.title}</span> 
+            <span>{chat.title}</span>
           </Link>
         </SidebarMenuButton>
-        <DropdownMenu 
-          modal={isMobile} 
+        <DropdownMenu
+          modal={isMobile}
           open={openMenuId === chat.id}
           onOpenChange={(open) => setOpenMenuId(open ? chat.id : null)}
         >
@@ -164,7 +174,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
             <SidebarMenuAction
               className={cn(
                 "hover:bg-transparent hover:text-black dark:hover:text-white transition-colors active:bg-transparent h-[25px] flex items-center",
-                chat.id !== id ? "hidden md:opacity-0 md:group-hover/menu-item:opacity-100 md:block" : ""
+                chat.id !== id
+                  ? "hidden md:opacity-0 md:group-hover/menu-item:opacity-100 md:block"
+                  : ""
               )}
               showOnHover={chat.id !== id}
             >
@@ -172,12 +184,16 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
               <span className="sr-only">More</span>
             </SidebarMenuAction>
           </DropdownMenuTrigger>
-          <DropdownMenuContent side="bottom" align="center" className="border border-border rounded-lg">
+          <DropdownMenuContent
+            side="bottom"
+            align="center"
+            className="border border-border rounded-lg"
+          >
             <DropdownMenuItem
               className="text-destructive focus:bg-destructive/15 focus:text-destructive intelligence-text text-[10px]"
               onSelect={() => {
-                setDeleteId(chat.id);
-                setShowDeleteDialog(true);
+                setDeleteId(chat.id)
+                setShowDeleteDialog(true)
               }}
             >
               <TrashIcon />
@@ -187,7 +203,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
         </DropdownMenu>
       </div>
     </SidebarMenuItem>
-  );
+  )
 
   if (!user) {
     return (
@@ -199,7 +215,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
-    );
+    )
   }
 
   if (isLoading) {
@@ -216,7 +232,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                   className="h-4 rounded-md flex-1 max-w-[--skeleton-width] bg-sidebar-accent-foreground/10"
                   style={
                     {
-                      '--skeleton-width': `${item}%`,
+                      "--skeleton-width": `${item}%`,
                     } as React.CSSProperties
                   }
                 />
@@ -225,7 +241,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
-    );
+    )
   }
 
   if (!groupedHistoryData || Object.keys(groupedHistoryData).length === 0) {
@@ -242,7 +258,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-    );
+    )
   }
 
   return (
@@ -251,16 +267,17 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
         <SidebarGroupContent>
           <SidebarMenu>
             {/* Use groupedHistoryData directly and ensure correct type */}
-            {Object.entries(groupedHistoryData).map(([period, chats]: [string, ProcessedChat[]]) => 
-              chats.length > 0 && (
-                <div key={period} className="mb-4">
-                  <div className="px-2 mb-2 intelligence-text text-muted-foreground">
-                    {period}
+            {Object.entries(groupedHistoryData).map(
+              ([period, chats]: [string, ProcessedChat[]]) =>
+                chats.length > 0 && (
+                  <div key={period} className="mb-4">
+                    <div className="px-2 mb-2 intelligence-text text-muted-foreground">
+                      {period}
+                    </div>
+                    {/* Ensure renderChatItem receives ProcessedChat */}
+                    {chats.map(renderChatItem)}
                   </div>
-                  {/* Ensure renderChatItem receives ProcessedChat */}
-                  {chats.map(renderChatItem)} 
-                </div>
-              )
+                )
             )}
           </SidebarMenu>
         </SidebarGroupContent>
@@ -268,13 +285,18 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="intelligence-text">Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle className="intelligence-text">
+              Are you absolutely sure?
+            </AlertDialogTitle>
             <AlertDialogDescription className="intelligence-content">
-              This action cannot be undone. This will permanently delete your chat and remove it from our servers.
+              This action cannot be undone. This will permanently delete your
+              chat and remove it from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="intelligence-text">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="intelligence-text">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               type="button"
               autoFocus
@@ -287,5 +309,5 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
         </AlertDialogContent>
       </AlertDialog>
     </>
-  );
+  )
 }

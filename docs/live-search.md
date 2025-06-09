@@ -9,13 +9,16 @@ Live Search allows the AI to access real-time information from the web, X (Twitt
 ## New Features
 
 ### Auto-Navigation to Chat URLs
+
 When a user starts a new conversation from `/intelligence`, the URL automatically updates to `/intelligence/chat/{id}` after the first AI response is received. This ensures:
+
 - Users can bookmark specific conversations
-- The back button works intuitively 
+- The back button works intuitively
 - Direct links to conversations work properly
 - Chat history is properly tracked
 
 The navigation only occurs for:
+
 - New chats (not existing conversations)
 - Non-incognito mode (since incognito chats aren't saved)
 - After receiving the first AI response (confirming the chat was saved)
@@ -25,12 +28,14 @@ The navigation only occurs for:
 ### API Integration
 
 Live Search is integrated into both chat endpoints:
+
 - `/app/chat/api/chat/route.ts` - Main chat interface
 - `/app/intelligence/api/chat/route.ts` - Intelligence interface
 
 ### Auto-Detection
 
 The system automatically enables Live Search when it detects certain keywords in user queries:
+
 - Time-sensitive queries: "news", "latest", "recent", "current", "today", etc.
 - Current data queries: "stock price", "weather", "events", "live", "real-time"
 - Market/financial data: "price of", "stock", "crypto", "bitcoin", "market"
@@ -50,28 +55,31 @@ The system automatically enables Live Search when it detects certain keywords in
 ### Programmatic Usage
 
 ```typescript
-import { createSearchParameters } from '@/lib/live-search';
+import { createSearchParameters } from "@/lib/live-search"
 
 // Auto-search with smart detection
-const autoSearch = createSearchParameters.auto();
+const autoSearch = createSearchParameters.auto()
 
 // Search recent news
-const newsSearch = createSearchParameters.recentNews(7); // Last 7 days
+const newsSearch = createSearchParameters.recentNews(7) // Last 7 days
 
 // Search specific websites
-const siteSearch = createSearchParameters.specificSites(['example.com', 'news.site.com']);
+const siteSearch = createSearchParameters.specificSites([
+  "example.com",
+  "news.site.com",
+])
 
 // Search X handles
-const xSearch = createSearchParameters.xHandles(['handle1', 'handle2']);
+const xSearch = createSearchParameters.xHandles(["handle1", "handle2"])
 
 // Search by country
-const countrySearch = createSearchParameters.byCountry('US');
+const countrySearch = createSearchParameters.byCountry("US")
 ```
 
 ### React Hook Usage
 
 ```typescript
-import { useLiveSearch } from '@/hooks/use-live-search';
+import { useLiveSearch } from "@/hooks/use-live-search"
 
 function ChatComponent() {
   const {
@@ -79,14 +87,14 @@ function ChatComponent() {
     searchParameters,
     toggleSearch,
     recentNews,
-    specificSites
-  } = useLiveSearch();
+    specificSites,
+  } = useLiveSearch()
 
   // Enable search for recent news
-  const handleNewsSearch = () => recentNews(7);
+  const handleNewsSearch = () => recentNews(7)
 
   // Toggle search on/off
-  const handleToggle = () => toggleSearch();
+  const handleToggle = () => toggleSearch()
 }
 ```
 
@@ -100,7 +108,7 @@ function ChatInterface() {
 
   return (
     <div>
-      <LiveSearchControls 
+      <LiveSearchControls
         onSearchChange={setSearchParams}
         disabled={false}
       />
@@ -115,11 +123,13 @@ function ChatInterface() {
 ### Basic Parameters
 
 - **mode**: `"auto"` | `"on"` | `"off"`
+
   - `"auto"`: AI decides when to search
   - `"on"`: Always search
   - `"off"`: Never search
 
 - **return_citations**: `boolean` (default: true)
+
   - Whether to include source citations in responses
 
 - **max_search_results**: `number` (default: 20, max: 50)
@@ -133,6 +143,7 @@ function ChatInterface() {
 ### Data Sources
 
 #### Web Search
+
 ```typescript
 {
   type: 'web',
@@ -144,6 +155,7 @@ function ChatInterface() {
 ```
 
 #### X (Twitter) Search
+
 ```typescript
 {
   type: 'x',
@@ -152,6 +164,7 @@ function ChatInterface() {
 ```
 
 #### News Search
+
 ```typescript
 {
   type: 'news',
@@ -162,6 +175,7 @@ function ChatInterface() {
 ```
 
 #### RSS Search
+
 ```typescript
 {
   type: 'rss',
@@ -172,53 +186,58 @@ function ChatInterface() {
 ## Examples
 
 ### Search Recent News
+
 ```typescript
 const newsParams = {
-  mode: 'auto',
+  mode: "auto",
   return_citations: true,
-  from_date: '2024-01-01',
-  to_date: '2024-01-07',
-  sources: [
-    { type: 'news' },
-    { type: 'web' }
-  ]
-};
+  from_date: "2024-01-01",
+  to_date: "2024-01-07",
+  sources: [{ type: "news" }, { type: "web" }],
+}
 ```
 
 ### Search Specific Websites
+
 ```typescript
 const siteParams = {
-  mode: 'on',
+  mode: "on",
   return_citations: true,
-  sources: [{
-    type: 'web',
-    allowed_websites: ['github.com', 'stackoverflow.com']
-  }]
-};
+  sources: [
+    {
+      type: "web",
+      allowed_websites: ["github.com", "stackoverflow.com"],
+    },
+  ],
+}
 ```
 
 ### Search X Handles
+
 ```typescript
 const xParams = {
-  mode: 'auto',
+  mode: "auto",
   return_citations: true,
-  sources: [{
-    type: 'x',
-    x_handles: ['elonmusk', 'openai']
-  }]
-};
+  sources: [
+    {
+      type: "x",
+      x_handles: ["elonmusk", "openai"],
+    },
+  ],
+}
 ```
 
 ### Country-Specific Search
+
 ```typescript
 const countryParams = {
-  mode: 'auto',
+  mode: "auto",
   return_citations: true,
   sources: [
-    { type: 'web', country: 'GB' },
-    { type: 'news', country: 'GB' }
-  ]
-};
+    { type: "web", country: "GB" },
+    { type: "news", country: "GB" },
+  ],
+}
 ```
 
 ## API Request Format
@@ -226,20 +245,20 @@ const countryParams = {
 When sending a request to the chat API, include the `searchParameters` field:
 
 ```javascript
-const response = await fetch('/api/intelligence/chat', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("/api/intelligence/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     id: chatId,
     messages: messages,
     isIncognito: false,
     searchParameters: {
-      mode: 'auto',
+      mode: "auto",
       return_citations: true,
-      max_search_results: 10
-    }
-  })
-});
+      max_search_results: 10,
+    },
+  }),
+})
 ```
 
 ## Environment Variables
@@ -272,4 +291,4 @@ XAI_API_KEY=your_xai_api_key_here
 - Advanced filtering options
 - Search result caching
 - Custom search sources
-- Integration with more data providers 
+- Integration with more data providers

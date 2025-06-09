@@ -1,48 +1,55 @@
-'use client';
+"use client"
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { signOut } from 'next-auth/react';
-import { useTheme } from 'next-themes';
+import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { signOut } from "next-auth/react"
+import { useTheme } from "next-themes"
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'; 
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
 
-import { useModal } from '../context/modal-context';
+import { SettingsModal } from "./settings-modal"
+import { useModal } from "../context/modal-context"
 
 const navItems = [
-  { href: '/tasks', label: 'Tasks' },
-  { href: '/calendar', label: 'Calendar' },
-  { href: '/database', label: 'Database' }, 
-  { href: '/curator', label: 'Curator' },
-  { href: '/intelligence', label: 'Intelligence' },
-];
+  { href: "/tasks", label: "Tasks" },
+  { href: "/calendar", label: "Calendar" },
+  { href: "/database", label: "Database" },
+  { href: "/curator", label: "Curator" },
+  { href: "/intelligence", label: "Intelligence" },
+]
 
 export function Navigation({ user }: { user: any }) {
-  const pathname = usePathname();
-  const { setTheme, theme } = useTheme();
-  const { openModal } = useModal();
+  const pathname = usePathname()
+  const { setTheme, theme } = useTheme()
+  const {
+    openModal,
+    isSettingsModalOpen,
+    openSettingsModal,
+    closeSettingsModal,
+  } = useModal()
 
   // Check for imprint first
-  if (pathname === '/imprint' || pathname === '/imprint/') {
-    return null;
+  if (pathname === "/imprint" || pathname === "/imprint/") {
+    return null
   }
-  
+
   // Then check other paths
-  if (pathname?.startsWith('/welcome') ||
-      pathname?.startsWith('/terms') ||
-      pathname?.startsWith('/privacy') ||
-      pathname?.startsWith('/login') ||
-      pathname?.startsWith('/register')) {
-    return null;
+  if (
+    pathname?.startsWith("/welcome") ||
+    pathname?.startsWith("/terms") ||
+    pathname?.startsWith("/privacy") ||
+    pathname?.startsWith("/login") ||
+    pathname?.startsWith("/register")
+  ) {
+    return null
   }
 
   return (
@@ -54,25 +61,27 @@ export function Navigation({ user }: { user: any }) {
               <div className="flex items-center gap-3 w-full md:w-auto">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       className="size-10 p-0 data-[state=open]:bg-transparent shrink-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none transition-opacity hover:bg-transparent"
                     >
                       <div className="relative size-8 -ml-5">
                         <Image
-                          src={'/images/Birdblack.png'}
+                          src={"/images/Birdblack.png"}
                           alt="Bird Interface Logo Light"
-                          layout="fill"
-                          objectFit="contain"
+                          fill
+                          sizes="32px"
+                          style={{ objectFit: "contain" }}
                           priority
                           className="block dark:hidden"
                           draggable={false}
                         />
                         <Image
-                          src={'/images/Birdwhite.png'}
+                          src={"/images/Birdwhite.png"}
                           alt="Bird Interface Logo Dark"
-                          layout="fill"
-                          objectFit="contain"
+                          fill
+                          sizes="32px"
+                          style={{ objectFit: "contain" }}
                           priority
                           className="hidden dark:block"
                           draggable={false}
@@ -80,19 +89,36 @@ export function Navigation({ user }: { user: any }) {
                       </div>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="center" sideOffset={0} className="w-48 custom-dropdown">
+                  <DropdownMenuContent
+                    align="center"
+                    sideOffset={0}
+                    className="w-48 custom-dropdown"
+                  >
                     {user && (
                       <>
                         <DropdownMenuItem asChild>
-                          <button className="w-full text-left text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent" onClick={openModal}>
+                          <button
+                            className="w-full text-left text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent"
+                            onClick={openModal}
+                          >
                             Your Plan
+                          </button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <button
+                            className="w-full text-left text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent"
+                            onClick={openSettingsModal}
+                          >
+                            Settings
                           </button>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent"
-                          onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                          onSelect={() =>
+                            setTheme(theme === "dark" ? "light" : "dark")
+                          }
                         >
-                          {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                          {theme === "light" ? "Dark Mode" : "Light Mode"}
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <button
@@ -100,8 +126,8 @@ export function Navigation({ user }: { user: any }) {
                             onClick={() => {
                               signOut({
                                 redirect: true,
-                                callbackUrl: '/',
-                              });
+                                callbackUrl: "/",
+                              })
                             }}
                           >
                             Sign Out
@@ -120,9 +146,11 @@ export function Navigation({ user }: { user: any }) {
                         href={item.href}
                         className={cn(
                           "text-xs font-medium transition-colors whitespace-nowrap nav-text",
-                          (pathname === item.href || (item.href === '/intelligence' && pathname?.startsWith('/intelligence')))
-                            ? 'text-foreground'
-                            : 'text-[#858a8f] hover:text-[#858a8f]'
+                          pathname === item.href ||
+                            (item.href === "/intelligence" &&
+                              pathname?.startsWith("/intelligence"))
+                            ? "text-foreground"
+                            : "text-[#858a8f] hover:text-[#858a8f]"
                         )}
                       >
                         {item.label}
@@ -136,10 +164,19 @@ export function Navigation({ user }: { user: any }) {
         </div>
       </nav>
       {/* Spacer to prevent content from going under navbar - adjust height for intelligence route on mobile */}
-      <div className={cn(
-        "h-14", // default height
-        pathname?.startsWith('/intelligence') && "h-10 md:h-14" // smaller height on mobile for intelligence route
-      )} />
+      <div
+        className={cn(
+          "h-14", // default height
+          pathname?.startsWith("/intelligence") && "h-10 md:h-14" // smaller height on mobile for intelligence route
+        )}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        open={isSettingsModalOpen}
+        onOpenChange={closeSettingsModal}
+        user={user}
+      />
     </>
-  );
-} 
+  )
+}

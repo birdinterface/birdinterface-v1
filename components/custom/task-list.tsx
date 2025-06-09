@@ -1,30 +1,41 @@
-'use client';
+"use client"
 
-import { format, parseISO, isToday, isYesterday, isTomorrow } from 'date-fns';
-import { Check, ChevronDown, ChevronUp, Calendar, Edit2, Link as LinkIcon } from 'lucide-react';
-import * as React from 'react';
-import { useState, useRef, KeyboardEvent, TouchEvent, useEffect, DragEvent, useCallback, useMemo } from 'react';
+import { format, isToday, isTomorrow, isYesterday, parseISO } from "date-fns"
+import { Calendar, Check, Link as LinkIcon } from "lucide-react"
+import * as React from "react"
+import {
+  DragEvent,
+  KeyboardEvent,
+  TouchEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 
-import { CustomCalendar } from '@/components/custom/custom-calendar';
-import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
-import { Button } from '@/components/ui/button';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
+import { CustomCalendar } from "@/components/custom/custom-calendar"
+import { Button } from "@/components/ui/button"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
 
 export type Task = {
-  id: string;
-  name: string;
-  description: string;
-  dueDate: string;
-  completed: boolean;
-  status: 'todo' | 'watch' | 'later' | 'done';
-  completedAt?: string;
-  userId: string;
-  link?: string;
-};
+  id: string
+  name: string
+  description: string
+  dueDate: string
+  completed: boolean
+  status: "todo" | "watch" | "later" | "done"
+  completedAt?: string
+  userId: string
+  link?: string
+}
 
-export type Tab = 'todo' | 'watch' | 'later' | 'done';
+export type Tab = "todo" | "watch" | "later" | "done"
 
 export function TaskList({
   tasks: externalTasks,
@@ -34,248 +45,280 @@ export function TaskList({
   onDeleteTask,
   activeTab,
   onTabChange,
+  tabNames,
+  onTabNamesChange,
 }: {
-  tasks?: Task[];
-  userId: string;
-  onAddTask?: (task: Omit<Task, 'id'>) => void;
-  onUpdateTask?: (id: string, updates: Partial<Task>) => void;
-  onDeleteTask?: (id: string) => void;
-  activeTab: Tab;
-  onTabChange: (tab: Tab) => void;
+  tasks?: Task[]
+  userId: string
+  onAddTask?: (task: Omit<Task, "id">) => void
+  onUpdateTask?: (id: string, updates: Partial<Task>) => void
+  onDeleteTask?: (id: string) => void
+  activeTab: Tab
+  onTabChange: (tab: Tab) => void
+  tabNames: { [key in Tab]: string }
+  onTabNamesChange: (newTabNames: { [key in Tab]: string }) => void
 }) {
   const normalizeTabName = (key: string, name: string): string => {
-    if (typeof name !== 'string' || !name) return '';
-    if (key === 'todo' && name.toLowerCase() === 'todo') {
-        return 'ToDo';
+    if (typeof name !== "string" || !name) return ""
+    if (key === "todo" && name.toLowerCase() === "todo") {
+      return "ToDo"
     }
     return name
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
-  };
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ")
+  }
   // Use useMemo for tasks to prevent unnecessary re-renders if externalTasks is stable
-  const tasks = useMemo(() => externalTasks || [], [externalTasks]);
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [showCompletedAnimation, setShowCompletedAnimation] = useState(false);
-  const [deletedTasks, setDeletedTasks] = useState<Task[]>([]);
-  const [swipeStartX, setSwipeStartX] = useState<number | null>(null);
-  const [swipeDistance, setSwipeDistance] = useState(0);
-  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
-  const lastTaskRef = useRef<string | null>(null);
-  const [editingTab, setEditingTab] = useState<Tab | null>(null);
-  const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
-  const [tabNames, setTabNames] = useState({
-    todo: 'ToDo',
-    watch: 'Watch',
-    later: 'Later',
-    done: 'Completed'
-  });
-  const [dragOverTarget, setDragOverTarget] = useState<Tab | null>(null);
-  const [emptyTaskData, setEmptyTaskData] = useState({ name: '', description: '' });
-  const lastTaskInputRef = useRef<HTMLInputElement | null>(null);
-  const shouldFocusNewTaskRef = React.useRef(false);
-  const focusAttemptCountRef = React.useRef(0);
-  const maintainFocusRef = React.useRef(false);
-  const focusedTaskPositionRef = React.useRef<number>(-1);
-  const pointerDownOnInputRef = useRef(false);
+  const tasks = useMemo(() => externalTasks || [], [externalTasks])
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
+  const [showCompletedAnimation, setShowCompletedAnimation] = useState(false)
+  const [deletedTasks, setDeletedTasks] = useState<Task[]>([])
+  const [swipeStartX, setSwipeStartX] = useState<number | null>(null)
+  const [swipeDistance, setSwipeDistance] = useState(0)
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null)
+  const lastTaskRef = useRef<string | null>(null)
+  const [editingTab, setEditingTab] = useState<Tab | null>(null)
+  const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null)
+  const [dragOverTarget, setDragOverTarget] = useState<Tab | null>(null)
+  const [emptyTaskData, setEmptyTaskData] = useState({
+    name: "",
+    description: "",
+  })
+  const lastTaskInputRef = useRef<HTMLInputElement | null>(null)
+  const shouldFocusNewTaskRef = React.useRef(false)
+  const focusAttemptCountRef = React.useRef(0)
+  const maintainFocusRef = React.useRef(false)
+  const focusedTaskPositionRef = React.useRef<number>(-1)
+  const pointerDownOnInputRef = useRef(false)
 
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
-  const [showLinkConfirmationModal, setShowLinkConfirmationModal] = useState(false);
-  const [linkForModal, setLinkForModal] = useState<string | null>(null);
+  const [isMobileDevice, setIsMobileDevice] = useState(false)
+  const [showLinkConfirmationModal, setShowLinkConfirmationModal] =
+    useState(false)
+  const [linkForModal, setLinkForModal] = useState<string | null>(null)
 
   useEffect(() => {
-    const checkMobile = () => setIsMobileDevice(window.innerWidth < 768);
-    if (typeof window !== 'undefined') {
-      checkMobile();
-      window.addEventListener('resize', checkMobile);
-      return () => window.removeEventListener('resize', checkMobile);
+    const checkMobile = () => setIsMobileDevice(window.innerWidth < 768)
+    if (typeof window !== "undefined") {
+      checkMobile()
+      window.addEventListener("resize", checkMobile)
+      return () => window.removeEventListener("resize", checkMobile)
     }
-    return () => {};
-  }, []);
+    return () => {}
+  }, [])
 
   const filteredTasks = tasks
-    .filter(task => task.status === activeTab)
+    .filter((task) => task.status === activeTab)
     .sort((a, b) => {
-      if (activeTab === 'done' && a.completedAt && b.completedAt) {
-        return new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime();
+      if (activeTab === "done" && a.completedAt && b.completedAt) {
+        return (
+          new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
+        )
       }
-      const dateA = new Date(a.dueDate).getTime();
-      const dateB = new Date(b.dueDate).getTime();
-      const comparison = dateA - dateB;
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
+      const dateA = new Date(a.dueDate).getTime()
+      const dateB = new Date(b.dueDate).getTime()
+      const comparison = dateA - dateB
+      return sortDirection === "asc" ? comparison : -comparison
+    })
 
   // If there are no tasks for the active tab, show an empty editable row
-  const displayTasks = filteredTasks.length > 0 ? filteredTasks : [{
-    id: 'empty',
-    name: emptyTaskData.name,
-    description: emptyTaskData.description,
-    dueDate: '',
-    completed: false,
-    status: activeTab,
-    userId: '', // This is a placeholder, actual new task uses prop userId
-  }];
+  const displayTasks =
+    filteredTasks.length > 0
+      ? filteredTasks
+      : [
+          {
+            id: "empty",
+            name: emptyTaskData.name,
+            description: emptyTaskData.description,
+            dueDate: "",
+            completed: false,
+            status: activeTab,
+            userId: "", // This is a placeholder, actual new task uses prop userId
+          },
+        ]
 
-  const focusTaskInput = useCallback((taskId: string) => {
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        const taskNameInput = document.querySelector(
-          `input.task-input[data-task-id="${taskId}"]`
-        ) as HTMLInputElement;
+  const focusTaskInput = useCallback(
+    (taskId: string) => {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          const taskNameInput = document.querySelector(
+            `input.task-input[data-task-id="${taskId}"]`
+          ) as HTMLInputElement
 
-        if (taskNameInput) {
-          if (document.activeElement !== taskNameInput) {
-            taskNameInput.focus();
-            taskNameInput.setSelectionRange(0, 0);
-            lastTaskInputRef.current = taskNameInput;
-            maintainFocusRef.current = true;
-            
-            const taskIndex = filteredTasks.findIndex(t => t.id === taskId);
-            focusedTaskPositionRef.current = taskIndex;
+          if (taskNameInput) {
+            if (document.activeElement !== taskNameInput) {
+              taskNameInput.focus()
+              taskNameInput.setSelectionRange(0, 0)
+              lastTaskInputRef.current = taskNameInput
+              maintainFocusRef.current = true
+
+              const taskIndex = filteredTasks.findIndex((t) => t.id === taskId)
+              focusedTaskPositionRef.current = taskIndex
+            }
           }
-        }
-      }, 10);
-    });
-  }, [filteredTasks]);
+        }, 10)
+      })
+    },
+    [filteredTasks]
+  )
 
   const focusLastEmptyTask = useCallback(() => {
     for (let i = filteredTasks.length - 1; i >= 0; i--) {
-      const task = filteredTasks[i];
-      if (task.name === '' && task.id !== 'empty') {
-        focusTaskInput(task.id);
-        return true;
+      const task = filteredTasks[i]
+      if (task.name === "" && task.id !== "empty") {
+        focusTaskInput(task.id)
+        return true
       }
     }
-    
-    if (filteredTasks.length === 1 && filteredTasks[0].name === '' && filteredTasks[0].id !== 'empty') {
-      focusTaskInput(filteredTasks[0].id);
-      return true;
+
+    if (
+      filteredTasks.length === 1 &&
+      filteredTasks[0].name === "" &&
+      filteredTasks[0].id !== "empty"
+    ) {
+      focusTaskInput(filteredTasks[0].id)
+      return true
     }
-    
-    return false;
-  }, [filteredTasks, focusTaskInput]);
+
+    return false
+  }, [filteredTasks, focusTaskInput])
 
   React.useEffect(() => {
     if (maintainFocusRef.current && focusedTaskPositionRef.current >= 0) {
-      const targetPosition = focusedTaskPositionRef.current;
-      
-      if (filteredTasks[targetPosition] && filteredTasks[targetPosition].id !== 'empty') {
-        const taskId = filteredTasks[targetPosition].id;
-        
+      const targetPosition = focusedTaskPositionRef.current
+
+      if (
+        filteredTasks[targetPosition] &&
+        filteredTasks[targetPosition].id !== "empty"
+      ) {
+        const taskId = filteredTasks[targetPosition].id
+
         requestAnimationFrame(() => {
           setTimeout(() => {
             const taskNameInput = document.querySelector(
               `input.task-input[data-task-id="${taskId}"]`
-            ) as HTMLInputElement;
+            ) as HTMLInputElement
 
             if (taskNameInput && document.activeElement !== taskNameInput) {
-              taskNameInput.focus();
-              taskNameInput.setSelectionRange(0, 0);
-              lastTaskInputRef.current = taskNameInput;
+              taskNameInput.focus()
+              taskNameInput.setSelectionRange(0, 0)
+              lastTaskInputRef.current = taskNameInput
             }
-          }, 5);
-        });
+          }, 5)
+        })
       }
     }
-  }, [filteredTasks]);
+  }, [filteredTasks])
 
   React.useEffect(() => {
     if (shouldFocusNewTaskRef.current && focusAttemptCountRef.current < 3) {
-      focusAttemptCountRef.current++;
-      
-      const focused = focusLastEmptyTask();
-      
+      focusAttemptCountRef.current++
+
+      const focused = focusLastEmptyTask()
+
       if (focused) {
-        shouldFocusNewTaskRef.current = false;
-        focusAttemptCountRef.current = 0;
+        shouldFocusNewTaskRef.current = false
+        focusAttemptCountRef.current = 0
       } else if (focusAttemptCountRef.current >= 3) {
-        shouldFocusNewTaskRef.current = false;
-        focusAttemptCountRef.current = 0;
-        maintainFocusRef.current = false;
+        shouldFocusNewTaskRef.current = false
+        focusAttemptCountRef.current = 0
+        maintainFocusRef.current = false
       }
     }
-  }, [filteredTasks, tasks, activeTab, focusLastEmptyTask]);
+  }, [filteredTasks, tasks, activeTab, focusLastEmptyTask])
 
   React.useEffect(() => {
-    shouldFocusNewTaskRef.current = false;
-    focusAttemptCountRef.current = 0;
-    maintainFocusRef.current = false;
-    focusedTaskPositionRef.current = -1;
-  }, [activeTab]);
+    shouldFocusNewTaskRef.current = false
+    focusAttemptCountRef.current = 0
+    maintainFocusRef.current = false
+    focusedTaskPositionRef.current = -1
+  }, [activeTab])
 
-  const parseTaskDate = (dateString: string | undefined | null): Date | undefined => {
-    if (!dateString || dateString.trim() === '') return undefined;
+  const parseTaskDate = (
+    dateString: string | undefined | null
+  ): Date | undefined => {
+    if (!dateString || dateString.trim() === "") return undefined
     try {
       // Handle date-only format (YYYY-MM-DD) by adding time component
-      const dateToParseString = dateString.includes('T') ? dateString : dateString + 'T00:00:00';
-      const parsedDate = parseISO(dateToParseString);
+      const dateToParseString = dateString.includes("T")
+        ? dateString
+        : dateString + "T00:00:00"
+      const parsedDate = parseISO(dateToParseString)
       // Check if the parsed date is valid
-      if (isNaN(parsedDate.getTime())) return undefined;
-      return parsedDate;
+      if (isNaN(parsedDate.getTime())) return undefined
+      return parsedDate
     } catch (error) {
-      return undefined;
+      return undefined
     }
-  };
+  }
 
   const formatDate = (date: string) => {
-    if (!date) return '';
-    const parsedDate = parseTaskDate(date);
-    if (!parsedDate) return '';
-    
-    if (isToday(parsedDate)) return 'Today';
-    if (isYesterday(parsedDate)) return 'Yesterday';
-    if (isTomorrow(parsedDate)) return 'Tomorrow';
-    
-    const daysDiff = Math.ceil((parsedDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    if (!date) return ""
+    const parsedDate = parseTaskDate(date)
+    if (!parsedDate) return ""
+
+    if (isToday(parsedDate)) return "Today"
+    if (isYesterday(parsedDate)) return "Yesterday"
+    if (isTomorrow(parsedDate)) return "Tomorrow"
+
+    const daysDiff = Math.ceil(
+      (parsedDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+    )
     if (daysDiff >= 2 && daysDiff <= 6) {
-      return format(parsedDate, 'EEEE');
+      return format(parsedDate, "EEEE")
     }
-    
-    return format(parsedDate, 'MMM d');
-  };
+
+    return format(parsedDate, "MMM d")
+  }
 
   const addNewTask = () => {
     if (onAddTask && userId) {
-      shouldFocusNewTaskRef.current = true;
-      focusAttemptCountRef.current = 0;
+      shouldFocusNewTaskRef.current = true
+      focusAttemptCountRef.current = 0
       onAddTask({
-        name: '',
-        description: '',
-        dueDate: '',
+        name: "",
+        description: "",
+        dueDate: "",
         completed: false,
         status: activeTab,
         userId,
-      });
+      })
     }
-  };
+  }
 
   const updateTask = (id: string, updates: Partial<Task>) => {
-    if (id === 'empty') {
-      setEmptyTaskData(prev => ({
-        name: typeof updates.name === 'string' ? updates.name : prev.name,
-        description: typeof updates.description === 'string' ? updates.description : prev.description,
-      }));
+    if (id === "empty") {
+      setEmptyTaskData((prev) => ({
+        name: typeof updates.name === "string" ? updates.name : prev.name,
+        description:
+          typeof updates.description === "string"
+            ? updates.description
+            : prev.description,
+      }))
       // Do not call onUpdateTask for the placeholder
     } else if (onUpdateTask) {
       // const currentTask = tasks.find(t => t.id === id); // Not strictly needed here anymore for link logic
 
       if (updates.description !== undefined) {
-        const urlRegex = /(https?:\/\/\S+)/g; // Regex to find URLs
-        const foundLinks = [];
-        let currentMatch;
-        let newDescription = updates.description;
+        const urlRegex = /(https?:\/\/\S+)/g // Regex to find URLs
+        const foundLinks = []
+        let currentMatch
+        let newDescription = updates.description
 
         while ((currentMatch = urlRegex.exec(updates.description)) !== null) {
-          foundLinks.push(currentMatch[0]);
-          newDescription = newDescription.replace(currentMatch[0], ''); // Remove the found URL
+          foundLinks.push(currentMatch[0])
+          newDescription = newDescription.replace(currentMatch[0], "") // Remove the found URL
         }
-        newDescription = newDescription.trim(); // Clean up extra spaces
+        newDescription = newDescription.trim() // Clean up extra spaces
 
         if (foundLinks.length > 0) {
-          const existingLinks = tasks.find(t => t.id === id)?.link?.split(',').filter(l => l.trim() !== '') || [];
-          const allLinks = [...new Set([...existingLinks, ...foundLinks])]; // Combine and deduplicate
-          updates.link = allLinks.join(',');
-          updates.description = newDescription;
+          const existingLinks =
+            tasks
+              .find((t) => t.id === id)
+              ?.link?.split(",")
+              .filter((l) => l.trim() !== "") || []
+          const allLinks = [...new Set([...existingLinks, ...foundLinks])] // Combine and deduplicate
+          updates.link = allLinks.join(",")
+          updates.description = newDescription
         }
         // If no new links are found, the existing link (if any) and description are preserved
         // unless the description was explicitly changed to remove links.
@@ -284,265 +327,250 @@ export function TaskList({
         // For now, if new links are pasted, they are added. If description is cleared of links, they remain.
       }
 
-      const currentFocusedTask = filteredTasks[focusedTaskPositionRef.current];
-      if (currentFocusedTask && currentFocusedTask.id === id && updates.name && updates.name !== '') {
-        maintainFocusRef.current = false;
-        focusedTaskPositionRef.current = -1;
+      const currentFocusedTask = filteredTasks[focusedTaskPositionRef.current]
+      if (
+        currentFocusedTask &&
+        currentFocusedTask.id === id &&
+        updates.name &&
+        updates.name !== ""
+      ) {
+        maintainFocusRef.current = false
+        focusedTaskPositionRef.current = -1
       }
 
       // Handle task completion
       if (updates.completed !== undefined) {
-        const now = format(new Date(), 'yyyy-MM-dd');
+        const now = format(new Date(), "yyyy-MM-dd")
         const updatedTask = {
           ...updates,
-          status: updates.completed ? 'done' as const : 'todo' as const,
-          completedAt: updates.completed ? now : undefined
-        };
-        onUpdateTask(id, updatedTask);
-        
+          status: updates.completed ? ("done" as const) : ("todo" as const),
+          completedAt: updates.completed ? now : undefined,
+        }
+        onUpdateTask(id, updatedTask)
+
         if (updates.completed) {
-          setShowCompletedAnimation(true);
-          setTimeout(() => setShowCompletedAnimation(false), 1500);
+          setShowCompletedAnimation(true)
+          setTimeout(() => setShowCompletedAnimation(false), 1500)
         }
       } else {
-        onUpdateTask(id, updates);
+        onUpdateTask(id, updates)
       }
     }
-  };
+  }
 
   const deleteTask = (taskId: string) => {
     if (onDeleteTask) {
-      const taskIndex = filteredTasks.findIndex(t => t.id === taskId);
-      onDeleteTask(taskId); // This will eventually update filteredTasks and the DOM
+      const taskIndex = filteredTasks.findIndex((t) => t.id === taskId)
+      onDeleteTask(taskId) // This will eventually update filteredTasks and the DOM
 
       requestAnimationFrame(() => {
         // Query for task inputs *after* the state update and re-render
-        const taskInputs = document.querySelectorAll('.task-list-container .task-input[data-task-id]');
-        
+        const taskInputs = document.querySelectorAll(
+          ".task-list-container .task-input[data-task-id]"
+        )
+
         if (taskInputs.length > 0) {
-          let newFocusIndex;
+          let newFocusIndex
           if (taskIndex > 0) {
             // If not the first item was deleted, target the one that was above it
-            newFocusIndex = taskIndex - 1;
+            newFocusIndex = taskIndex - 1
           } else {
             // If the first item was deleted, target the new first item
-            newFocusIndex = 0;
+            newFocusIndex = 0
           }
           // Ensure the index is within the bounds of the current task inputs
-          const finalFocusIndex = Math.min(newFocusIndex, taskInputs.length - 1);
-          (taskInputs[finalFocusIndex] as HTMLInputElement)?.focus();
+          const finalFocusIndex = Math.min(newFocusIndex, taskInputs.length - 1)
+          ;(taskInputs[finalFocusIndex] as HTMLInputElement)?.focus()
         }
-      });
+      })
     }
-  };
+  }
 
   const undoDelete = () => {
     // ... existing code ...
-  };
+  }
 
-  const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>, taskId: string) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      if (taskId === 'empty') {
-        if (emptyTaskData.name.trim() !== '') {
+  const handleKeyDown = async (
+    e: KeyboardEvent<HTMLInputElement>,
+    taskId: string
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      if (taskId === "empty") {
+        if (emptyTaskData.name.trim() !== "") {
           if (onAddTask && userId) {
-            shouldFocusNewTaskRef.current = true;
-            focusAttemptCountRef.current = 0;
+            shouldFocusNewTaskRef.current = true
+            focusAttemptCountRef.current = 0
             onAddTask({
               name: emptyTaskData.name.trim(),
               description: emptyTaskData.description.trim(),
-              dueDate: '',
+              dueDate: "",
               completed: false,
               status: activeTab,
               userId,
-            });
-            setEmptyTaskData({ name: '', description: '' });
+            })
+            setEmptyTaskData({ name: "", description: "" })
           }
         }
       } else {
-        const task = tasks.find(t => t.id === taskId);
-        if (task && task.name.trim() !== '') {
-          addNewTask();
+        const task = tasks.find((t) => t.id === taskId)
+        if (task && task.name.trim() !== "") {
+          addNewTask()
         }
       }
-    } else if (e.key === 'Backspace' && taskId !== 'empty') {
-      const task = tasks.find(t => t.id === taskId);
-      if (!task) return;
+    } else if (e.key === "Backspace" && taskId !== "empty") {
+      const task = tasks.find((t) => t.id === taskId)
+      if (!task) return
 
-      if (e.currentTarget.selectionStart === 0 && e.currentTarget.selectionEnd === 0) {
-        const taskName = typeof task.name === 'string' ? task.name : '';
-        const taskDescription = typeof task.description === 'string' ? task.description : '';
-        if (taskName.trim() === '' && taskDescription.trim() === '') {
-          deleteTask(taskId);
+      if (
+        e.currentTarget.selectionStart === 0 &&
+        e.currentTarget.selectionEnd === 0
+      ) {
+        const taskName = typeof task.name === "string" ? task.name : ""
+        const taskDescription =
+          typeof task.description === "string" ? task.description : ""
+        if (taskName.trim() === "" && taskDescription.trim() === "") {
+          deleteTask(taskId)
         }
       }
     }
-  };
+  }
 
   const handleTouchStart = (e: TouchEvent, taskId: string) => {
     // ... existing code ...
-  };
+  }
 
   const handleTouchMove = (e: TouchEvent) => {
     // ... existing code ...
-  };
+  }
 
   const handleTouchEnd = () => {
     // ... existing code ...
-  };
+  }
 
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && (e.key === 'z' || (e.shiftKey && e.key === 'Z'))) {
-        e.preventDefault();
-        undoDelete();
+      if (e.ctrlKey && (e.key === "z" || (e.shiftKey && e.key === "Z"))) {
+        e.preventDefault()
+        undoDelete()
       }
-    };
+    }
 
-    document.addEventListener('keydown', handleGlobalKeyDown as any);
-    return () => document.removeEventListener('keydown', handleGlobalKeyDown as any);
-  }, []);
+    document.addEventListener("keydown", handleGlobalKeyDown as any)
+    return () =>
+      document.removeEventListener("keydown", handleGlobalKeyDown as any)
+  }, [])
 
   useEffect(() => {
     const handleGlobalMouseUp = () => {
-      pointerDownOnInputRef.current = false;
-    };
-    document.addEventListener('mouseup', handleGlobalMouseUp);
+      pointerDownOnInputRef.current = false
+    }
+    document.addEventListener("mouseup", handleGlobalMouseUp)
     return () => {
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
-    };
-  }, []);
+      document.removeEventListener("mouseup", handleGlobalMouseUp)
+    }
+  }, [])
 
   // Drag and Drop Handlers
   const handleDragStart = (e: DragEvent<HTMLDivElement>, taskId: string) => {
     if (pointerDownOnInputRef.current) {
-      pointerDownOnInputRef.current = false; // Reset immediately to handle this drag instance
-      e.preventDefault();
-      return;
+      pointerDownOnInputRef.current = false // Reset immediately to handle this drag instance
+      e.preventDefault()
+      return
     }
-    
-    // If mousedown wasn't on an input, proceed with drag as normal
-    e.dataTransfer.setData('text/plain', taskId);
-    setDraggingTaskId(taskId);
-  };
 
-  const handleDragOver = (e: DragEvent<HTMLButtonElement>, targetStatus: Tab) => {
-    e.preventDefault();
+    // If mousedown wasn't on an input, proceed with drag as normal
+    e.dataTransfer.setData("text/plain", taskId)
+    setDraggingTaskId(taskId)
+  }
+
+  const handleDragOver = (
+    e: DragEvent<HTMLButtonElement>,
+    targetStatus: Tab
+  ) => {
+    e.preventDefault()
     if (targetStatus !== activeTab) {
-      setDragOverTarget(targetStatus);
+      setDragOverTarget(targetStatus)
     }
-  };
+  }
 
   const handleDragLeave = (e: DragEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setDragOverTarget(null);
-  };
+    e.preventDefault()
+    setDragOverTarget(null)
+  }
 
   const handleDrop = (e: DragEvent<HTMLButtonElement>, targetStatus: Tab) => {
-    e.preventDefault();
-    const taskId = e.dataTransfer.getData('text/plain');
+    e.preventDefault()
+    const taskId = e.dataTransfer.getData("text/plain")
     if (taskId && onUpdateTask) {
-      const task = tasks.find(t => t.id === taskId);
+      const task = tasks.find((t) => t.id === taskId)
       if (task) {
         const updates: Partial<Task> = {
-          status: targetStatus
-        };
-        
-        // If dropping into done tab, mark as completed
-        if (targetStatus === 'done') {
-          updates.completed = true;
-          updates.completedAt = format(new Date(), 'yyyy-MM-dd');
-        } else if (task.status === 'done') {
-          // If moving from done tab, mark as uncompleted
-          updates.completed = false;
-          updates.completedAt = undefined;
+          status: targetStatus,
         }
-        
-        onUpdateTask(taskId, updates);
+
+        // If dropping into done tab, mark as completed
+        if (targetStatus === "done") {
+          updates.completed = true
+          updates.completedAt = format(new Date(), "yyyy-MM-dd")
+        } else if (task.status === "done") {
+          // If moving from done tab, mark as uncompleted
+          updates.completed = false
+          updates.completedAt = undefined
+        }
+
+        onUpdateTask(taskId, updates)
       }
     }
-    setDragOverTarget(null);
-  };
+    setDragOverTarget(null)
+  }
 
   const handleDragEnd = () => {
-    setDraggingTaskId(null);
-    setDragOverTarget(null);
-  };
+    setDraggingTaskId(null)
+    setDragOverTarget(null)
+  }
 
   // Empty task drag handlers
   const handleEmptyTaskDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
+    e.preventDefault()
+  }
 
   const handleEmptyTaskDragLeave = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
+    e.preventDefault()
+  }
 
   const handleEmptyTaskDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const taskId = e.dataTransfer.getData('text/plain');
+    e.preventDefault()
+    const taskId = e.dataTransfer.getData("text/plain")
     if (taskId && onUpdateTask) {
-      const task = tasks.find(t => t.id === taskId);
+      const task = tasks.find((t) => t.id === taskId)
       if (task) {
         const updates: Partial<Task> = {
-          status: activeTab
-        };
-        
-        // If dropping into done tab, mark as completed
-        if (activeTab === 'done') {
-          updates.completed = true;
-          updates.completedAt = format(new Date(), 'yyyy-MM-dd');
-        } else if (task.status === 'done') {
-          // If moving from done tab, mark as uncompleted
-          updates.completed = false;
-          updates.completedAt = undefined;
+          status: activeTab,
         }
-        
-        onUpdateTask(taskId, updates);
-      }
-    }
-  };
 
-  // Load user preferences on mount
-  useEffect(() => {
-    async function loadUserPreferences() {
-      try {
-        const response = await fetch('/api/user-preferences');
-        if (response.ok) {
-          const prefs = await response.json();
-          if (prefs.tabNames) {
-            setTabNames(prefs.tabNames);
-          }
+        // If dropping into done tab, mark as completed
+        if (activeTab === "done") {
+          updates.completed = true
+          updates.completedAt = format(new Date(), "yyyy-MM-dd")
+        } else if (task.status === "done") {
+          // If moving from done tab, mark as uncompleted
+          updates.completed = false
+          updates.completedAt = undefined
         }
-      } catch (error) {
-        console.error('Failed to load user preferences:', error);
+
+        onUpdateTask(taskId, updates)
       }
     }
-    loadUserPreferences();
-  }, [userId]);
+  }
 
   // Save tab names when they change
-  const updateTabName = async (tab: Tab, newName: string) => {
-    const oldNames = { ...tabNames };
-    const normalizedName = normalizeTabName(tab, newName);
-    const updatedTabNames = { ...tabNames, [tab]: normalizedName };
-    setTabNames(updatedTabNames);
-    setEditingTab(null);
-    
-    try {
-      await fetch('/api/user-preferences', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tabNames: updatedTabNames
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to save tab name:', error);
-    }
-  };
+  const updateTabName = (tab: Tab, newName: string) => {
+    const normalizedName = normalizeTabName(tab, newName)
+    const updatedTabNames = { ...tabNames, [tab]: normalizedName }
+    onTabNamesChange(updatedTabNames)
+    setEditingTab(null)
+  }
 
   return (
     <div className="w-full flex items-start justify-center task-list-container">
@@ -550,7 +578,7 @@ export function TaskList({
         <div className="pt-4 px-4">
           <div className="flex justify-between items-center">
             <div className="flex gap-2">
-              {(['todo', 'watch', 'later'] as const).map(tab => (
+              {(["todo", "watch", "later"] as const).map((tab) => (
                 <TabButton
                   key={tab}
                   active={activeTab === tab}
@@ -559,97 +587,124 @@ export function TaskList({
                   isEditing={editingTab === tab}
                   value={tabNames[tab]}
                   onChange={(value) => {
-                    updateTabName(tab, value);
+                    updateTabName(tab, value)
                   }}
                   onDragOver={(e) => handleDragOver(e, tab)}
                   onDrop={(e) => handleDrop(e, tab)}
                   onDragLeave={handleDragLeave}
                   className={cn({
-                    'bg-accent dark:bg-sidebar-accent': dragOverTarget === tab
+                    "bg-accent dark:bg-sidebar-accent": dragOverTarget === tab,
                   })}
                 >
                   {tabNames[tab]}
                 </TabButton>
               ))}
             </div>
-            <TabButton 
-              active={activeTab === 'done'} 
-              onClick={() => onTabChange('done')}
+            <TabButton
+              active={activeTab === "done"}
+              onClick={() => onTabChange("done")}
             >
-              <span className="task-tab">
-                {tabNames.done}
-              </span>
+              <span className="task-tab">{tabNames.done}</span>
             </TabButton>
           </div>
         </div>
-        
+
         <div className="space-y-2 p-4">
-          {displayTasks.map(task => (
+          {displayTasks.map((task) => (
             <div
               key={task.id}
               className="relative group"
-              draggable={activeTab !== 'done' && task.id !== 'empty'}
+              draggable={activeTab !== "done" && task.id !== "empty"}
               onDragStart={(e) => handleDragStart(e, task.id)}
               onDragEnd={handleDragEnd}
-              onDragOver={task.id === 'empty' ? handleEmptyTaskDragOver : undefined}
-              onDragLeave={task.id === 'empty' ? handleEmptyTaskDragLeave : undefined}
-              onDrop={task.id === 'empty' ? handleEmptyTaskDrop : undefined}
+              onDragOver={
+                task.id === "empty" ? handleEmptyTaskDragOver : undefined
+              }
+              onDragLeave={
+                task.id === "empty" ? handleEmptyTaskDragLeave : undefined
+              }
+              onDrop={task.id === "empty" ? handleEmptyTaskDrop : undefined}
               onTouchStart={(e) => handleTouchStart(e, task.id)}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
-              style={{ opacity: taskToDelete === task.id ? (1 - swipeDistance / 100) : 1 }}
+              style={{
+                opacity: taskToDelete === task.id ? 1 - swipeDistance / 100 : 1,
+              }}
             >
               {taskToDelete === task.id && swipeDistance > 10 && (
-                 <div className="absolute inset-y-0 right-0 flex items-center justify-end bg-red-500 text-white text-xs px-2 rounded-r-lg pointer-events-none" style={{ width: `${swipeDistance}%`, maxWidth: '100px' }}>
-                   Delete
-                 </div>
+                <div
+                  className="absolute inset-y-0 right-0 flex items-center justify-end bg-red-500 text-white text-xs px-2 rounded-r-lg pointer-events-none"
+                  style={{ width: `${swipeDistance}%`, maxWidth: "100px" }}
+                >
+                  Delete
+                </div>
               )}
               <div
                 className={cn(
                   "rounded-md p-2 transition-transform flex items-start gap-2",
-                  { "transform -translate-x-full": taskToDelete === task.id && swipeDistance >= 100 }
+                  {
+                    "transform -translate-x-full":
+                      taskToDelete === task.id && swipeDistance >= 100,
+                  }
                 )}
-                style={{ transform: taskToDelete === task.id ? `translateX(-${swipeDistance}px)` : 'none' }}
+                style={{
+                  transform:
+                    taskToDelete === task.id
+                      ? `translateX(-${swipeDistance}px)`
+                      : "none",
+                }}
               >
-                {activeTab === 'done' ? (
+                {activeTab === "done" ? (
                   <div className="mt-1 text-foreground flex">
                     <Check className="size-3" />
                     <Check className="size-3 -ml-2" />
                   </div>
                 ) : (
-                  <button 
+                  <button
                     className="mt-1 text-foreground hover:text-foreground transition-colors"
-                    onClick={() => updateTask(task.id, { completed: !task.completed })}
+                    onClick={() =>
+                      updateTask(task.id, { completed: !task.completed })
+                    }
                   >
                     <Check className="size-3" />
                   </button>
                 )}
-                
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12 min-w-0 flex-1">
                       <input
                         type="text"
-                        value={typeof task.name === 'string' ? task.name : ''}
-                        onChange={(e) => updateTask(task.id, { name: e.target.value })}
+                        value={typeof task.name === "string" ? task.name : ""}
+                        onChange={(e) =>
+                          updateTask(task.id, { name: e.target.value })
+                        }
                         onKeyDown={(e) => handleKeyDown(e, task.id)}
                         onMouseDown={(e) => {
-                          e.stopPropagation();
-                          pointerDownOnInputRef.current = true;
+                          e.stopPropagation()
+                          pointerDownOnInputRef.current = true
                         }}
                         onDragStart={(e) => e.preventDefault()}
                         className="w-full sm:w-32 md:w-40 lg:w-48 xl:w-56 bg-transparent text-xs font-medium focus:outline-none task-input tracking-widest"
                         data-task-id={task.id}
-                        placeholder={task.id === 'empty' ? "Task Name" : "Task Name"}
+                        placeholder={
+                          task.id === "empty" ? "Task Name" : "Task Name"
+                        }
                       />
                       <input
                         type="text"
-                        value={typeof task.description === 'string' ? task.description : ''}
-                        onChange={(e) => updateTask(task.id, { description: e.target.value })}
+                        value={
+                          typeof task.description === "string"
+                            ? task.description
+                            : ""
+                        }
+                        onChange={(e) =>
+                          updateTask(task.id, { description: e.target.value })
+                        }
                         onKeyDown={(e) => handleKeyDown(e, task.id)}
                         onMouseDown={(e) => {
-                          e.stopPropagation();
-                          pointerDownOnInputRef.current = true;
+                          e.stopPropagation()
+                          pointerDownOnInputRef.current = true
                         }}
                         onDragStart={(e) => e.preventDefault()}
                         className="flex-1 bg-transparent text-xs text-muted-foreground focus:outline-none task-input tracking-widest"
@@ -657,8 +712,8 @@ export function TaskList({
                       />
                     </div>
                     <div className="flex items-center gap-2 h-5">
-                      {task.link && (
-                        task.link.split(',').map((link, index) => (
+                      {task.link &&
+                        task.link.split(",").map((link, index) => (
                           <a
                             key={index}
                             href={link.trim()}
@@ -667,20 +722,19 @@ export function TaskList({
                             className="p-1 rounded-md"
                             onClick={(e) => {
                               if (isMobileDevice) {
-                                e.preventDefault();
-                                setLinkForModal(link.trim());
-                                setShowLinkConfirmationModal(true);
+                                e.preventDefault()
+                                setLinkForModal(link.trim())
+                                setShowLinkConfirmationModal(true)
                               }
-                              e.stopPropagation();
+                              e.stopPropagation()
                             }}
                             aria-label="Task link"
                           >
                             <LinkIcon className="size-2.5 text-blue-500" />
                           </a>
-                        ))
-                      )}
+                        ))}
                       <span className="text-xs text-muted-foreground whitespace-nowrap min-w-[60px] flex justify-end items-center">
-                        {(activeTab as Tab) === 'done' ? (
+                        {(activeTab as Tab) === "done" ? (
                           task.completedAt ? (
                             <Popover>
                               <PopoverTrigger asChild>
@@ -697,7 +751,9 @@ export function TaskList({
                                   selectedDate={parseTaskDate(task.completedAt)}
                                   onDateSelect={(date) => {
                                     if (date) {
-                                      updateTask(task.id, { completedAt: format(date, 'yyyy-MM-dd') });
+                                      updateTask(task.id, {
+                                        completedAt: format(date, "yyyy-MM-dd"),
+                                      })
                                     }
                                   }}
                                 />
@@ -719,7 +775,9 @@ export function TaskList({
                                   selectedDate={undefined}
                                   onDateSelect={(date) => {
                                     if (date) {
-                                      updateTask(task.id, { completedAt: format(date, 'yyyy-MM-dd') });
+                                      updateTask(task.id, {
+                                        completedAt: format(date, "yyyy-MM-dd"),
+                                      })
                                     }
                                   }}
                                 />
@@ -741,7 +799,11 @@ export function TaskList({
                               <CustomCalendar
                                 selectedDate={parseTaskDate(task.dueDate)}
                                 onDateSelect={(date) => {
-                                  updateTask(task.id, { dueDate: date ? format(date, 'yyyy-MM-dd') : '' });
+                                  updateTask(task.id, {
+                                    dueDate: date
+                                      ? format(date, "yyyy-MM-dd")
+                                      : "",
+                                  })
                                 }}
                               />
                             </PopoverContent>
@@ -761,7 +823,11 @@ export function TaskList({
                               <CustomCalendar
                                 selectedDate={parseTaskDate(task.dueDate)}
                                 onDateSelect={(date) => {
-                                  updateTask(task.id, { dueDate: date ? format(date, 'yyyy-MM-dd') : '' });
+                                  updateTask(task.id, {
+                                    dueDate: date
+                                      ? format(date, "yyyy-MM-dd")
+                                      : "",
+                                  })
                                 }}
                               />
                             </PopoverContent>
@@ -785,7 +851,7 @@ export function TaskList({
         >
           <div
             className="bg-card text-card-foreground p-6 rounded-lg shadow-xl w-full max-w-md"
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-lg font-semibold mb-3">Open Link</h3>
             <p className="mb-4 text-sm break-all">
@@ -800,8 +866,9 @@ export function TaskList({
               </Button>
               <Button
                 onClick={() => {
-                  if (linkForModal) window.open(linkForModal, '_blank', 'noopener,noreferrer');
-                  setShowLinkConfirmationModal(false);
+                  if (linkForModal)
+                    window.open(linkForModal, "_blank", "noopener,noreferrer")
+                  setShowLinkConfirmationModal(false)
                 }}
               >
                 Proceed
@@ -811,50 +878,50 @@ export function TaskList({
         </div>
       )}
     </div>
-  );
+  )
 }
 
-function TabButton(props: { 
-  children: React.ReactNode; 
-  active: boolean; 
-  onClick: () => void;
-  onDoubleClick?: () => void;
-  isEditing?: boolean;
-  value?: string;
-  onChange?: (value: string) => void;
-  className?: string;
-  onDragOver?: (e: DragEvent<HTMLButtonElement>) => void;
-  onDrop?: (e: DragEvent<HTMLButtonElement>) => void;
-  onDragLeave?: (e: DragEvent<HTMLButtonElement>) => void;
+function TabButton(props: {
+  children: React.ReactNode
+  active: boolean
+  onClick: () => void
+  onDoubleClick?: () => void
+  isEditing?: boolean
+  value?: string
+  onChange?: (value: string) => void
+  className?: string
+  onDragOver?: (e: DragEvent<HTMLButtonElement>) => void
+  onDrop?: (e: DragEvent<HTMLButtonElement>) => void
+  onDragLeave?: (e: DragEvent<HTMLButtonElement>) => void
 }) {
-  const spanRef = React.useRef<HTMLSpanElement>(null);
-  const { 
-    children, 
-    active, 
+  const spanRef = React.useRef<HTMLSpanElement>(null)
+  const {
+    children,
+    active,
     onClick,
     onDoubleClick,
     isEditing,
     value,
     onChange,
     className,
-    onDragOver, 
-    onDrop, 
-    onDragLeave 
-  } = props;
+    onDragOver,
+    onDrop,
+    onDragLeave,
+  } = props
 
   React.useEffect(() => {
     if (isEditing && spanRef.current) {
-      spanRef.current.focus();
-      const range = document.createRange();
-      range.selectNodeContents(spanRef.current);
-      range.collapse(false);
-      const selection = window.getSelection();
+      spanRef.current.focus()
+      const range = document.createRange()
+      range.selectNodeContents(spanRef.current)
+      range.collapse(false)
+      const selection = window.getSelection()
       if (selection) {
-        selection.removeAllRanges();
-        selection.addRange(range);
+        selection.removeAllRanges()
+        selection.addRange(range)
       }
     }
-  }, [isEditing]);
+  }, [isEditing])
 
   if (isEditing && value !== undefined && onChange) {
     return (
@@ -863,25 +930,25 @@ function TabButton(props: {
         contentEditable
         suppressContentEditableWarning
         onBlur={(e) => {
-          const newValue = e.currentTarget.textContent || value;
-          onChange(newValue);
+          const newValue = e.currentTarget.textContent || value
+          onChange(newValue)
         }}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            onChange(e.currentTarget.textContent || value);
+          if (e.key === "Enter") {
+            e.preventDefault()
+            onChange(e.currentTarget.textContent || value)
           }
         }}
         className={cn(
           "px-2 py-1 text-xs outline-none task-tab rounded-md",
-          active 
-            ? "text-muted-foreground bg-task-active" 
+          active
+            ? "text-muted-foreground bg-task-active"
             : "text-muted-foreground hover:bg-task-hover"
         )}
       >
         {value}
       </span>
-    );
+    )
   }
 
   return (
@@ -890,8 +957,8 @@ function TabButton(props: {
       onDoubleClick={onDoubleClick}
       className={cn(
         "px-2 py-1 text-xs transition-colors task-tab rounded-md",
-        active 
-          ? "text-muted-foreground bg-task-active" 
+        active
+          ? "text-muted-foreground bg-task-active"
           : "text-muted-foreground hover:bg-task-hover",
         className
       )}
@@ -901,5 +968,5 @@ function TabButton(props: {
     >
       {children}
     </button>
-  );
-} 
+  )
+}

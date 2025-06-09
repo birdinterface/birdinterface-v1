@@ -1,6 +1,6 @@
 /* Import Orbitron font */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -8,8 +8,8 @@
 
 /* Add Good Times Bold font */
 @font-face {
-  font-family: 'Good Times';
-  src: url('/fonts/good-times.woff') format('woff');
+  font-family: "Good Times";
+  src: url("/fonts/good-times.woff") format("woff");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -26,7 +26,7 @@ html, body {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
-  --font-orbitron: 'Orbitron', monospace;
+  --font-orbitron: "Orbitron", monospace;
   --dot-size: 1px;
   --dot-space: 22px;
 }
@@ -49,8 +49,8 @@ html, body {
   }
 
   .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 
   .animate-shine-text {
@@ -216,14 +216,14 @@ html, body {
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-weight: 600;
-    letter-spacing: 0.00em;
+    letter-spacing: 0em;
   }
 
   /* Remove dot pattern from body */
   body::before {
-    content: '';
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
@@ -235,7 +235,7 @@ html, body {
 
   /* Remove dot pattern from nav */
   .nav-dots::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -246,17 +246,17 @@ html, body {
 
   /* Define fonts here */
   @font-face {
-    font-family: 'geist';
+    font-family: "geist";
     font-style: normal;
     font-weight: 100 900;
-    src: url(/fonts/geist.woff2) format('woff2');
+    src: url(/fonts/geist.woff2) format("woff2");
   }
 
   @font-face {
-    font-family: 'geist-mono';
+    font-family: "geist-mono";
     font-style: normal;
     font-weight: 100 900;
-    src: url(/fonts/geist-mono.woff2) format('woff2');
+    src: url(/fonts/geist-mono.woff2) format("woff2");
   }
 
   /* Ensure base HTML background is black in dark mode */
@@ -274,7 +274,7 @@ html, body {
     pointer-events: none !important;
   }
 
-  *[class^='text-'] {
+  *[class^="text-"] {
     color: transparent;
     @apply rounded-md bg-foreground/20 select-none animate-pulse;
   }
@@ -290,20 +290,23 @@ html, body {
 
 @theme inline {
   @keyframes shiny-text {
-  0%, 90%, 100% {
-    background-position: calc(-100% - var(--shiny-width)) 0;
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
     }
-  30%, 60% {
-    background-position: calc(100% + var(--shiny-width)) 0;
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
 }
 
 /* Add styles moved from navigation.tsx */
 .nav-text {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
-  letter-spacing: 0.00em;
+  letter-spacing: 0em;
   font-size: 14px;
 }
 
@@ -318,6 +321,7 @@ nav {
   padding: 0.5rem !important;
   /* Use CSS variables for background */
   background-color: var(--background) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
   backdrop-filter: blur(16px) !important;
   /* Ensure high z-index */
   z-index: 99999 !important;
@@ -325,7 +329,7 @@ nav {
 
 /* Add styles for tasks */
 .task-tab {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   letter-spacing: 0.05em;
   font-size: 11px;
@@ -333,7 +337,7 @@ nav {
 }
 
 .task-input {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   letter-spacing: 0.05em;
   font-size: 11px;
   text-transform: none;
@@ -362,7 +366,7 @@ nav {
 
 /* Add styles for task calendar */
 .task-calendar-date {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   letter-spacing: 0.05em;
   font-size: 11px;
   min-width: 40px;
@@ -377,7 +381,7 @@ nav {
 }
 
 .task-calendar button {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   letter-spacing: 0.05em;
   font-size: 11px;
   text-transform: none;
@@ -385,7 +389,7 @@ nav {
 }
 
 .task-calendar-header {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   letter-spacing: 0.05em;
   font-size: 11px;
   text-transform: none;
@@ -394,14 +398,14 @@ nav {
 
 /* Add styles for intelligence section */
 .intelligence-text {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   letter-spacing: 0.02em;
   font-size: 11px;
 }
 
 .intelligence-input {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   letter-spacing: 0.02em;
   font-size: 11px;
@@ -424,7 +428,7 @@ nav {
 }
 
 .intelligence-content {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   letter-spacing: 0.01em;
   font-size: 11px;
@@ -473,7 +477,9 @@ nav {
 
 /* Make scrollbar thumb visible on hover (optional, as it's always visible now) */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(var(--primary-foreground)); /* Or a slightly different color on hover */
+  background-color: hsl(
+    var(--primary-foreground)
+  ); /* Or a slightly different color on hover */
 }
 
 /* For Firefox */

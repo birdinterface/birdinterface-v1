@@ -1,36 +1,34 @@
-import Form from 'next/form';
-import { useState } from 'react';
+import Form from "next/form"
+import { useState } from "react"
 
-import { SignInWithGoogle } from './sign-in-with-google';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+import { SignInWithGoogle } from "./sign-in-with-google"
+import { Button } from "../ui/button"
+import { Input } from "../ui/input"
+import { Label } from "../ui/label"
 
 export function AuthForm({
   action,
   children,
-  defaultEmail = '',
+  defaultEmail = "",
   showNameField = false,
 }: {
-  action: any;
-  children: React.ReactNode;
-  defaultEmail?: string;
-  showNameField?: boolean;
+  action: any
+  children: React.ReactNode
+  defaultEmail?: string
+  showNameField?: boolean
 }) {
-  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false)
 
   return (
     <Form action={action} className="flex flex-col gap-4 px-4 sm:px-16">
       <SignInWithGoogle />
-      
+
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">Or</span>
         </div>
       </div>
 
@@ -103,5 +101,5 @@ export function AuthForm({
         </div>
       )}
     </Form>
-  );
+  )
 }

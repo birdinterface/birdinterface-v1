@@ -1,22 +1,20 @@
-'use client';
+"use client"
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect } from 'react';
+import { motion } from "framer-motion"
+import Image from "next/image"
+import { useEffect } from "react"
 
-import { MessageIcon, VercelIcon } from './icons';
-import { preloadImages, preloadDataUrls } from '../../utils/preloadImages';
+import { preloadDataUrls, preloadImages } from "../../utils/preloadImages"
 
 // Call the preload function
-preloadImages();
-preloadDataUrls();
+preloadImages()
+preloadDataUrls()
 
 export const Overview = () => {
   useEffect(() => {
-    preloadImages();
-    preloadDataUrls();
-  }, []);
+    preloadImages()
+    preloadDataUrls()
+  }, [])
 
   return (
     <motion.div
@@ -29,12 +27,17 @@ export const Overview = () => {
     >
       <div className="rounded-xl flex flex-col leading-relaxed text-center max-w-xl">
         <h1 className="text-4xl flex flex-col items-center">
-          <Image src="/images/blur.png" alt="Blur effect" width={300} height={300} className="size-[300px]" style={{ filter: 'blur(35px)' }} draggable={false} />
+          <Image
+            src="/images/blur.png"
+            alt="Blur effect"
+            width={300}
+            height={300}
+            className="size-[300px]"
+            style={{ filter: "blur(35px)" }}
+            draggable={false}
+          />
         </h1>
       </div>
     </motion.div>
-  );
-};
-
-
-
+  )
+}

@@ -235,7 +235,8 @@ export const Message = ({
                 } else {
                   return (
                     <div key={toolCallId} className="skeleton">
-                      {toolName === 'getWeather' ? <Weather /> : null}
+                      {toolName === 'getWeather' ? <Weather /> : 
+                       null}
                     </div>
                   );
                 }

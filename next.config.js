@@ -3,10 +3,10 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: 'avatar.vercel.sh',
+        hostname: "avatar.vercel.sh",
       },
       {
-        hostname: 'lh3.googleusercontent.com',
+        hostname: "lh3.googleusercontent.com",
       },
     ],
   },
@@ -20,4 +20,4 @@ const nextConfig = {
   // ... other config options
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig

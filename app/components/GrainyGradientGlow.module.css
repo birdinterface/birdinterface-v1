@@ -5,8 +5,12 @@
 }
 
 @keyframes fadeInFlares {
-  from { opacity: 0; }
-  to { opacity: 0.0; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .flaresContainer {
@@ -22,6 +26,8 @@
   position: absolute;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: left 3s ease-in-out, top 3s ease-in-out;
+  transition:
+    left 3s ease-in-out,
+    top 3s ease-in-out;
   will-change: left, top;
 }

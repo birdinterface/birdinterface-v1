@@ -1,139 +1,161 @@
-'use client';
+"use client"
 
-import { Attachment, Message } from 'ai';
-import { useChat } from 'ai/react';
-import { ChevronDown, ChevronUp, MessageSquare, History, Plus } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useTheme } from 'next-themes';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { Attachment, Message } from "ai"
+import { useChat } from "ai/react"
+import { ChevronDown, ChevronUp, History, Plus } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { useTheme } from "next-themes"
+import { useState } from "react"
+import { toast } from "sonner"
 
-import { ChatHistoryModal } from '@/components/custom/chat-history-modal';
-import { Message as PreviewMessage } from '@/components/custom/message';
-import { useScrollToBottom } from '@/components/custom/use-scroll-to-bottom';
-import { Model } from '@/lib/model';
+import { ChatHistoryModal } from "@/components/custom/chat-history-modal"
+import { Message as PreviewMessage } from "@/components/custom/message"
+import { useScrollToBottom } from "@/components/custom/use-scroll-to-bottom"
+import { Model } from "@/lib/model"
 
-import { MultimodalInput } from './multimodal-input';
-import { useModal } from '../context/modal-context';
+import { MultimodalInput } from "./multimodal-input"
+import { useModal } from "../context/modal-context"
 
 export function Chat({
   id,
   initialMessages,
   selectedModelName,
-  api = '/api/chat',
+  api = "/api/chat",
   user,
 }: {
-  id: string;
-  initialMessages: Array<Message>;
-  selectedModelName: Model['name'];
-  api?: string;
-  user?: any;
+  id: string
+  initialMessages: Array<Message>
+  selectedModelName: Model["name"]
+  api?: string
+  user?: any
 }) {
-  const { theme } = useTheme();
-  const { openModal } = useModal();
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const { theme } = useTheme()
+  const { openModal } = useModal()
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [showHistoryModal, setShowHistoryModal] = useState(false)
 
   // Ensure initialMessages is an array
-  const validInitialMessages = Array.isArray(initialMessages) ? initialMessages : [];
+  const validInitialMessages = Array.isArray(initialMessages)
+    ? initialMessages
+    : []
 
   // Determine upload API based on chat API
-  const uploadApi = api.includes('/intelligence/') 
-    ? '/intelligence/api/files/upload' 
-    : '/api/files/upload';
+  const uploadApi = api.includes("/intelligence/")
+    ? "/intelligence/api/files/upload"
+    : "/api/files/upload"
 
-  const { messages, append, reload, stop, isLoading, input, setInput, handleSubmit, setMessages } =
-    useChat({
-      api,
+  const {
+    messages,
+    append,
+    reload,
+    stop,
+    isLoading,
+    input,
+    setInput,
+    handleSubmit,
+    setMessages,
+  } = useChat({
+    api,
+    id,
+    initialMessages: validInitialMessages,
+    body: {
       id,
-      initialMessages: validInitialMessages,
-      body: {
-        id,
-        model: selectedModelName,
-      },
-      onError: (error) => {
-        // Handle the error response
-        let errorMessage = '';
-        let lastMessage = '';
-        try {
-          // If it's a JSON string, parse it
-          if (typeof error.message === 'string' && error.message.startsWith('{')) {
-            const parsed = JSON.parse(error.message);
-            errorMessage = parsed.error;
-            lastMessage = parsed.lastMessage;
-          } else {
-            errorMessage = error.message;
-          }
-        } catch (e) {
-          errorMessage = error.message;
+      model: selectedModelName,
+    },
+    onError: (error) => {
+      // Handle the error response
+      let errorMessage = ""
+      let lastMessage = ""
+      try {
+        // If it's a JSON string, parse it
+        if (
+          typeof error.message === "string" &&
+          error.message.startsWith("{")
+        ) {
+          const parsed = JSON.parse(error.message)
+          errorMessage = parsed.error
+          lastMessage = parsed.lastMessage
+        } else {
+          errorMessage = error.message
+        }
+      } catch (e) {
+        errorMessage = error.message
+      }
+
+      if (errorMessage.toLowerCase().includes("usage limit")) {
+        // Set the input back to the last message
+        if (lastMessage) {
+          setInput(lastMessage)
         }
 
-        if (errorMessage.toLowerCase().includes('usage limit')) {
-          // Set the input back to the last message
-          if (lastMessage) {
-            setInput(lastMessage);
+        toast(
+          <div className="flex items-center justify-between gap-4">
+            <span>{errorMessage}</span>
+            <button
+              onClick={() => {
+                openModal()
+                toast.dismiss()
+              }}
+              className="px-4 py-1.5 rounded-md intelligence-text transition-colors whitespace-nowrap shrink-0 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            >
+              Upgrade
+            </button>
+          </div>,
+          {
+            duration: 8000,
+            style: {
+              background: theme === "dark" ? "black" : "white",
+              border:
+                theme === "dark"
+                  ? "1px solid rgb(31,41,55)"
+                  : "1px solid rgb(229,231,235)",
+              color: theme === "dark" ? "white" : "black",
+            },
           }
-          
-          toast(
-            <div className="flex items-center justify-between gap-4">
-              <span>{errorMessage}</span>
-              <button
-                onClick={() => {
-                  openModal();
-                  toast.dismiss();
-                }}
-                className="px-4 py-1.5 rounded-md intelligence-text transition-colors whitespace-nowrap shrink-0 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-              >
-                Upgrade
-              </button>
-            </div>,
-            {
-              duration: 8000,
-              style: {
-                background: theme === 'dark' ? 'black' : 'white',
-                border: theme === 'dark' ? '1px solid rgb(31,41,55)' : '1px solid rgb(229,231,235)',
-                color: theme === 'dark' ? 'white' : 'black',
-              }
-            }
-          );
-        } else {
-          toast.error(errorMessage);
-        }
-      },
-    });
+        )
+      } else {
+        toast.error(errorMessage)
+      }
+    },
+  })
 
   const [messagesContainerRef, messagesEndRef] =
-    useScrollToBottom<HTMLDivElement>();
+    useScrollToBottom<HTMLDivElement>()
 
-  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  const [attachments, setAttachments] = useState<Array<Attachment>>([])
 
-  const handleMessageEdit = async (messageId: string, newContent: string): Promise<boolean> => {
-    const messageIndex = messages.findIndex(msg => msg.id === messageId);
+  const handleMessageEdit = async (
+    messageId: string,
+    newContent: string
+  ): Promise<boolean> => {
+    const messageIndex = messages.findIndex((msg) => msg.id === messageId)
     if (messageIndex === -1) {
-      toast.error('Message not found');
-      return false;
+      toast.error("Message not found")
+      return false
     }
 
     // Create a new array with messages up to (but not including) the edited message
-    const updatedMessages = messages.slice(0, messageIndex).map(message => message);
+    const updatedMessages = messages
+      .slice(0, messageIndex)
+      .map((message) => message)
 
     // Update the messages state immediately
-    setMessages(updatedMessages);
+    setMessages(updatedMessages)
 
     // Create a new prompt with the edited message
     try {
       // This will add the edited message as a new message
       append({
-        role: 'user',
+        role: "user",
         content: newContent,
-      });
-      return true;
+      })
+      return true
     } catch (error) {
-      toast.error('Failed to update conversation');
-      return false;
+      toast.error("Failed to update conversation")
+      return false
     }
-  };
+  }
 
   return (
     <>
@@ -147,8 +169,8 @@ export function Chat({
               <div className="flex items-center gap-2">
                 <div
                   onClick={(e) => {
-                    e.stopPropagation();
-                    setShowHistoryModal(true);
+                    e.stopPropagation()
+                    setShowHistoryModal(true)
                   }}
                   className="p-1 hover:bg-transparent rounded-md cursor-pointer transition-colors"
                 >
@@ -163,7 +185,9 @@ export function Chat({
                 </Link>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground task-tab">[{selectedModelName}]</span>
+                <span className="text-xs text-muted-foreground task-tab">
+                  [{selectedModelName}]
+                </span>
                 {isCollapsed ? (
                   <ChevronDown className="size-4 text-muted-foreground" />
                 ) : (
@@ -172,7 +196,7 @@ export function Chat({
               </div>
             </button>
           </div>
-          
+
           {!isCollapsed && (
             <div className="pb-4 px-4">
               <div className="bg-task-light dark:bg-task-dark rounded-none overflow-hidden">
@@ -185,14 +209,14 @@ export function Chat({
                     {messages.length === 0 && (
                       <div className="flex items-center justify-center h-full">
                         <div className="flex flex-col items-center">
-                          <Image 
-                            src="/images/blur.png" 
-                            alt="Birdinterface Logo" 
-                            width={200} 
-                            height={200} 
-                            className="size-[200px] opacity-60" 
-                            style={{ filter: 'blur(25px)' }} 
-                            draggable={false} 
+                          <Image
+                            src="/images/blur.png"
+                            alt="Birdinterface Logo"
+                            width={200}
+                            height={200}
+                            className="size-[200px] opacity-60"
+                            style={{ filter: "blur(25px)" }}
+                            draggable={false}
                           />
                         </div>
                       </div>
@@ -215,7 +239,7 @@ export function Chat({
                       className="shrink-0 min-w-[24px] min-h-[24px]"
                     />
                   </div>
-                  
+
                   {/* Input Area */}
                   <div className="p-4">
                     <MultimodalInput
@@ -248,5 +272,5 @@ export function Chat({
         user={user}
       />
     </>
-  );
+  )
 }
