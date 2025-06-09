@@ -1669,7 +1669,7 @@ export function RecurringTaskList({
 
   return (
     <div className="w-full flex items-start justify-center recurring-task-container">
-      <div className="w-full max-w-2xl border border-task-border rounded-t-md rounded-b-2xl mb-4 bg-normal-task">
+      <div className="w-full max-w-2xl rounded-t-md rounded-b-2xl mb-4 bg-normal-task">
         <div className="p-4">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
@@ -1794,7 +1794,7 @@ export function RecurringTaskList({
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent
-                                className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                                className="w-auto p-0 rounded-lg task-calendar"
                                 align="center"
                                 collisionPadding={8}
                               >
@@ -1847,7 +1847,7 @@ export function RecurringTaskList({
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent
-                                className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                                className="w-auto p-0 rounded-lg task-calendar"
                                 align="center"
                                 collisionPadding={8}
                               >
@@ -2073,7 +2073,7 @@ function RecurringSettings({
   }
 
   return (
-    <div className="px-2 py-1.5 border-t border-border">
+    <div className="px-2 py-1.5">
       <div className="flex items-center gap-1 mb-1.5">
         <Repeat className="size-2 text-muted-foreground" />
         <span className="text-[0.6rem] text-foreground task-tab">Repeat</span>
@@ -2101,11 +2101,11 @@ function RecurringSettings({
             setTimeout(() => setShowSuggestion(false), 150)
           }}
           placeholder="mo, we, fr"
-          className="w-full text-[0.6rem] text-foreground task-tab bg-background border border-border rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-ring"
+          className="w-full text-[0.6rem] text-foreground task-tab bg-background rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-ring"
         />
 
         {showSuggestion && suggestion && (
-          <div className="absolute top-full inset-x-0 z-50 mt-1 bg-background border border-border rounded shadow-lg">
+          <div className="absolute top-full inset-x-0 z-50 mt-1 bg-background rounded shadow-lg">
             <button
               onClick={selectSuggestion}
               className="w-full text-left px-1 py-0.5 text-[0.6rem] hover:bg-accent hover:text-accent-foreground flex items-center justify-between"

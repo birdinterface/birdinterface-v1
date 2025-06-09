@@ -173,7 +173,7 @@ html, body {
     --sidebar-ring: 217.2 91.2% 59.8%; /* Keep blue? */
     /* Task background */
     --task-background-light: 0 0% 90%;
-    --task-background-dark: 0 0% 6.2%;
+    --task-background-dark: 0 0% 12%;
     /* Normal tasks - subtle blue tone */
     --normal-task-bg: 220 13% 95%;
     --normal-task-bg-dark: 220 13% 7%;
@@ -220,7 +220,7 @@ html, body {
     --sidebar-border: 0 0% 14.1%;
     /* --sidebar-ring: ...; /* Adjust if needed */
     /* Task background */
-    --task-background-dark: 0 0% 6.2%;
+    --task-background-dark: 0 0% 12%;
     /* Normal tasks - subtle blue tone */
     --normal-task-bg: 220 13% 7%;
     --normal-task-bg-dark: 220 13% 7%;
@@ -344,7 +344,6 @@ nav {
 }
 
 .custom-dropdown {
-  border: 1px solid hsl(var(--border)) !important;
   border-radius: 0.5rem !important;
   padding: 0.5rem !important;
   /* Use CSS variables for background */

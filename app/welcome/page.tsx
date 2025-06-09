@@ -1,7 +1,7 @@
 "use client"
 
 import { ArrowDown } from "lucide-react"
-import { Inter } from "next/font/google"
+import { Montserrat } from "next/font/google"
 import Head from "next/head"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -15,7 +15,7 @@ import "../../public/css/webflow.css"
 
 import FlashlightEffect from "../../components/custom/flashlight-effect"
 
-const interFont = Inter({ subsets: ["latin"] })
+const montserratFont = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] })
 
 const Welcome = () => {
   const [email, setEmail] = useState("")
@@ -170,8 +170,8 @@ const Welcome = () => {
       <Head>
         <title>Birdinterface</title>
         <style>{`
-          body { 
-            background-color: black; 
+          body {
+            background-color: white !important;
           }
           * {
             -webkit-user-select: none;
@@ -197,7 +197,7 @@ const Welcome = () => {
       </Head>
       {/* Outer container now allows scrolling */}
       <div
-        className="w-full bg-black min-h-screen select-none"
+        className="w-full bg-white min-h-screen select-none"
         style={{
           userSelect: "none",
           WebkitUserSelect: "none",
@@ -209,13 +209,13 @@ const Welcome = () => {
         onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
         onDragStart={(e: React.DragEvent) => e.preventDefault()}
       >
-        {/* Hero Section - Adjusted for scrolling */}
-        <div className="hero-section-for-flashlight relative flex flex-col items-center z-20 min-h-screen">
+        {/* Hero Section - White background */}
+        <div className="hero-section-for-flashlight relative flex flex-col items-center z-20 min-h-screen bg-white">
           {/* Logo positioned separately */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[-210px]">
             <div className="relative size-[340px] sm:size-[400px] md:size-[460px] lg:size-[520px] xl:size-[560px]">
               <Image
-                src="/images/Birdinterface final-4.png"
+                src="/images/Birdinterface final-3.png"
                 alt="Bird Interface Logo"
                 width={1000}
                 height={1000}
@@ -231,10 +231,11 @@ const Welcome = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full mt-[-80px]">
             <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
               <p
-                className="text-white text-sm text-center px-4 font-medium"
+                className="text-sm text-center px-4"
                 style={{
-                  fontFamily: interFont.style.fontFamily,
-                  textTransform: "none",
+                  fontFamily: montserratFont.style.fontFamily,
+                  fontWeight: 600,
+                  color: "hsl(0 0% 45.1%)",
                 }}
               >
                 Your core data – unified in a high-capability environment.
@@ -269,7 +270,13 @@ const Welcome = () => {
                     autoComplete="email"
                     required
                     disabled={isSubmitting}
-                    className="w-full px-4 py-2 bg-black text-white placeholder:text-white/50 focus:outline-none disabled:opacity-50 text-center border border-task-border rounded-md"
+                    className="w-full px-4 py-2 rounded-md text-center focus:outline-none disabled:opacity-50"
+                    style={{
+                      fontFamily: montserratFont.style.fontFamily,
+                      fontWeight: 600,
+                      color: "hsl(0 0% 20%)",
+                      backgroundColor: "#f1f2f4",
+                    }}
                   />
                   {error && (
                     <p className="text-red-400 text-sm mt-2">{error}</p>
@@ -296,7 +303,13 @@ const Welcome = () => {
                     autoCapitalize="off"
                     spellCheck="false"
                     disabled={isDemoSubmitting}
-                    className="w-full px-4 py-2 bg-black text-white placeholder:text-white/50 focus:outline-none disabled:opacity-50 text-center border border-task-border rounded-md"
+                    className="w-full px-4 py-2 rounded-md text-center focus:outline-none disabled:opacity-50"
+                    style={{
+                      fontFamily: montserratFont.style.fontFamily,
+                      fontWeight: 600,
+                      color: "hsl(0 0% 20%)",
+                      backgroundColor: "#f1f2f4",
+                    }}
                   />
                   {demoError && (
                     <p className="text-red-400 text-sm mt-2">{demoError}</p>
@@ -308,10 +321,11 @@ const Welcome = () => {
           {/* Arrow pointing down with text */}
           <div className="absolute bottom-10 w-full flex items-end justify-between px-4 md:justify-center md:gap-2 md:px-0 cursor-pointer group">
             <p
-              className="text-neutral-400 text-sm cursor-pointer"
+              className="text-sm cursor-pointer"
               style={{
-                fontFamily: interFont.style.fontFamily,
-                textTransform: "none",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500,
+                color: "hsl(0 0% 45.1%)",
               }}
               onClick={() => {
                 const missionSection =
@@ -324,7 +338,7 @@ const Welcome = () => {
               Coming at the end of summer 2025
             </p>
             <ArrowDown
-              className="size-5 text-neutral-400 group-hover:text-white transition-colors relative bottom-[10px] cursor-pointer"
+              className="size-5 text-neutral-400 group-hover:text-neutral-600 transition-colors relative bottom-[10px] cursor-pointer"
               onClick={() => {
                 const missionSection =
                   document.getElementById("mission-section")
@@ -343,26 +357,56 @@ const Welcome = () => {
         >
           <div
             className="max-w-3xl mx-auto normal-case font-normal"
-            style={{ fontFamily: interFont.style.fontFamily }}
+            style={{ fontFamily: montserratFont.style.fontFamily }}
           >
-            <h2 className="text-3xl font-bold text-black mb-1 text-center">
+            <h2 
+              className="text-3xl text-black mb-1 text-center"
+              style={{ 
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 600
+              }}
+            >
               Mission and Masterplan
             </h2>
             <p
-              className="text-center text-xs font-medium"
-              style={{ color: "#555555", marginBottom: "2rem" }}
+              className="text-center text-xs mb-8"
+              style={{ 
+                color: "hsl(0 0% 45.1%)", 
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
             >
               Alex Gisbrecht, Founder &amp; CEO of Birdinterface • May 30, 2025
             </p>
 
-            <h2 className="text-xl font-bold text-black mb-6 mt-12">
+            <h2 
+              className="text-xl text-black mb-6 mt-12"
+              style={{ 
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 600
+              }}
+            >
               Unifying Our Life For AI
             </h2>
-            <p className="text-base" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               I founded Birdinterface to solve data fragmentation by building a
               unified and AI-integrated personal interface.
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               The first essential step is unifying core data+tools into one
               elegant, ground-up interface—starting with tasks, calendar, an
               improved G-Drive-like system, a curator (to store and organize
@@ -370,43 +414,99 @@ const Welcome = () => {
               music), agentic AI, maps, mail, messaging, financial overview, and
               browser.
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               This creates 3 major unlocks:
             </p>
-            <ol
-              className="list-decimal list-inside text-base mt-4 pl-4"
-              style={{ color: "#555555" }}
+                          <ol
+                className="list-decimal list-inside text-sm mt-4 pl-4"
+                style={{ 
+                  color: "hsl(0 0% 45.1%)",
+                  fontFamily: montserratFont.style.fontFamily,
+                  fontWeight: 500
+                }}
+              >
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  The user has all his important data in one place.
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Birdinterface now understands the whole life of a user.
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Birdinterface can deliver the best and most relevant knowledge,
+                  insights, and tools from the internet directly to the user—at
+                  the right place and time. Knowledge is Power - but only if
+                  it&apos;s the right knowledge.
+                </li>
+              </ol>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
             >
-              <li className="text-base">
-                The user has all his important data in one place.
-              </li>
-              <li className="text-base">
-                Birdinterface now understands the whole life of a user.
-              </li>
-              <li className="text-base">
-                Birdinterface can deliver the best and most relevant knowledge,
-                insights, and tools from the internet directly to the user—at
-                the right place and time. Knowledge is Power - but only if
-                it&apos;s the right knowledge.
-              </li>
-            </ol>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
               As soon as core data is unified (which is the essential first step
               to create a truly magical experience), we&apos;ll start training
               LLMs to emulate the interface, freeing AI to serve the user&apos;s
               needs and preferences more intelligently while maintaining UI and
               data consistency.
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               Currently, we&apos;re in the early stages with a prototype used
               daily by 1,000+ people. I&apos;m preparing for the Alpha launch in
               summer 2025.
             </p>
 
-            <h2 className="text-xl font-bold text-black mt-12 mb-6">
+            <h2 
+              className="text-xl text-black mt-12 mb-6"
+              style={{ 
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 600
+              }}
+            >
               The Mission
             </h2>
-            <p className="text-base" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               At Birdinterface, the mission is to empower humans in their own
               pursuits and from an early age. We want to bring more freedom,
               independence, and power to people by creating a completely new,
@@ -414,7 +514,14 @@ const Welcome = () => {
               with a user&apos;s best interests, adapts to his/her thinking,
               removes friction, and respects their time.
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               As outlined in{" "}
               <a
                 href="https://advancers.org"
@@ -429,24 +536,58 @@ const Welcome = () => {
               inefficiency, or profit over individual freedom and progress.
             </p>
 
-            <h2 className="text-xl font-bold text-black mt-12 mb-6">
+            <h2 
+              className="text-xl text-black mt-12 mb-6"
+              style={{ 
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 600
+              }}
+            >
               The Data Fragmentation Problem
             </h2>
-            <p className="text-base" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               The fundamental problem is the fragmentation of core data (=what
               drives one&apos;s curiosity, creativity and will to contribute).
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               Today, a user&apos;s core data is fragmented across disconnected
               data silos and environments—creating friction, wasting time, and
               blocking a clear overview of life.
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+            className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               Birdinterface aims to solve this problem by creating a unified,
               AI-integrated and high-capability environment, that would be
               unwise not to use.
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               Among other things Birdinterface continuously analyzes a
               user&apos;s data to predict and serve user needs better. Bird can
               almost instantly surface or teleport the user to a desired data
@@ -459,10 +600,23 @@ const Welcome = () => {
               surface.
             </p>
 
-            <h2 className="text-xl font-bold text-black mt-12 mb-6">
+            <h2 
+              className="text-xl text-black mt-12 mb-6"
+              style={{ 
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 600
+              }}
+            >
               Building a Unified Data Interface
             </h2>
-            <p className="text-base" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               Birdinterface started as a personal research project I&apos;ve
               developed over 10+ years by continuously removing friction from my
               computer and phone experience. The current prototype uses Chrome
@@ -472,10 +626,23 @@ const Welcome = () => {
               to their most elegant, simple, and prioritized forms.
             </p>
 
-            <h2 className="text-xl font-bold text-black mb-6 mt-12">
+            <h2 
+              className="text-xl text-black mb-6 mt-12"
+              style={{ 
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 600
+              }}
+            >
               What&apos;s Next
             </h2>
-            <p className="text-base" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               For the Alpha launch planned in summer 2025, I aim to build the
               first five core data components—Tasks, Calendar, Database,
               Curator, and Intelligence—with core functionalities such as full
@@ -483,45 +650,107 @@ const Welcome = () => {
               ability to generate new functioning components that can also be
               shared with other users.
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               Thereafter, every 1–2 months and over 6–9 months, we&apos;ll ship
               the next five—Map, Mail, People (communications hub), Finance, and
               Internet (sandboxed browser)—while starting data collection to
               train our first generative interface model.
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               Looking further ahead, Birdinterface plans to:
             </p>
-            <ol
-              className="list-decimal list-inside text-base mt-4 pl-4"
-              style={{ color: "#555555" }}
+                          <ol
+                className="list-decimal list-inside text-sm mt-4 pl-4"
+                style={{ 
+                  color: "hsl(0 0% 45.1%)",
+                  fontFamily: montserratFont.style.fontFamily,
+                  fontWeight: 500
+                }}
+              >
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Develop adaptive displays and devices powered by generative
+                  computing
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Integrate a virtual world using real-world models for social,
+                  work, and play—with Bird as the HUD
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Build augmentation hardware to boost cognition and monitor
+                  health
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Enhance prediction accuracy to be truly in-sync with the user
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Explore blockchain for data ownership
+                </li>
+              </ol>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
             >
-              <li className="text-base">
-                Develop adaptive displays and devices powered by generative
-                computing
-              </li>
-              <li className="text-base">
-                Integrate a virtual world using real-world models for social,
-                work, and play—with Bird as the HUD
-              </li>
-              <li className="text-base">
-                Build augmentation hardware to boost cognition and monitor
-                health
-              </li>
-              <li className="text-base">
-                Enhance prediction accuracy to be truly in-sync with the user
-              </li>
-              <li className="text-base">
-                Explore blockchain for data ownership
-              </li>
-            </ol>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
               If rethinking the current computer experience excites you,
               let&apos;s talk. I&apos;m seeking founding engineers and partners
               with expertise in AI systems, model optimization, hardware, and
               scalable architecture.
             </p>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+              fontWeight: 500
+              }}
+            >
               Reach out:{" "}
               <a
                 href="mailto:alex@birdinterface.com"
@@ -531,30 +760,90 @@ const Welcome = () => {
               </a>
             </p>
 
-            <h2 className="text-xl font-bold text-black mt-12 mb-6">
+            <h2 
+              className="text-xl text-black mt-12 mb-6"
+              style={{ 
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 600
+              }}
+            >
               Mission and Masterplan (Summarized)
             </h2>
-            <p className="text-base mt-4" style={{ color: "#555555" }}>
+            <p 
+              className="text-sm mt-4"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               Empower humans—in their own pursuits and from an early age.
             </p>
-            <ul
-              className="list-decimal list-inside text-base mt-4 pl-4"
-              style={{ color: "#555555" }}
-            >
-              <li className="text-base">
-                Unify core data, add all important AI capabilities
-              </li>
-              <li className="text-base">Train LLMs to emulate the interface</li>
-              <li className="text-base">Build custom displays and devices</li>
-              <li className="text-base">Develop augmentation hardware</li>
-              <li className="text-base">
-                Predict user actions with high accuracy
-              </li>
-            </ul>
+                          <ul
+                className="list-decimal list-inside text-sm mt-4 pl-4"
+                style={{ 
+                  color: "hsl(0 0% 45.1%)",
+                  fontFamily: montserratFont.style.fontFamily,
+                  fontWeight: 500
+                }}
+              >
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Unify core data, add all important AI capabilities
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Train LLMs to emulate the interface
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Build custom displays and devices
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Develop augmentation hardware
+                </li>
+                <li 
+                  className="text-sm"
+                  style={{
+                    fontFamily: montserratFont.style.fontFamily,
+                    fontWeight: 500
+                  }}
+                >
+                  Predict user actions with high accuracy
+                </li>
+              </ul>
 
             <hr className="my-12 border-gray-300" />
 
-            <p className="text-center text-sm" style={{ color: "#555555" }}>
+            <p 
+              className="text-center text-xs"
+              style={{ 
+                color: "hsl(0 0% 45.1%)",
+                fontFamily: montserratFont.style.fontFamily,
+                fontWeight: 500
+              }}
+            >
               © 2025 Bird Interfaces, GmbH. All rights reserved.
             </p>
           </div>

@@ -574,7 +574,7 @@ export function TaskList({
 
   return (
     <div className="w-full flex items-start justify-center task-list-container">
-      <div className="w-full max-w-2xl border border-task-border rounded-t-2xl rounded-b-md mb-1 bg-normal-task">
+      <div className="w-full max-w-2xl rounded-t-2xl rounded-b-md mb-1 bg-normal-task">
         <div className="pt-4 px-4">
           <div className="flex justify-between items-center">
             <div className="flex gap-2">
@@ -743,7 +743,7 @@ export function TaskList({
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent
-                                className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                                className="w-auto p-0 rounded-lg task-calendar"
                                 align="center"
                                 collisionPadding={8}
                               >
@@ -767,7 +767,7 @@ export function TaskList({
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent
-                                className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                                className="w-auto p-0 rounded-lg task-calendar"
                                 align="center"
                                 collisionPadding={8}
                               >
@@ -792,7 +792,7 @@ export function TaskList({
                               </button>
                             </PopoverTrigger>
                             <PopoverContent
-                              className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                              className="w-auto p-0 rounded-lg task-calendar"
                               align="center"
                               collisionPadding={8}
                             >
@@ -816,7 +816,7 @@ export function TaskList({
                               </button>
                             </PopoverTrigger>
                             <PopoverContent
-                              className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                              className="w-auto p-0 rounded-lg task-calendar"
                               align="center"
                               collisionPadding={8}
                             >

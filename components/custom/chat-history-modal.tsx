@@ -454,7 +454,7 @@ export function ChatHistoryModal({
         className="fixed inset-0 bg-background/80 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
       />
-      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-[1fr_1px_1fr] gap-6 p-6 mx-4 md:mx-auto bg-background rounded-lg border border-border shadow-[0_0_30px_rgba(255,255,255,0.15)]">
+      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-[1fr_1px_1fr] gap-6 p-6 mx-4 md:mx-auto bg-normal-task rounded-lg">
         <div className="flex flex-col h-[500px]">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -462,7 +462,7 @@ export function ChatHistoryModal({
               ref={searchInputRef}
               type="text"
               placeholder="Search log"
-              className="pl-10 w-full text-xs rounded-md focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="pl-10 w-full text-xs rounded-md focus-visible:ring-0 focus-visible:ring-offset-0 border-0 bg-task-light dark:bg-task-dark"
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
             />

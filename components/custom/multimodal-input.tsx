@@ -290,9 +290,9 @@ export function MultimodalInput({
           value={input}
           onChange={handleInput}
           className={cn(
-            "min-h-[24px] overflow-hidden resize-none p-4 pb-12 focus-visible:outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 intelligence-input font-chat border border-task-border rounded-lg bg-transparent",
+            "min-h-[24px] overflow-hidden resize-none p-4 pb-12 focus-visible:outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 intelligence-input font-chat rounded-lg bg-task-light dark:bg-task-dark",
             isIncognito ? "bg-purple-100 dark:bg-purple-900/40" : "",
-            isDragOver && "border-blue-300 dark:border-blue-700"
+            isDragOver && "border border-blue-300 dark:border-blue-700"
           )}
           rows={1}
           onKeyDown={(event) => {

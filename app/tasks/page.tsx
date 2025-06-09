@@ -198,18 +198,22 @@ export default function TasksPage() {
         saveToLocalStorage(RECURRING_TASKS_CACHE_KEY, uiRecurringTasks)
 
         // Handle user preferences response
-        if (prefsResponse.ok) {
-          const prefs = await prefsResponse.json()
-          if (prefs.tabNames) {
-            setTabNames(prefs.tabNames)
-            saveToLocalStorage(TAB_NAMES_CACHE_KEY, prefs.tabNames)
+        if (!prefsResponse.ok) {
+          const errorData = await prefsResponse.json()
+          console.error("Frontend: Error fetching user preferences:", errorData)
+          // Don't throw error here, preferences are optional
+        } else {
+          const prefsData = await prefsResponse.json()
+          if (prefsData && prefsData.tabNames) {
+            setTabNames(prefsData.tabNames)
+            saveToLocalStorage(TAB_NAMES_CACHE_KEY, prefsData.tabNames)
           }
         }
 
         setError(null)
-      } catch (err: any) {
-        console.error("Frontend: Error fetching task data:", err)
-        setError(err.message)
+      } catch (err) {
+        console.error("Frontend: Error fetching data:", err)
+        setError("Failed to load data")
         // Clear the pending requests cache on error
         pendingRequests.tasks = undefined
         pendingRequests.recurringTasks = undefined
@@ -220,7 +224,7 @@ export default function TasksPage() {
     }
 
     fetchData()
-  }, [userId, status])
+  }, [userId, status, RECURRING_TASKS_CACHE_KEY, TAB_NAMES_CACHE_KEY, TASKS_CACHE_KEY, isLoading])
 
   // Handler to add a new task (optimistic)
   const handleAddTask = async (task: Omit<UiTask, "id">) => {

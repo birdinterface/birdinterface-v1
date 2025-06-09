@@ -98,7 +98,7 @@ export function Navigation({ user }: { user: any }) {
                       <>
                         <DropdownMenuItem asChild>
                           <button
-                            className="w-full text-left text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent"
+                            className="w-full text-left text-[10px] nav-text text-[#858a8f] focus:bg-transparent cursor-pointer"
                             onClick={openModal}
                           >
                             Your Plan
@@ -106,14 +106,14 @@ export function Navigation({ user }: { user: any }) {
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <button
-                            className="w-full text-left text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent"
+                            className="w-full text-left text-[10px] nav-text text-[#858a8f] focus:bg-transparent cursor-pointer"
                             onClick={openSettingsModal}
                           >
                             Settings
                           </button>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent"
+                          className="text-[10px] nav-text text-[#858a8f] focus:bg-transparent cursor-pointer"
                           onSelect={() =>
                             setTheme(theme === "dark" ? "light" : "dark")
                           }
@@ -122,7 +122,7 @@ export function Navigation({ user }: { user: any }) {
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <button
-                            className="w-full text-left text-[10px] nav-text text-[#858a8f] hover:text-[#858a8f] focus:bg-transparent"
+                            className="w-full text-left text-[10px] nav-text text-[#858a8f] focus:bg-transparent cursor-pointer"
                             onClick={() => {
                               signOut({
                                 redirect: true,
@@ -150,7 +150,7 @@ export function Navigation({ user }: { user: any }) {
                             (item.href === "/intelligence" &&
                               pathname?.startsWith("/intelligence"))
                             ? "text-foreground"
-                            : "text-[#858a8f] hover:text-[#858a8f]"
+                            : "text-[#858a8f]"
                         )}
                       >
                         {item.label}

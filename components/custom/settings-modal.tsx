@@ -9,6 +9,7 @@ import {
   User as UserIcon,
 } from "lucide-react"
 import { type User } from "next-auth"
+import Image from "next/image"
 import { useCallback, useEffect, useState } from "react"
 import useSWR from "swr"
 
@@ -120,7 +121,7 @@ export function SettingsModal({
           <Input
             id="fullName"
             defaultValue={user?.name || ""}
-            className="mt-1 text-sm"
+            className="mt-1 text-sm border-0 bg-task-light dark:bg-task-dark"
             placeholder="Enter your full name"
           />
         </div>
@@ -136,7 +137,7 @@ export function SettingsModal({
             id="email"
             type="email"
             defaultValue={user?.email || ""}
-            className="mt-1 text-sm"
+            className="mt-1 text-sm border-0 bg-task-light dark:bg-task-dark"
             placeholder="Enter your email"
           />
         </div>
@@ -146,12 +147,14 @@ export function SettingsModal({
             Profile Image
           </Label>
           <div className="mt-2 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+            <div className="size-12 rounded-full bg-muted flex items-center justify-center">
               {user?.image ? (
-                <img
+                <Image
                   src={user.image}
                   alt="Profile"
-                  className="w-12 h-12 rounded-full"
+                  width={48}
+                  height={48}
+                  className="size-12 rounded-full"
                 />
               ) : (
                 <UserIcon size={20} className="text-muted-foreground" />
@@ -193,7 +196,7 @@ export function SettingsModal({
                   id={voice}
                   name="aiVoice"
                   defaultChecked={voice === "Default"}
-                  className="w-3 h-3"
+                  className="size-3"
                 />
                 <Label htmlFor={voice} className="text-sm cursor-pointer">
                   {voice}
@@ -344,7 +347,7 @@ export function SettingsModal({
         className="fixed inset-0 bg-background/80 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
       />
-      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-[1fr_1px_1fr] gap-6 p-6 mx-4 md:mx-auto bg-background rounded-lg border border-border shadow-[0_0_30px_rgba(255,255,255,0.15)]">
+      <div className="relative z-10 grid w-full max-w-4xl grid-cols-1 md:grid-cols-[1fr_1px_1fr] gap-6 p-6 mx-4 md:mx-auto bg-normal-task rounded-lg">
         <div className="flex flex-col h-[500px]">
           <div className="mb-4">
             <h2 className="text-sm font-medium text-foreground">Settings</h2>
