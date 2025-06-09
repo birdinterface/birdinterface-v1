@@ -688,7 +688,11 @@ export function TaskList({
                                   {formatDate(task.completedAt)}
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
+                              <PopoverContent
+                                className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                                align="center"
+                                collisionPadding={8}
+                              >
                                 <CustomCalendar
                                   selectedDate={parseTaskDate(task.completedAt)}
                                   onDateSelect={(date) => {
@@ -706,7 +710,11 @@ export function TaskList({
                                   <Calendar className="size-3" />
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
+                              <PopoverContent
+                                className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                                align="center"
+                                collisionPadding={8}
+                              >
                                 <CustomCalendar
                                   selectedDate={undefined}
                                   onDateSelect={(date) => {
@@ -725,7 +733,11 @@ export function TaskList({
                                 {formatDate(task.dueDate)}
                               </button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
+                            <PopoverContent
+                              className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                              align="center"
+                              collisionPadding={8}
+                            >
                               <CustomCalendar
                                 selectedDate={parseTaskDate(task.dueDate)}
                                 onDateSelect={(date) => {
@@ -741,7 +753,11 @@ export function TaskList({
                                 <Calendar className="size-3" />
                               </button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
+                            <PopoverContent
+                              className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                              align="center"
+                              collisionPadding={8}
+                            >
                               <CustomCalendar
                                 selectedDate={parseTaskDate(task.dueDate)}
                                 onDateSelect={(date) => {

@@ -1348,7 +1348,11 @@ export function RecurringTaskList({
                                   {formatDate(task.dueDate)}
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
+                              <PopoverContent
+                                className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                                align="center"
+                                collisionPadding={8}
+                              >
                                 <CustomCalendar
                                   selectedDate={parseTaskDate(task.dueDate)}
                                   onDateSelect={(date) => {
@@ -1383,7 +1387,11 @@ export function RecurringTaskList({
                                   <Calendar className="size-3" />
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 border border-task-border rounded-lg task-calendar" align="center">
+                              <PopoverContent
+                                className="w-auto p-0 border border-task-border rounded-lg task-calendar"
+                                align="center"
+                                collisionPadding={8}
+                              >
                                 <CustomCalendar
                                   selectedDate={parseTaskDate(task.dueDate)}
                                   onDateSelect={(date) => {

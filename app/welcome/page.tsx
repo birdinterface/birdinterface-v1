@@ -5,6 +5,8 @@ import { ArrowDown } from 'lucide-react';
 import { Inter } from 'next/font/google';
 import Head from 'next/head';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { useEffect, useState, useRef, useCallback } from 'react';
 
 import '../../public/css/normalize.css';
@@ -25,8 +27,13 @@ const Welcome = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [demoCode, setDemoCode] = useState('');
+  const [isDemoSubmitting, setIsDemoSubmitting] = useState(false);
+  const [demoError, setDemoError] = useState('');
   const fullText = "The intelligent personal interface";
   const emailInputRef = useRef<HTMLInputElement>(null);
+  const demoInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +68,31 @@ const Welcome = () => {
     }
   }, [email]);
 
+  const handleDemoSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDemoError('');
+    setIsDemoSubmitting(true);
+
+    try {
+      const result = await signIn('credentials', {
+        demoCode: demoCode,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setDemoError('Invalid demo code');
+      } else if (result?.ok) {
+        // Successful login, wait a moment for session to establish then redirect
+        setTimeout(() => {
+          window.location.href = '/tasks';
+        }, 500);
+      }
+    } catch (err) {
+      setDemoError('Failed to authenticate. Please try again.');
+      setIsDemoSubmitting(false);
+    }
+  }, [demoCode]);
+
   // Auto-submit when valid email is entered
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -71,6 +103,16 @@ const Welcome = () => {
       return () => clearTimeout(timer);
     }
   }, [email, isSubmitting, isSubmitted, handleSubmit]);
+
+  // Auto-submit when demo code is entered
+  useEffect(() => {
+    if (demoCode && demoCode.length === 4 && !isDemoSubmitting) {
+      const timer = setTimeout(() => {
+        handleDemoSubmit(new Event('submit') as any);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [demoCode, isDemoSubmitting, handleDemoSubmit]);
 
   // Prevent copy/paste keyboard shortcuts
   useEffect(() => {
@@ -83,9 +125,9 @@ const Welcome = () => {
         (e.ctrlKey && e.shiftKey && e.key === 'J') ||
         (e.ctrlKey && e.key === 'u')
       ) {
-        // Allow these shortcuts only when focused on the email input
+        // Allow these shortcuts only when focused on the email or demo code input
         const target = e.target as HTMLElement;
-        if (target.tagName === 'INPUT' && target.getAttribute('type') === 'email') {
+        if (target.tagName === 'INPUT' && (target.getAttribute('type') === 'email' || target.getAttribute('type') === 'text' || target.getAttribute('type') === 'password')) {
           return; // Allow normal input behavior
         }
         e.preventDefault();
@@ -100,9 +142,11 @@ const Welcome = () => {
   // Focus input when Enter is pressed
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && emailInputRef.current && document.activeElement !== emailInputRef.current) {
+      if (e.key === 'Enter' && document.activeElement !== emailInputRef.current && document.activeElement !== demoInputRef.current) {
         e.preventDefault();
-        emailInputRef.current.focus();
+        if (emailInputRef.current) {
+          emailInputRef.current.focus();
+        }
       }
     };
 
@@ -126,7 +170,7 @@ const Welcome = () => {
             -webkit-touch-callout: none;
             -webkit-tap-highlight-color: transparent;
           }
-          input[type="email"] {
+          input[type="email"], input[type="text"], input[type="password"] {
             -webkit-user-select: text !important;
             -moz-user-select: text !important;
             -ms-user-select: text !important;
@@ -204,6 +248,28 @@ const Welcome = () => {
                   />
                   {error && (
                     <p className="text-red-400 text-sm mt-2">{error}</p>
+                  )}
+                </div>
+              </form>
+              
+              {/* Demo Code Form */}
+              <form onSubmit={handleDemoSubmit} className="w-full max-w-xs mx-auto px-4 mt-4">
+                <div className="flex flex-col gap-2 items-center">
+                  <input
+                    ref={demoInputRef}
+                    type="password"
+                    value={demoCode}
+                    onChange={(e) => setDemoCode(e.target.value)}
+                    placeholder={isDemoSubmitting ? "Authenticating..." : "Enter Demo Code"}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
+                    disabled={isDemoSubmitting}
+                    className="w-full px-4 py-2 bg-black text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 text-center border border-task-border rounded-md"
+                  />
+                  {demoError && (
+                    <p className="text-red-400 text-sm mt-2">{demoError}</p>
                   )}
                 </div>
               </form>

@@ -41,7 +41,17 @@ export const {
     }),
     Credentials({
       credentials: {},
-      async authorize({ email, password }: any) {
+      async authorize({ email, password, demoCode }: any) {
+        // Handle demo user authentication
+        if (demoCode === '2222') {
+          return {
+            id: '3aad0575-0bb7-4bd4-bbae-1d83be0b71f3',
+            email: 'demo@birdinterface.com',
+            name: 'Demo User',
+            membership: 'free',
+          };
+        }
+        
         let users = await getUser(email);
         if (users.length === 0) return null;
         

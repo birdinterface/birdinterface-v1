@@ -172,15 +172,15 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
             <>
               <li className="flex items-center mb-2">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Full functionality
+                Pro two-week trial
               </li>
               <li className="flex items-center mb-2">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Limited usage
+                Limited AI usage
               </li>
               <li className="flex items-center mb-2">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Limited storage
+                20 GB storage
               </li>
             </>
           ) : selectedPlan === 'pro' ? (
@@ -191,7 +191,7 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
               </li>
               <li className="flex items-center mb-2">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Unlimited usage
+                Unlimited AI usage
               </li>
               <li className="flex items-center mb-2">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
@@ -199,7 +199,7 @@ export function SidebarUserNavContent({ user }: { user: ExtendedUser }) {
               </li>
               <li className="flex items-center">
                 <svg className="size-5 mr-3 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Early access to new features
+                Use more compute
               </li>
             </>
           ) : (

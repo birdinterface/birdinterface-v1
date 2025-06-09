@@ -1,6 +1,8 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+
 
 import { auth } from '@/app/(auth)/auth';
 import { RecurringTaskList } from '@/components/custom/recurring-task-list';
@@ -74,13 +76,15 @@ function toRecurringTask(task: any): RecurringTask {
 }
 
 export default function TasksPage() {
+  const { data: session, status } = useSession();
   const [tasks, setTasks] = useState<UiTask[]>([]);
   const [recurringTasks, setRecurringTasks] = useState<RecurringTask[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TaskTab>('todo');
-  // TODO: Replace with real session userId
-  const userId = tasks[0]?.userId || recurringTasks[0]?.userId || '26d545cb-63c5-461d-9fe9-8dc5256fe504'; // Use valid UUID for testing
-
+  
+  // Use session user ID, with fallback to hardcoded ID for development
+  const userId = session?.user?.id || '26d545cb-63c5-461d-9fe9-8dc5256fe504';
+  
   const TASKS_CACHE_KEY = `cachedTasks_${userId}`;
   const RECURRING_TASKS_CACHE_KEY = `cachedRecurringTasks_${userId}`;
 
@@ -99,6 +103,7 @@ export default function TasksPage() {
     }
 
     async function fetchTasks() {
+      if (status === 'loading') return;
       try {
         console.log('Frontend: Fetching tasks...');
         const response = await fetch('/api/tasks');
@@ -120,6 +125,7 @@ export default function TasksPage() {
     }
 
     async function fetchRecurringTasks() {
+      if (status === 'loading') return;
       try {
         console.log('Frontend: Fetching recurring tasks...');
         const response = await fetch('/api/recurring-tasks');
@@ -141,7 +147,7 @@ export default function TasksPage() {
 
     fetchTasks();
     fetchRecurringTasks();
-  }, [userId, TASKS_CACHE_KEY, RECURRING_TASKS_CACHE_KEY]);
+  }, [userId, TASKS_CACHE_KEY, RECURRING_TASKS_CACHE_KEY, status]);
 
   // Handler to add a new task (optimistic)
   const handleAddTask = async (task: Omit<UiTask, 'id'>) => {
@@ -383,6 +389,11 @@ export default function TasksPage() {
       window.alert('Failed to delete recurring task');
     }
   };
+
+  // Show loading state while session is loading
+  if (status === 'loading') {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
 
   return (
     <div className="w-full flex flex-col items-center justify-center space-y-4 py-4 px-2 sm:px-4">
