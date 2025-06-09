@@ -211,8 +211,6 @@ const Welcome = () => {
       >
         {/* Hero Section - Adjusted for scrolling */}
         <div className="hero-section-for-flashlight relative flex flex-col items-center z-20 min-h-screen">
-          <FlashlightEffect />
-
           {/* Logo positioned separately */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[-210px]">
             <div className="relative size-[340px] sm:size-[400px] md:size-[460px] lg:size-[520px] xl:size-[560px]">
